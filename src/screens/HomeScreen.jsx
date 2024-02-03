@@ -7,11 +7,6 @@ const HomeScreen = (props) => {
   const { user } = props;
   const input = useRef(null);
 
-  const inputProps = {
-    type: 'name',
-    placeHolder: 'Enter your name',
-  };
-
   return (
     <View
       style={{
@@ -23,7 +18,11 @@ const HomeScreen = (props) => {
     >
       <View>
         <Text style={{ color: 'black' }}>Hello {user}</Text>
-        <CustomInput ref={input} {...inputProps} />
+        <CustomInput
+          ref={input}
+          type={'name'}
+          placeHolder={'Enter your name'}
+        />
       </View>
     </View>
   );

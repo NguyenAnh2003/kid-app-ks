@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import React from 'react';
 
 const CustomInput = (props) => {
@@ -10,7 +10,7 @@ const CustomInput = (props) => {
       }}
       type={type}
       placeholderTextColor={'black'}
-      style={{ color: 'black' }}
+      style={styles}
       placeholder={placeHolder}
     />
   );
@@ -18,4 +18,6 @@ const CustomInput = (props) => {
 
 export default CustomInput;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  color: 'black',
+});

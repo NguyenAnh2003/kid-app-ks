@@ -1,17 +1,21 @@
-import { TextInput } from 'react-native';
-import React, { forwardRef } from 'react';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
+import React from 'react';
 
-const CustomInput = forwardRef((props, inputRef) => {
-  const { type, placeHolder } = props;
+const CustomInput = (props) => {
+  const { type, placeHolder, setValue } = props;
   return (
     <TextInput
-      ref={inputRef}
+      onChangeText={(value) => {
+        setValue(value);
+      }}
+      type={type}
       placeholderTextColor={'black'}
-      placeholder={placeHolder}
-      secureTextEntry={type === 'password' ? true : false}
       style={{ color: 'black' }}
+      placeholder={placeHolder}
     />
   );
-});
+};
 
 export default CustomInput;
+
+const styles = StyleSheet.create({});

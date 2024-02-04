@@ -11,7 +11,11 @@ const NavBar = (props) => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={{ tabBarLabel: '', tabBarIconStyle: { marginTop: 10 } }}
+      screenOptions={{
+        tabBarLabel: '',
+        tabBarIconStyle: { marginTop: 10 },
+        tabBarStyle: { padding: 0, margin: 0 },
+      }}
     >
       <Tab.Screen
         name="Home"

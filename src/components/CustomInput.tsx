@@ -24,6 +24,7 @@ const CustomInput = forwardRef<InputHandle, InputProps>(
         onChangeText={setValue}
         type={type}
         placeholderTextColor={'black'}
+        secureTextEntry={type === 'password' ? true : false}
         style={styles}
         placeholder={placeHolder}
       />

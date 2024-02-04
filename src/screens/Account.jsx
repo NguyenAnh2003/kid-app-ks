@@ -7,6 +7,7 @@ const Account = ({ navigation }) => {
     <View>
       <Text style={{ color: 'black' }}>Account screen</Text>
       <Button title={'Move to home'} onPress={() => navigate('Home')} />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );
 };

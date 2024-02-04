@@ -10,6 +10,10 @@ type InputProps = {
   type: string;
 };
 
+const styles = StyleSheet.create({
+  color: 'black',
+});
+
 const CustomInput = forwardRef<InputHandle, InputProps>(
   ({ placeHolder, type }, ref) => {
     /** guide: https://www.youtube.com/watch?v=NT6FlJv8VoI */
@@ -33,7 +37,3 @@ const CustomInput = forwardRef<InputHandle, InputProps>(
 );
 
 export default CustomInput;
-
-const styles = StyleSheet.create({
-  color: 'black',
-});

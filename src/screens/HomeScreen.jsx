@@ -1,14 +1,14 @@
 /* eslint-disable prettier/prettier */
 import React, { useRef, useState } from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import CustomInput from '../components/CustomInput';
 
 const HomeScreen = (props) => {
   const { user } = props;
-  const [text, setText] = useState('');
+  const inputRef = useRef();
 
   const submitHandler = () => {
-    alert(text);
+    alert(inputRef.current?.getValue());
   };
 
   return (
@@ -23,7 +23,7 @@ const HomeScreen = (props) => {
       <View>
         <Text style={{ color: 'black' }}>Hello {user}</Text>
         <CustomInput
-          setValue={setText}
+          ref={inputRef}
           type={'name'}
           placeHolder={'Enter your name'}
         />

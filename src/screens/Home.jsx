@@ -3,12 +3,13 @@ import React, { useRef, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import CustomInput from '../components/CustomInput';
 
-const HomeScreen = (props) => {
-  const { user } = props;
+const Home = (props) => {
+  const { user, navigation, route } = props;
+  const { navigate, goBack } = navigation; //
   const inputRef = useRef();
 
   const submitHandler = () => {
-    alert(inputRef.current?.getValue());
+    navigate('Account');
   };
 
   return (
@@ -38,4 +39,4 @@ const HomeScreen = (props) => {
   );
 };
 
-export default HomeScreen;
+export default Home;

@@ -1,11 +1,13 @@
 import axios from 'axios';
 
-const postHTTP = (url, params = {}) => {
-  const res = axios.post(url, params);
+const axiosConfig = axios.create({});
+
+export const postHTTP = async (url, params = {}) => {
+  const res = await axios.post(url, params);
   return res;
 };
 
-const getHTTP = url => {
-  const res = axios.get(url);
+export const getHTTP = async (url) => {
+  const res = await axios.get(url);
   return res;
 };

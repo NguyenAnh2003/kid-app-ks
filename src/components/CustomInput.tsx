@@ -12,6 +12,7 @@ type InputProps = {
 
 const CustomInput = forwardRef<InputHandle, InputProps>(
   ({ placeHolder, type }, ref) => {
+    /** guide: https://www.youtube.com/watch?v=NT6FlJv8VoI */
     const [value, setValue] = useState('');
 
     useImperativeHandle(ref, () => ({

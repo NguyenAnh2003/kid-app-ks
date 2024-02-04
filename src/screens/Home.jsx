@@ -1,10 +1,27 @@
 /* eslint-disable prettier/prettier */
 import React, { useRef, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import CustomInput from '../components/CustomInput';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const Home = (props) => {
-  const { user, navigation, route } = props;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+  },
+  button: {
+    padding: 10,
+    backgroundColor: 'black',
+  },
+  text: {
+    textAlign: 'center',
+    color: 'black',
+  },
+});
+
+const Home = ({ user, navigation, route }) => {
   const { navigate, goBack } = navigation; //
   const inputRef = useRef();
 
@@ -13,25 +30,10 @@ const Home = (props) => {
   };
 
   return (
-    <View
-      style={{
-        backgroundColor: 'white',
-        flex: 1,
-        paddingHorizontal: 20,
-        paddingVertical: 20,
-      }}
-    >
+    <View style={styles.container}>
       <View>
-        <Text style={{ color: 'black' }}>Hello {user}</Text>
-        <CustomInput
-          ref={inputRef}
-          type={'name'}
-          placeHolder={'Enter your name'}
-        />
-        <TouchableOpacity
-          style={{ backgroundColor: 'black' }}
-          onPress={submitHandler}
-        >
+        <Text style={styles.text}>Hello {user}</Text>
+        <TouchableOpacity style={styles.button} onPress={submitHandler}>
           <Text>Click</Text>
         </TouchableOpacity>
       </View>

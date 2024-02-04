@@ -9,7 +9,10 @@ const Tab = createBottomTabNavigator();
 
 const NavBar = (props) => {
   return (
-    <Tab.Navigator initialRouteName="Home">
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={{ tabBarLabel: '', tabBarIconStyle: { marginTop: 10 } }}
+    >
       <Tab.Screen
         name="Home"
         component={HomeScreen}

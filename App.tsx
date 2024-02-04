@@ -16,7 +16,10 @@ const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{ headerStyle: { backgroundColor: '#fdf6e2' } }}
+      >
         <Stack.Screen
           name="Home"
           component={Home}

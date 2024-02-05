@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { getHTTP } from '../apis/api.config';
 
 const styles = StyleSheet.create({
   container: {
@@ -23,10 +24,21 @@ const styles = StyleSheet.create({
 
 const Home = ({ user, navigation, route }) => {
   const { navigate, goBack } = navigation; //
-  const inputRef = useRef();
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    const fetchDataaa = async () => {
+      const { data, status } = await getHTTP(
+        'https://jsonplaceholder.typicode.com/todos/1'
+      );
+      if (status === 200) setData(data);
+    };
+    fetchDataaa();
+  }, []);
 
   const submitHandler = () => {
-    navigate('Account');
+    // navigate('Account');
+    alert(data.title);
   };
 
   return (

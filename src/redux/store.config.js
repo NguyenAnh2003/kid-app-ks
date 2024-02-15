@@ -1,7 +1,8 @@
-import { createStore } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import appReducders from './reducers';
-import { offline } from '@redux-offline/redux-offline';
-import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
+import thunk from 'redux-thunk';
 
-const store = createStore(appReducders, offline(offlineConfig));
+const rootReducerr = combineReducers({ appReducders });
+
+const store = createStore(appReducders);
 export default store;

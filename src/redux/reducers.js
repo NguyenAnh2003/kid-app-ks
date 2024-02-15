@@ -6,7 +6,8 @@ const appReducders = (state = initState, action) => {
   switch (action.type) {
     case appConstants.addItem:
       return { ...state, item: action.payload };
-
+    case appConstants.getItem:
+      return { ...state, item: action.payload };
     default:
       return state;
   }

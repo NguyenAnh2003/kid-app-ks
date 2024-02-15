@@ -10,6 +10,8 @@ import React, { useRef } from 'react';
 import globalStyle from '../style/globalStyle';
 import CustomInput from '../components/CustomInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItem } from '../redux/actions/actions';
 
 const styles = StyleSheet.create({
   button: {
@@ -26,6 +28,10 @@ const styles = StyleSheet.create({
 });
 
 const CreateSthScreen = () => {
+  /** redux define */
+  const { item } = useSelector((state) => state.appReducders);
+  const dispatch = useDispatch();
+
   // input ref
   const ref = useRef(null);
 
@@ -35,10 +41,13 @@ const CreateSthScreen = () => {
       /** AsyncStorage store only string so if the input is JSON format
        * it should be converted to string
        */
-      await AsyncStorage.setItem(
-        'item',
-        JSON.stringify(ref.current?.getValue())
-      );
+      // await AsyncStorage.setItem(
+      //   'item',
+      //   JSON.stringify(ref.current?.getValue())
+      // );
+
+      /** dispatch to global state with redux */
+      dispatch(addItem(ref.current.getValue()));
     } catch (error) {
       Alert.alert(error);
     }
@@ -47,8 +56,8 @@ const CreateSthScreen = () => {
   // get local data handler
   const getLocalDataHandler = async () => {
     try {
-      const data = JSON.parse(await AsyncStorage.getItem('item'));
-      Alert.alert(data);
+      // const data = JSON.parse(await AsyncStorage.getItem('item'));
+      Alert.alert(JSON.parse(item));
     } catch (error) {
       Alert.alert(error);
     }

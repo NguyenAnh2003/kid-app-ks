@@ -13,6 +13,9 @@ type InputProps = {
 const styles = StyleSheet.create({
   input: {
     color: 'black',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
   },
 });
 

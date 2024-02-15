@@ -15,6 +15,10 @@ const styles = StyleSheet.create({
   button: {
     padding: 10,
     backgroundColor: 'black',
+    marginTop: 10,
+  },
+  localH1: {
+    marginBottom: 20,
   },
   text: {
     color: 'white',
@@ -32,7 +36,7 @@ const CreateSthScreen = () => {
 
   return (
     <View style={globalStyle.container}>
-      <Text style={globalStyle.text}>Create Something</Text>
+      <Text style={[globalStyle.h1, styles.localH1]}>Create Something</Text>
       <CustomInput type="text" placeHolder="Enter something" ref={ref} />
       <TouchableOpacity style={styles.button} onPress={submitHandler}>
         <Text style={styles.text}>Click</Text>

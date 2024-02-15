@@ -27,7 +27,7 @@ const Home = ({ user, navigation, route }) => {
   return (
     <View style={globalStyle.container}>
       <View>
-        <Text style={globalStyle.text}>Hello {user}</Text>
+        <Text style={globalStyle.h1}>Hello</Text>
         <Text style={globalStyle.text}>{data?.title}</Text>
         {/**<TouchableOpacity style={styles.button} onPress={submitHandler}>
           <Text>Click</Text>

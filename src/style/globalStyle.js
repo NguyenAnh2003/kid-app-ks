@@ -9,6 +9,11 @@ const globalStyle = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
+  h1: {
+    color: 'black',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
   text: {
     textAlign: 'center',
     color: 'black',

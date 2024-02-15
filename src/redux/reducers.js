@@ -6,7 +6,7 @@ const initState = {
   user: { userId: '' },
 };
 
-const appReducders = (state = initState, action) => {
+const appReducders = (state = initState.item, action) => {
   /** item reducer
    * reducer can be used for single object
    */
@@ -19,7 +19,7 @@ const appReducders = (state = initState, action) => {
   }
 };
 
-export const userReducers = (state = initState, action) => {
+export const userReducers = (state = initState.user, action) => {
   /** user reducers temp */
   switch (action.type) {
     case appConstants.USER_ACTIVITY:

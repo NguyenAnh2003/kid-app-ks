@@ -1,12 +1,9 @@
 import appConstants from './constants';
 
-export const addItem = (data) => (dispatch) => {
-  dispatch({
-    type: appConstants.addItem,
+export const addItem = (data) => {
+  console.log(data);
+  return {
+    type: appConstants.ADD_ITEM,
     payload: data,
-  });
+  };
 };
-
-export const getItem = () => {
-  
-}

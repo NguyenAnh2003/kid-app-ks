@@ -6,6 +6,7 @@ import { thunk } from 'redux-thunk';
 
 /**
  * @access https://jscrambler.com/blog/how-to-use-redux-persist-in-react-native-with-asyncstorage
+ * https://www.youtube.com/watch?v=p38wfGgQZ9c
  */
 
 const persistConfig = {
@@ -17,8 +18,6 @@ const rootReducer = combineReducers({
   appReducders: persistReducer(persistConfig, appReducders),
 });
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+export const configStore = createStore(rootReducer, applyMiddleware(thunk));
 // persistor
 export const persistor = persistStore(store);
-
-export default store;

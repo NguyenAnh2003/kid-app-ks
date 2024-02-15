@@ -47,7 +47,7 @@ const CreateSthScreen = () => {
       // );
 
       /** dispatch to global state with redux */
-      dispatch(addItem(ref.current.getValue()));
+      dispatch(addItem(JSON.stringify(ref.current?.getValue())));
     } catch (error) {
       Alert.alert(error);
     }
@@ -56,8 +56,8 @@ const CreateSthScreen = () => {
   // get local data handler
   const getLocalDataHandler = async () => {
     try {
-      // const data = JSON.parse(await AsyncStorage.getItem('item'));
-      Alert.alert(JSON.parse(item));
+      const data = JSON.parse(await AsyncStorage.getItem('item'));
+      Alert.alert(JSON.parse(data));
     } catch (error) {
       Alert.alert(error);
     }

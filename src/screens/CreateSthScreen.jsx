@@ -27,6 +27,8 @@ const styles = StyleSheet.create({
   },
 });
 
+/** DEMO OFFLINE FEATURE: https://www.youtube.com/watch?v=Js0E_pEe71A&list=LL&index=1 */
+
 const CreateSthScreen = () => {
   /** redux define */
   const itemData = useSelector((state) => state.itemReducers?.item);

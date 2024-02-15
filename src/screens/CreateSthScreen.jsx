@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 
 const CreateSthScreen = () => {
   /** redux define */
-  const itemData = useSelector((state) => state.appReducders?.item);
+  const itemData = useSelector((state) => state.itemReducers?.item);
   const dispatch = useDispatch();
 
   // input ref

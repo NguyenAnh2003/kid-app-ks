@@ -3,6 +3,7 @@ import appConstants from './actions/constants';
 
 const initState = {
   item: { name: '' },
+  user: { userId: '' },
 };
 
 const appReducders = (state = initState, action) => {
@@ -13,6 +14,17 @@ const appReducders = (state = initState, action) => {
     case appConstants.ADD_ITEM:
       console.log('description', action.payload);
       return { ...state.item, item: { name: action.payload } };
+    default:
+      return state;
+  }
+};
+
+export const userReducers = (state = initState, action) => {
+  /** user reducers temp */
+  switch (action.type) {
+    case appConstants.USER_ACTIVITY:
+      return { ...state.user };
+
     default:
       return state;
   }

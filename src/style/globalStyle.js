@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export default StyleSheet.create({
+const globalStyle = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -14,3 +14,5 @@ export default StyleSheet.create({
     color: 'black',
   },
 });
+
+export default globalStyle;

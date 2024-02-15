@@ -35,17 +35,14 @@ const Home = ({ user, navigation, route }) => {
     fetchDataaa();
   }, []);
 
-  const submitHandler = () => {
-    alert(data.title);
-  };
-
   return (
     <View style={styles.container}>
       <View>
         <Text style={styles.text}>Hello {user}</Text>
-        <TouchableOpacity style={styles.button} onPress={submitHandler}>
+        <Text style={styles.text}>{data.title}</Text>
+        {/**<TouchableOpacity style={styles.button} onPress={submitHandler}>
           <Text>Click</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>*/}
       </View>
     </View>
   );

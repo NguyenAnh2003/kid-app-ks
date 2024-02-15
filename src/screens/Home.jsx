@@ -39,7 +39,7 @@ const Home = ({ user, navigation, route }) => {
     <View style={styles.container}>
       <View>
         <Text style={styles.text}>Hello {user}</Text>
-        <Text style={styles.text}>{data.title}</Text>
+        <Text style={styles.text}>{data?.title}</Text>
         {/**<TouchableOpacity style={styles.button} onPress={submitHandler}>
           <Text>Click</Text>
         </TouchableOpacity>*/}

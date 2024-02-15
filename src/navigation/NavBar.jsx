@@ -4,6 +4,7 @@ import Home from '../screens/Home';
 import Account from '../screens/Account';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import CreateSthScreen from '../screens/CreateSthScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -17,6 +18,7 @@ const NavBar = (props) => {
         tabBarStyle: { padding: 0, margin: 0 },
       }}
     >
+      {/** home screen */}
       <Tab.Screen
         name="Home"
         component={Home}
@@ -30,6 +32,21 @@ const NavBar = (props) => {
           ),
         }}
       />
+      {/** create something screen */}
+      <Tab.Screen
+        name="Create"
+        component={CreateSthScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'add-circle' : 'add-circle-outline'}
+              size={24}
+              color={'black'}
+            />
+          ),
+        }}
+      />
+      {/** account screen */}
       <Tab.Screen
         name="Account"
         component={Account}

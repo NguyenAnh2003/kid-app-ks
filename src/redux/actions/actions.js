@@ -7,3 +7,10 @@ export const addItem = (data) => {
     payload: data,
   };
 };
+
+export const userActivity = (data) => {
+  return {
+    type: appConstants.USER_ACTIVITY,
+    payload: data,
+  };
+};

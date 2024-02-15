@@ -27,9 +27,9 @@ const styles = StyleSheet.create({
   },
 });
 
-/** DEMO OFFLINE FEATURE: https://www.youtube.com/watch?v=Js0E_pEe71A&list=LL&index=1 
+/** DEMO OFFLINE FEATURE: https://www.youtube.com/watch?v=Js0E_pEe71A&list=LL&index=1
  * guide: https://medium.com/differential/handling-offline-actions-in-react-native-74949cbfabf2#.b2sm29c4u
-*/
+ */
 
 const CreateSthScreen = () => {
   /** redux define */
@@ -42,10 +42,6 @@ const CreateSthScreen = () => {
   // submit handler function
   const submitHandler = async () => {
     try {
-      /** AsyncStorage store only string so if the input is JSON format
-       * it should be converted to string
-       */
-
       /** dispatch to global state with redux */
       dispatch(addItem(JSON.stringify(ref.current?.getValue())));
     } catch (error) {

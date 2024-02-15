@@ -1,6 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import appConstants from './actions/constants';
 
-const initState = { item: {} };
+const initState = {
+  item: { name: '' },
+};
 
 const appReducders = (state = initState, action) => {
   /** item reducer
@@ -9,7 +12,7 @@ const appReducders = (state = initState, action) => {
   switch (action.type) {
     case appConstants.ADD_ITEM:
       console.log('description', action.payload);
-      return { item: action.payload };
+      return { ...state.item, item: { name: action.payload } };
     default:
       return state;
   }

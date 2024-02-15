@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 
 const CreateSthScreen = () => {
   /** redux define */
-  const { item } = useSelector((state) => state.appReducders);
+  const itemData = useSelector((state) => state.appReducders?.item);
   const dispatch = useDispatch();
 
   // input ref
@@ -41,10 +41,6 @@ const CreateSthScreen = () => {
       /** AsyncStorage store only string so if the input is JSON format
        * it should be converted to string
        */
-      // await AsyncStorage.setItem(
-      //   'item',
-      //   JSON.stringify(ref.current?.getValue())
-      // );
 
       /** dispatch to global state with redux */
       dispatch(addItem(JSON.stringify(ref.current?.getValue())));
@@ -56,8 +52,9 @@ const CreateSthScreen = () => {
   // get local data handler
   const getLocalDataHandler = async () => {
     try {
-      const data = JSON.parse(await AsyncStorage.getItem('item'));
-      Alert.alert(JSON.parse(data));
+      console.log(itemData ? itemData : 'NOPE');
+      const { name } = itemData;
+      Alert.alert(JSON.parse(name));
     } catch (error) {
       Alert.alert(error);
     }

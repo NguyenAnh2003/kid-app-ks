@@ -47,7 +47,7 @@ const CreateSthScreen = () => {
   // get local data handler
   const getLocalDataHandler = async () => {
     try {
-      const data = await AsyncStorage.getItem('item');
+      const data = JSON.parse(await AsyncStorage.getItem('item'));
       Alert.alert(data);
     } catch (error) {
       Alert.alert(error);

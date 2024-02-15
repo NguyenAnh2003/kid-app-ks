@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import appConstants from './actions/constants';
 
 const initState = {

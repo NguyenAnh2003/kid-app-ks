@@ -12,6 +12,7 @@ import CustomInput from '../components/CustomInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../redux/actions/actions';
+import firestore from '@react-native-firebase/firestore';
 
 const styles = StyleSheet.create({
   button: {
@@ -36,12 +37,22 @@ const CreateSthScreen = () => {
   const itemData = useSelector((state) => state.itemReducers?.item);
   const dispatch = useDispatch();
 
+  /** firebase firestore */
+  const dbRef = firestore().collection('rnative-collection-test');
+
   // input ref
   const ref = useRef(null);
 
   // submit handler function
   const submitHandler = async () => {
     try {
+      // firestore add
+      dbRef
+        .add({ name: ref.current?.getValue() })
+        .then(() => {
+          console.log('sucess');
+        })
+        .catch((err) => console.log(err));
       /** dispatch to global state with redux */
       dispatch(addItem(JSON.stringify(ref.current?.getValue())));
     } catch (error) {

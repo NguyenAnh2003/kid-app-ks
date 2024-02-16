@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { getHttp } from '../apis/api.config';
+import { getHttp } from '../libs/apis/api.config';
 import globalStyle from '../style/globalStyle';
 
 const styles = StyleSheet.create({

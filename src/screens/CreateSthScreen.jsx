@@ -30,6 +30,8 @@ const styles = StyleSheet.create({
 
 /** DEMO OFFLINE FEATURE: https://www.youtube.com/watch?v=Js0E_pEe71A&list=LL&index=1
  * guide: https://medium.com/differential/handling-offline-actions-in-react-native-74949cbfabf2#.b2sm29c4u
+ * offline approaches: usage restrictions, caching, requests queues. https://www.bacancytechnology.com/blog/react-native-offline-support
+ *
  */
 
 const CreateSthScreen = () => {
@@ -47,14 +49,16 @@ const CreateSthScreen = () => {
   const submitHandler = async () => {
     try {
       // firestore add
-      dbRef
+      const docRef = await dbRef
         .add({ name: ref.current?.getValue() })
-        .then(() => {
-          console.log('sucess');
-        })
-        .catch((err) => console.log(err));
-      /** dispatch to global state with redux */
-      dispatch(addItem(JSON.stringify(ref.current?.getValue())));
+        .then((res) => {
+          return res;
+        });
+      if (docRef) {
+        console.log('added item');
+        /** dispatch to global state with redux */
+        dispatch(addItem(JSON.stringify(ref.current?.getValue())));
+      } else return;
     } catch (error) {
       Alert.alert(error);
     }

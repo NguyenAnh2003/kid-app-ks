@@ -12,7 +12,7 @@ import { Provider } from 'react-redux';
 import { configStore, persistor } from './src/redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import NetInfo from '@react-native-community/netinfo';
-import { Alert } from 'react-native';
+import { Alert, Text } from 'react-native';
 
 function App(): React.JSX.Element {
   /** net info https://www.youtube.com/watch?v=QkyU9LYGRsM */
@@ -28,7 +28,7 @@ function App(): React.JSX.Element {
 
   return (
     <Provider store={configStore}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>
         <NavigationContainer>
           <NavBar />
         </NavigationContainer>

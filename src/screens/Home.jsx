@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getHttp } from '../libs/configs/api.config';
-import globalStyle from '../style/globalStyle';
+import globalStyle from '../styles/globalStyle';
 
 const styles = StyleSheet.create({
   button: {
@@ -15,6 +15,7 @@ const Home = ({ user, navigation, route }) => {
   const [data, setData] = useState();
 
   useEffect(() => {
+    /** exp caching data */
     const fetchDataaa = async () => {
       const { data, status } = await getHttp(
         'https://jsonplaceholder.typicode.com/todos/1'

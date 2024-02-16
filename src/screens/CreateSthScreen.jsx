@@ -7,9 +7,8 @@ import {
   Alert,
 } from 'react-native';
 import React, { useRef } from 'react';
-import globalStyle from '../style/globalStyle';
+import globalStyle from '../styles/globalStyle';
 import CustomInput from '../components/CustomInput';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../redux/actions/actions';
 import firestore from '@react-native-firebase/firestore';

@@ -58,7 +58,9 @@ const CreateSthScreen = () => {
         console.log('added item');
         /** dispatch to global state with redux */
         dispatch(addItem(JSON.stringify(ref.current?.getValue())));
-      } else return;
+      } else {
+        Alert.alert('Problem exist cannot add');
+      }
     } catch (error) {
       Alert.alert(error);
     }

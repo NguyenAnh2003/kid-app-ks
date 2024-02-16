@@ -15,10 +15,12 @@ import NetInfo from '@react-native-community/netinfo';
 import { Alert, Text } from 'react-native';
 
 function App(): React.JSX.Element {
-  /** net info https://www.youtube.com/watch?v=QkyU9LYGRsM */
+  /** net info using USB to connect phone (using adb connect not working) */
   const unsucbscribe = NetInfo.addEventListener((state) => {
     if (state.isConnected === false) {
       Alert.alert('NO INTERNET CONNECTION');
+    } else {
+      Alert.alert("CONNECTED")
     }
   });
 

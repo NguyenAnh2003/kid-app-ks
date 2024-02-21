@@ -5,7 +5,7 @@ const initState = {
   user: { userId: '' },
 };
 
-const appReducders = (state = initState.item, action) => {
+export const itemReducders = (state = initState.item, action) => {
   /** item reducer
    * reducer can be used for single object
    */
@@ -28,5 +28,3 @@ export const userReducers = (state = initState.user, action) => {
       return state;
   }
 };
-
-export default appReducders;

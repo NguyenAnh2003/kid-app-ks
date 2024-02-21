@@ -1,5 +1,5 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import appReducders, { userReducers } from './reducers';
+import { itemReducders, userReducers } from './reducers';
 import { persistReducer, persistStore } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { thunk } from 'redux-thunk';
@@ -17,7 +17,10 @@ const persistConfig = {
 
 /** persisted reducer */
 const rootReducer = combineReducers({
-  itemReducers: persistReducer(persistConfig, appReducders),
+  /** combine each reducers
+   * each one have its own responsibility (offline, online)
+   */
+  itemReducers: persistReducer(persistConfig, itemReducders),
   userReducers: userReducers,
 });
 

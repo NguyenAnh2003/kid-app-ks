@@ -11,7 +11,7 @@ import globalStyle from '../styles/globalStyle';
 import CustomInput from '../components/CustomInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../redux/actions/actions';
-import firestore from '@react-native-firebase/firestore';
+import { appFireStore } from '../libs/firebase/firebaseCustom.services';
 
 const styles = StyleSheet.create({
   button: {
@@ -39,7 +39,7 @@ const CreateSthScreen = () => {
   const dispatch = useDispatch();
 
   /** firebase firestore */
-  const dbRef = firestore().collection('rnative-collection-test');
+  const dbRef = appFireStore();
 
   // input ref
   const ref = useRef(null);

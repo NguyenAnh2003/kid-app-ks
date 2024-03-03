@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getHttp } from '../configs/axios.config';
 import globalStyle from '../styles/globalStyle';
+import DeviceInfo from '../components/DeviceInfo';
 
 const styles = StyleSheet.create({
   button: {
@@ -29,6 +30,8 @@ const Home = ({ user, navigation, route }) => {
     <View style={globalStyle.container}>
       <View>
         <Text style={globalStyle.h1}>Hello</Text>
+        {/** device info */}
+        <DeviceInfo />
         <Text style={globalStyle.text}>{data?.title}</Text>
         {/**<TouchableOpacity style={styles.button} onPress={submitHandler}>
           <Text>Click</Text>

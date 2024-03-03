@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { getHttp } from '../configs/customAxios.config';
+import { getHttp } from '../configs/axios.config';
 import globalStyle from '../styles/globalStyle';
 
 const styles = StyleSheet.create({

@@ -11,7 +11,6 @@ import globalStyle from '../styles/globalStyle';
 import CustomInput from '../components/CustomInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../redux/actions/actions';
-import { appFireStore } from '../libs/firebase/firebaseCustom.services';
 
 const styles = StyleSheet.create({
   button: {
@@ -38,21 +37,13 @@ const CreateSthScreen = () => {
   const itemData = useSelector((state) => state.itemReducers?.item);
   const dispatch = useDispatch();
 
-  /** firebase firestore */
-  const dbRef = appFireStore();
-
   // input ref
   const ref = useRef(null);
 
   // submit handler function
   const submitHandler = async () => {
     try {
-      // firestore add
-      const docRef = await dbRef
-        .add({ name: ref.current?.getValue() })
-        .then((res) => {
-          return res;
-        });
+      const docRef = {}
       if (docRef) {
         console.log('added item');
         /** dispatch to global state with redux */

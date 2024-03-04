@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getHttp } from '../configs/axios.config';
 import globalStyle from '../styles/globalStyle';
 import DeviceInfo from '../components/DeviceInfo';
+import { PermissionsAndroid } from 'react-native';
 
 const styles = StyleSheet.create({
   button: {
@@ -14,6 +15,8 @@ const styles = StyleSheet.create({
 
 const Home = ({ user, navigation, route }) => {
   const [data, setData] = useState();
+  
+  /** permission */
 
   useEffect(() => {
     /** exp caching data */

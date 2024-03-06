@@ -44,6 +44,8 @@ function App(): React.JSX.Element {
       console.log(err);
     });
 
+    // hello
+
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (

@@ -14,6 +14,9 @@ import { PersistGate } from 'redux-persist/integration/react';
 import NetInfo from '@react-native-community/netinfo';
 import { AppState } from 'react-native';
 import { Alert, Text } from 'react-native';
+import { NativeModules } from 'react-native';
+
+const { UsageStats } = NativeModules;
 
 function App(): React.JSX.Element {
   /** net info using USB to connect phone (using adb connect not working) */

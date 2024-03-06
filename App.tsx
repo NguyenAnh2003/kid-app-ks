@@ -36,6 +36,14 @@ function App(): React.JSX.Element {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
+  UsageStats.testUsage()
+    .then((stats: any) => {
+      console.log(stats);
+    })
+    .catch((err: any) => {
+      console.log(err);
+    });
+
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (

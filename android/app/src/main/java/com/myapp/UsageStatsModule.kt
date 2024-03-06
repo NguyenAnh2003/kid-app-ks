@@ -13,7 +13,8 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
     }
 
     @ReactMethod
-    fun getSomeStats() {
+    fun getUsageList(promise: Promise) {
+        /* using promise b.c this function will connect with react native through the bridge */
         
     }
 

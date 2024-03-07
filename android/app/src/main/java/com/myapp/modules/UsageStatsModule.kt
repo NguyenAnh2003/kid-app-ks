@@ -7,6 +7,11 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.Promise // promise interface
 import com.facebook.react.bridge.Callback // call back interface
 
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.bridge.WritableNativeMap
+import com.facebook.react.bridge.WritableNativeArray
+import com.facebook.react.common.MapBuilder
+
 /** usage stats package */
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStats
@@ -18,6 +23,7 @@ import android.util.Log
 import java.lang.Exception
 
 
+
 /** time package */
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -26,7 +32,6 @@ import java.util.List;
 
 
 class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactApplicationContext) {
-
     /** @params */
 
 
@@ -51,9 +56,9 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
     // @ReactMethod(isBlockingSynchronousMethod = True)
     // func showPermission() {}
 
-    /** get usage list function */
+    /** get total usage time */
     @ReactMethod
-    fun getUsagesList(promise: Promise) {
+    fun getTotalUsage(interval: Int, startTime: Long, endTime: Long, promise: Promise) {
         try {
             /** using promise b.c this function will connect with react native through the bridge
              * Promise function
@@ -62,8 +67,51 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
 
             // init usage stats manager
             val usageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-            
-            
+
+            // queryUsageStats
+
+            // return usage list
+
+        } catch (e: Throwable) {
+            /** log exception */
+            // logger
+            println("Exception usage module: ${e}") // just print
+            // Promise reject error
+            promise.reject("Error:", e) //
+        }
+    }
+
+    /** get usage list function */
+    @ReactMethod
+    fun getUsagesList(interval: Int, startTime: Long, endTime: Long, promise: Promise) {
+        try {
+            /** Promise function
+             * @param interval - (daily, week, month, year)
+             * @param startTime - the time when user move to background state
+             * @param endTime - the time user move to active state
+             * @return list of usage data of every single app
+             * */
+            val result = WritableNativeMap()
+
+            // init usage stats manager
+            val usageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+
+            /** queryUsageStats (interval, startTime, endTime) */
+            val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(interval, startTime, endTime)
+
+            for (us in usageStatsList) {
+                val usageStats = WritableNativeMap()
+                usageStats.putString("packageName", us.packageName)
+                usageStats.putDouble("totalTimeInForeground", us.totalTimeInForeground.toDouble())
+                usageStats.putDouble("firstTimeStamp", us.firstTimeStamp.toDouble())
+                usageStats.putDouble("lastTimeStamp", us.lastTimeStamp.toDouble())
+                usageStats.putDouble("lastTimeUsed", us.lastTimeUsed.toDouble())
+                usageStats.putInt("describeContents", us.describeContents())
+                result.putMap(us.packageName, usageStats)
+            }
+
+            promise.resolve(result) //
+
         } catch (e: Throwable) {
             /** log exception */
             // logger

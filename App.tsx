@@ -36,17 +36,9 @@ function App(): React.JSX.Element {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
-  UsageStats.testUsage()
-    .then((stats: any) => {
-      console.log(stats);
-    })
-    .catch((err: any) => {
-      console.log(err);
-    });
-
-    // changed
-
   useEffect(() => {
+    /** check current app state func activate
+     * this function when having change */
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (
         appState.current.match(/inactive|background/) &&
@@ -59,6 +51,20 @@ function App(): React.JSX.Element {
       appState.current = nextAppState; //
       setAppStateVisible(appState.current);
     });
+
+    /** usage stats function */
+    const usageStats = async () => {
+      await UsageStats.testUsage()
+        .then((stats: any) => {
+          console.log(stats);
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
+    };
+
+    /** call usage stats function */
+    usageStats(); //
 
     return () => {
       subscription.remove();

@@ -45,7 +45,7 @@ function App(): React.JSX.Element {
     /** get usage list */
     const getUsageList = async () => {
       const startTime = 1647388800000; // 24 hours ago
-      const endTime = 1647475200000;
+      const endTime = 1647214800000;
 
       const result = await UsageStats.getUsagesList(
         UsageStats.INTERVAL_DAILY,
@@ -62,8 +62,7 @@ function App(): React.JSX.Element {
         nextAppState === 'active'
       ) {
         console.log('App come to foreground and move to active');
-        const usageList = getUsageList();
-        console.log('haha', usageList);
+
       } else {
         console.log(`Current state ${nextAppState}`);
       }
@@ -84,7 +83,8 @@ function App(): React.JSX.Element {
 
     /** call usage stats function */
     usageStats(); //
-
+    const usageList = getUsageList();
+    console.log('haha', usageList);
 
     return () => {
       subscription.remove();

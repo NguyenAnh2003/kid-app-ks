@@ -110,8 +110,15 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
                     usageStats.putDouble("lastTimeStamp", us.lastTimeStamp.toDouble())
                     usageStats.putDouble("lastTimeUsed", us.lastTimeUsed.toDouble())
                     usageStats.putInt("describeContents", us.describeContents())
+
+                    Log.d("UsageStatsModule", "UsageStats: LOOP - ${us.packageName} ${us.totalTimeInForeground.toDouble()}" +
+                            "${us.firstTimeStamp.toDouble()} ${us.lastTimeStamp.toDouble()} ${us.lastTimeUsed.toDouble()}" +
+                            "${us.describeContents()}")
+
                     result.putMap(us.packageName, usageStats)
                 }
+
+                Log.d("UsageStatsModule", "UsageStats: Entire Map - ${result}")
 
                 promise.resolve(result) //
             } else {

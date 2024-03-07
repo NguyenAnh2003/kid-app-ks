@@ -39,12 +39,28 @@ function App(): React.JSX.Element {
   useEffect(() => {
     /** check current app state func activate
      * this function when having change */
+    /** get usage list */
+    const getUsageList = async () => {
+      const startTime = 1647388800000; // 24 hours ago
+      const endTime = 1647475200000;
+
+      const result = await UsageStats.getUsagesList(
+        UsageStats.INTERVAL_DAILY,
+        startTime,
+        endTime
+      );
+
+      return result;
+    };
+
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
         console.log('App come to foreground and move to active');
+        const usageList = getUsageList();
+        console.log('haha', usageList);
       } else {
         console.log(`Current state ${nextAppState}`);
       }
@@ -63,24 +79,10 @@ function App(): React.JSX.Element {
         });
     };
 
-    /** get usage list */
-    const getUsageList = async () => {
-      const startTime = Date.now() - 24 * 60 * 60 * 1000; // 24 hours ago
-      const endTime = new Date(Date.now()).getTime();
-
-      // const result = await UsageStats.getUsagesList(UsageStats.INTERVAL_DAILY,
-      // startTime, endTime);
-
-      // return result;
-      return endTime;
-    };
-
     /** call usage stats function */
     usageStats(); //
-    const time = getUsageList();
-    console.log('haha', time);
 
-    console.log('usage stats constants', UsageStats.INTERVAL_YEARLY);
+    console.log('usage stats constants', UsageStats.INTERVAL_DAILY);
 
     return () => {
       subscription.remove();

@@ -66,6 +66,9 @@ function App(): React.JSX.Element {
     /** call usage stats function */
     usageStats(); //
 
+    console.log('usage stats constants', UsageStats.INTERVAL_YEARLY);
+    
+
     return () => {
       subscription.remove();
     };

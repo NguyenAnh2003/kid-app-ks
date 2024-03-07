@@ -14,7 +14,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import NetInfo from '@react-native-community/netinfo';
 import { AppState } from 'react-native';
 import { Alert, Text } from 'react-native';
-import { NativeModules } from 'react-native';
+import { NativeModules, Linking } from 'react-native';
 
 const { UsageStats } = NativeModules;
 
@@ -31,6 +31,9 @@ function App(): React.JSX.Element {
   // useEffect(() => {
   //   unsucbscribe();
   // }, []);
+
+  /** open settings */
+  // Linking.openSettings()
 
   /** app state */
   const appState = useRef(AppState.currentState);
@@ -59,8 +62,6 @@ function App(): React.JSX.Element {
         nextAppState === 'active'
       ) {
         console.log('App come to foreground and move to active');
-        const usageList = getUsageList();
-        console.log('haha', usageList);
       } else {
         console.log(`Current state ${nextAppState}`);
       }
@@ -82,7 +83,8 @@ function App(): React.JSX.Element {
     /** call usage stats function */
     usageStats(); //
 
-    console.log('usage stats constants', UsageStats.INTERVAL_DAILY);
+    const usageList = getUsageList();
+    console.log('haha', usageList);
 
     return () => {
       subscription.remove();

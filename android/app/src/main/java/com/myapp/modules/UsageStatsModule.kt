@@ -84,7 +84,7 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
 
     /** get usage list function */
     @ReactMethod
-    fun getUsagesList(interval: Int, startTime: Double, endTime: Double, promise: Promise) {
+    fun getUsagesList(interval: Int, startTime: Long, endTime: Long, promise: Promise) {
         try {
             /** Promise function
              * @param interval - (daily, week, month, year)
@@ -93,14 +93,17 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
              * @return list of usage data of every single app
              * */
             if(isUsageStatsPermissionGranted(reactApplicationContext)) {
-                Log.d("UsageStatsModule", "Permission granted.")
                 val result = WritableNativeMap()
 
                 // init usage stats manager
                 val usageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 
+                Log.d("UsageStatsModule", "UsageStats: manager - ${usageStatsManager}")
+
                 /** queryUsageStats (interval, startTime, endTime) */
                 val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(interval, startTime.toLong(), endTime.toLong())
+
+                Log.d("UsageStatsModule", "UsageStats: query usage - ${usageStatsList}")
 
                 for (us in usageStatsList) {
                     val usageStats = WritableNativeMap()

@@ -44,8 +44,8 @@ function App(): React.JSX.Element {
      * this function when having change */
     /** get usage list */
     const getUsageList = async () => {
-      const startTime = 1647388800000; // 24 hours ago
-      const endTime = 1647214800000;
+      const startTime = 1051900800000; // 24 hours ago
+      const endTime = 1054492800000;
 
       const result = await UsageStats.getUsagesList(
         UsageStats.INTERVAL_DAILY,

@@ -16,6 +16,7 @@ import com.facebook.react.common.MapBuilder
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
+import android.app.AppOpsManager
 
 /** */
 import android.content.Context // android content
@@ -91,34 +92,51 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
              * @param endTime - the time user move to active state
              * @return list of usage data of every single app
              * */
-            val result = WritableNativeMap()
+            if(isUsageStatsPermissionGranted(reactApplicationContext)) {
+                Log.d("UsageStatsModule", "Permission granted.")
+                val result = WritableNativeMap()
 
-            // init usage stats manager
-            val usageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+                // init usage stats manager
+                val usageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 
-            /** queryUsageStats (interval, startTime, endTime) */
-            val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(interval, startTime.toLong(), endTime.toLong())
+                /** queryUsageStats (interval, startTime, endTime) */
+                val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(interval, startTime.toLong(), endTime.toLong())
 
-            for (us in usageStatsList) {
-                val usageStats = WritableNativeMap()
-                usageStats.putString("packageName", us.packageName)
-                usageStats.putDouble("totalTimeInForeground", us.totalTimeInForeground.toDouble())
-                usageStats.putDouble("firstTimeStamp", us.firstTimeStamp.toDouble())
-                usageStats.putDouble("lastTimeStamp", us.lastTimeStamp.toDouble())
-                usageStats.putDouble("lastTimeUsed", us.lastTimeUsed.toDouble())
-                usageStats.putInt("describeContents", us.describeContents())
-                result.putMap(us.packageName, usageStats)
+                for (us in usageStatsList) {
+                    val usageStats = WritableNativeMap()
+                    usageStats.putString("packageName", us.packageName)
+                    usageStats.putDouble("totalTimeInForeground", us.totalTimeInForeground.toDouble())
+                    usageStats.putDouble("firstTimeStamp", us.firstTimeStamp.toDouble())
+                    usageStats.putDouble("lastTimeStamp", us.lastTimeStamp.toDouble())
+                    usageStats.putDouble("lastTimeUsed", us.lastTimeUsed.toDouble())
+                    usageStats.putInt("describeContents", us.describeContents())
+                    result.putMap(us.packageName, usageStats)
+                }
+
+                promise.resolve(result) //
+            } else {
+                promise.reject("PERMISSION_DENIED", "Usage stats permission is not granted.")
             }
 
-            promise.resolve(result) //
-
-        } catch (e: Throwable) {
+        } catch (e: java.lang.Exception) {
             /** log exception */
             // logger
+            Log.e("UsageStatsModule", "Error querying usage stats", e)
+
             println("Exception usage module: ${e}") // just print
             // Promise reject error
             promise.reject("Error:", e) //
         }
+    }
+
+    private fun isUsageStatsPermissionGranted(context: Context): Boolean {
+        val appOpsManager = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode = appOpsManager.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(),
+                context.packageName
+        )
+        return mode == AppOpsManager.MODE_ALLOWED
     }
 
     @ReactMethod

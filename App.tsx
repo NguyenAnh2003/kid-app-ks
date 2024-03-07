@@ -62,6 +62,8 @@ function App(): React.JSX.Element {
         nextAppState === 'active'
       ) {
         console.log('App come to foreground and move to active');
+        const usageList = getUsageList();
+        console.log('haha', usageList);
       } else {
         console.log(`Current state ${nextAppState}`);
       }
@@ -83,8 +85,6 @@ function App(): React.JSX.Element {
     /** call usage stats function */
     usageStats(); //
 
-    const usageList = getUsageList();
-    console.log('haha', usageList);
 
     return () => {
       subscription.remove();

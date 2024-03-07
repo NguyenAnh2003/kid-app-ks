@@ -65,14 +65,20 @@ function App(): React.JSX.Element {
 
     /** get usage list */
     const getUsageList = async () => {
-      const result = await UsageStats.getUsagesList(1, 10000000, 200000000);
-      return result;
+      const startTime = Date.now() - 24 * 60 * 60 * 1000; // 24 hours ago
+      const endTime = new Date(Date.now()).getTime();
+
+      // const result = await UsageStats.getUsagesList(UsageStats.INTERVAL_DAILY,
+      // startTime, endTime);
+
+      // return result;
+      return endTime;
     };
 
     /** call usage stats function */
     usageStats(); //
-
-    console.log('usage list', getUsageList());
+    const time = getUsageList();
+    console.log('haha', time);
 
     console.log('usage stats constants', UsageStats.INTERVAL_YEARLY);
 

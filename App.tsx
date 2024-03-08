@@ -38,6 +38,7 @@ function App(): React.JSX.Element {
   /** app state */
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  const [usageList, setUsageList] = useState();
 
   useEffect(() => {
     /** check current app state func activate
@@ -53,7 +54,7 @@ function App(): React.JSX.Element {
         endTime
       );
 
-      return result;
+      if (result) setUsageList(result);
     };
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
@@ -70,14 +71,17 @@ function App(): React.JSX.Element {
     });
 
     /** call usage stats function */
-    const usageList = getUsageList();
-    console.log('haha', usageList);
+    getUsageList(); //
     console.log('const', UsageStats.getConstants());
 
     return () => {
       subscription.remove();
     };
   }, []);
+
+  useEffect(() => {
+    console.log('usage list', usageList);
+  }, [usageList]);
 
   return (
     <Provider store={configStore}>

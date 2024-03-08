@@ -68,9 +68,10 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
                 val usageStatsManager: UsageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 
                 Log.d("UsageStatsModule", "UsageStats: manager - ${usageStatsManager}")
+                Log.d("UsageStatsModule", "UsageStats: Interval - ${UsageStatsManager.INTERVAL_DAILY}")
 
                 /** queryUsageStats (interval, startTime, endTime) */
-                val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime.toLong(), endTime.toLong())
+                val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(getUsageInterval(interval), startTime.toLong(), endTime.toLong())
 
                 Log.d("UsageStatsModule", "UsageStats: query usage - ${usageStatsList}")
 
@@ -106,6 +107,17 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
             // Promise reject error
             promise.reject("Error:", e) //
         }
+    }
+
+    private fun getUsageInterval(interval: Int): Int {
+        var result: Int = 0
+        when (interval) {
+            0 -> result = UsageStatsManager.INTERVAL_DAILY
+            1 -> result = UsageStatsManager.INTERVAL_WEEKLY
+            2 -> result = UsageStatsManager.INTERVAL_MONTHLY
+            3 -> result = UsageStatsManager.INTERVAL_YEARLY
+        }
+        return result
     }
 
     private fun isUsageStatsPermissionGranted(context: Context): Boolean {

@@ -87,11 +87,11 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
     @ReactMethod
     fun getUsagesList(interval: Int, startTime: Double, endTime: Double, promise: Promise) {
         try {
-            /** Promise function
+            /**
              * @param interval - (daily, week, month, year)
              * @param startTime - the time when user move to background state
              * @param endTime - the time user move to active state
-             * @return list of usage data of every single app
+             * @return list of HISTORICAL usage data of every single app
              * */
             if(isUsageStatsPermissionGranted(reactApplicationContext)) {
                 val result = WritableNativeMap()
@@ -111,11 +111,11 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
                     val usageStats = WritableNativeMap()
 
                     /**  */
-                    usageStats.putString("packageName", us.packageName)
-                    usageStats.putDouble("totalTimeInForeground", us.totalTimeInForeground.toDouble())
-                    usageStats.putDouble("firstTimeStamp", us.firstTimeStamp.toDouble())
-                    usageStats.putDouble("lastTimeStamp", us.lastTimeStamp.toDouble())
-                    usageStats.putDouble("lastTimeUsed", us.lastTimeUsed.toDouble())
+                    usageStats.putString("packageName", us.getPackageName())
+                    usageStats.putDouble("totalTimeInForeground", us.getTotalTimeInForeground().toDouble())
+                    usageStats.putDouble("firstTimeStamp", us.getFirstTimeStamp().toDouble())
+                    usageStats.putDouble("lastTimeStamp", us.getLastTimeStamp().toDouble())
+                    usageStats.putDouble("lastTimeUsed", us.getLastTimeUsed().toDouble())
                     // usageStats.putInt("describeContents", us.describeContents())
 
                     Log.d("UsageStatsModule", "UsageStats: App packge and usage - package name: ${us.packageName} " +

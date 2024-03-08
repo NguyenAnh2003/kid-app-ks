@@ -42,11 +42,11 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
     override fun getConstants(): Map<String, Any> {
         /** constants return (daily, weekly, monthly, yearly)
          * [0: daily, 1: weekly, 2: monthly, 3: yearly] */
-        val constants: MutableMap<String, Any> = HashMap()
-        constants["INTERVAL_DAILY"] = UsageStatsManager.INTERVAL_DAILY
-        constants["INTERVAL_WEEKLY"] = UsageStatsManager.INTERVAL_WEEKLY
-        constants["INTERVAL_MONTHLY"] = UsageStatsManager.INTERVAL_MONTHLY
-        constants["INTERVAL_YEARLY"] = UsageStatsManager.INTERVAL_YEARLY
+        val constants: MutableMap<String, Any> = MapBuilder.newHashMap()
+        constants.put("INTERVAL_DAILY", UsageStatsManager.INTERVAL_DAILY)
+        constants.put("INTERVAL_WEEKLY", UsageStatsManager.INTERVAL_WEEKLY)
+        constants.put("INTERVAL_MONTHLY", UsageStatsManager.INTERVAL_MONTHLY)
+        constants.put("INTERVAL_YEARLY", UsageStatsManager.INTERVAL_YEARLY)
 
         return constants
     }
@@ -65,12 +65,12 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
                 val result = WritableNativeMap()
 
                 // init usage stats manager
-                val usageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+                val usageStatsManager: UsageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 
                 Log.d("UsageStatsModule", "UsageStats: manager - ${usageStatsManager}")
 
                 /** queryUsageStats (interval, startTime, endTime) */
-                val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(interval, startTime.toLong(), endTime.toLong())
+                val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime.toLong(), endTime.toLong())
 
                 Log.d("UsageStatsModule", "UsageStats: query usage - ${usageStatsList}")
 

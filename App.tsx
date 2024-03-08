@@ -87,6 +87,7 @@ function App(): React.JSX.Element {
   }, []);
 
   useEffect(() => {
+    /** log check usage list -> current: success -> need to analyze data */
     // console.log('usage list', usageList);
   }, [usageList]);
 

@@ -45,7 +45,7 @@ function App(): React.JSX.Element {
      * this function when having change */
     /** get usage list */
     const getUsageList = async () => {
-      const startTime = Date.now() - 24 * 10000; // 24 hours ago
+      const startTime = Date.now() - 1000 * 60 * 60;
       const endTime = Date.now();
 
       const result = await UsageStats.getUsagesList(
@@ -72,14 +72,14 @@ function App(): React.JSX.Element {
 
     /** check permission */
     const checkPermission = async () => {
-        const isGranted = await UsageStats.checkUsageDataAccess();
-        console.log('permission isGranted', isGranted)
-    }
+      const isGranted = await UsageStats.checkUsageDataAccess();
+      console.log('permission isGranted', isGranted);
+    };
 
     /** call usage stats function */
     getUsageList(); //
     console.log('const', UsageStats.getConstants());
-    checkPermission() // permission isGranted
+    checkPermission(); // permission isGranted
 
     return () => {
       subscription.remove();

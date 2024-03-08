@@ -95,31 +95,37 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
                 // init usage stats manager
                 val usageStatsManager: UsageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 
-                Log.d("UsageStatsModule", "UsageStats: manager - ${usageStatsManager}")
-                Log.d("UsageStatsModule", "UsageStats: Interval - ${UsageStatsManager.INTERVAL_DAILY}")
+                // Log.d("UsageStatsModule", "UsageStats: manager - ${usageStatsManager}")
+                // Log.d("UsageStatsModule", "UsageStats: Interval - ${UsageStatsManager.INTERVAL_DAILY}")
 
                 /** queryUsageStats (interval, startTime, endTime) */
                 val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(getUsageInterval(interval), startTime.toLong(), endTime.toLong())
 
-                Log.d("UsageStatsModule", "UsageStats: query usage - ${usageStatsList}")
+                // Log.d("UsageStatsModule", "UsageStats: query usage - ${usageStatsList}")
 
                 for (us in usageStatsList) {
+                    /** */
                     val usageStats = WritableNativeMap()
+
+                    /**  */
                     usageStats.putString("packageName", us.packageName)
                     usageStats.putDouble("totalTimeInForeground", us.totalTimeInForeground.toDouble())
                     usageStats.putDouble("firstTimeStamp", us.firstTimeStamp.toDouble())
                     usageStats.putDouble("lastTimeStamp", us.lastTimeStamp.toDouble())
                     usageStats.putDouble("lastTimeUsed", us.lastTimeUsed.toDouble())
-                    usageStats.putInt("describeContents", us.describeContents())
+                    // usageStats.putInt("describeContents", us.describeContents())
 
-                    Log.d("UsageStatsModule", "UsageStats: LOOP - ${us.packageName} ${us.totalTimeInForeground.toDouble()}" +
-                            "${us.firstTimeStamp.toDouble()} ${us.lastTimeStamp.toDouble()} ${us.lastTimeUsed.toDouble()}" +
-                            "${us.describeContents()}")
+                    Log.d("UsageStatsModule", "UsageStats: App packge and usage - package name: ${us.packageName} " +
+                            "tottal time in foreground: ${us.totalTimeInForeground.toDouble()} " +
+                            "first time use: ${us.firstTimeStamp.toDouble()} " +
+                            "last time use: ${us.lastTimeUsed.toDouble()}")
 
+                    /**  */
                     result.putMap(us.packageName, usageStats)
                 }
 
-                Log.d("UsageStatsModule", "UsageStats: Entire Map - ${result}")
+                /** log result - adb logcat -s UsageStatsModule */
+                // Log.d("UsageStatsModule", "UsageStats: Entire Map - ${result}")
 
                 promise.resolve(result) //
             } else {

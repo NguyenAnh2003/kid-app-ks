@@ -34,6 +34,9 @@ import java.util.List;
 
 class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactApplicationContext) {
 
+    /** class log tag */
+    val TAG: String = UsageStatsModule::class.toString()
+
     override fun getName(): String {
         /** @return module name */
         return "UsageStats"
@@ -43,6 +46,7 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
         /** constants return (daily, weekly, monthly, yearly)
          * [0: daily, 1: weekly, 2: monthly, 3: yearly] */
         val constants: MutableMap<String, Any> = MapBuilder.newHashMap()
+        constants.put("INTERVAL_BEST", UsageStatsManager.INTERVAL_BEST)
         constants.put("INTERVAL_DAILY", UsageStatsManager.INTERVAL_DAILY)
         constants.put("INTERVAL_WEEKLY", UsageStatsManager.INTERVAL_WEEKLY)
         constants.put("INTERVAL_MONTHLY", UsageStatsManager.INTERVAL_MONTHLY)
@@ -96,7 +100,6 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
                 val usageStatsManager: UsageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 
                 // Log.d("UsageStatsModule", "UsageStats: manager - ${usageStatsManager}")
-                // Log.d("UsageStatsModule", "UsageStats: Interval - ${UsageStatsManager.INTERVAL_DAILY}")
 
                 /** queryUsageStats (interval, startTime, endTime) */
                 val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(getUsageInterval(interval), startTime.toLong(), endTime.toLong())
@@ -117,8 +120,9 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
 
                     Log.d("UsageStatsModule", "UsageStats: App packge and usage - package name: ${us.packageName} " +
                             "tottal time in foreground: ${us.totalTimeInForeground.toDouble()} " +
-                            "first time use: ${us.firstTimeStamp.toDouble()} " +
-                            "last time use: ${us.lastTimeUsed.toDouble()}")
+                            "first timestamp: ${us.firstTimeStamp.toDouble()} " +
+                            "last timestamp: ${us.lastTimeStamp.toDouble()} " +
+                            "last time used: ${us.lastTimeUsed.toDouble()}")
 
                     /**  */
                     result.putMap(us.packageName, usageStats)

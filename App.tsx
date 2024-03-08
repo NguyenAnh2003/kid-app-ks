@@ -70,9 +70,16 @@ function App(): React.JSX.Element {
       setAppStateVisible(appState.current);
     });
 
+    /** check permission */
+    const checkPermission = async () => {
+        const isGranted = await UsageStats.checkUsageDataAccess();
+        console.log('permission isGranted', isGranted)
+    }
+
     /** call usage stats function */
     getUsageList(); //
     console.log('const', UsageStats.getConstants());
+    checkPermission() // permission isGranted
 
     return () => {
       subscription.remove();
@@ -80,7 +87,7 @@ function App(): React.JSX.Element {
   }, []);
 
   useEffect(() => {
-    console.log('usage list', usageList);
+    // console.log('usage list', usageList);
   }, [usageList]);
 
   return (

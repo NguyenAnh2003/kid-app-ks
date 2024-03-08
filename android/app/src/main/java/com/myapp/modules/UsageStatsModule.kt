@@ -51,6 +51,34 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
         return constants
     }
 
+    /** test function */
+    @ReactMethod
+    fun testUsage(promise: Promise) {
+        /** @sample */
+        val stats = "haha-test native module"
+        // testing
+        promise.resolve(stats)
+    }
+
+    /** check usage data access permission */
+    @ReactMethod
+    fun checkUsageDataAccess(promise: Promise) {
+        /** @return access granted? if not react-native will move to Usage Data Access
+         * to allow the app */
+        try {
+            val appOpsManager = reactApplicationContext.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+            val mode = appOpsManager.checkOpNoThrow(
+                    AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    android.os.Process.myUid(),
+                    reactApplicationContext.packageName
+            )
+            Log.d("Check Usage permission", "${mode}")
+            promise.resolve(mode == AppOpsManager.MODE_ALLOWED)
+        } catch (e: java.lang.Exception) {
+            promise.reject("CHECK_ACCESS_ERROR", e.message)
+        }
+    }
+
     /** get usage list function */
     @ReactMethod
     fun getUsagesList(interval: Int, startTime: Double, endTime: Double, promise: Promise) {
@@ -128,14 +156,6 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
             context.packageName
         )
         return mode == AppOpsManager.MODE_ALLOWED
-    }
-
-    @ReactMethod
-    fun testUsage(promise: Promise) {
-        /** @sample */
-        val stats = "haha-test native module"
-        // testing
-        promise.resolve(stats)
     }
     
 }

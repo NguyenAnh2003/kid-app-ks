@@ -33,8 +33,6 @@ import java.util.List;
 
 
 class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactApplicationContext) {
-    /** @params */
-
 
     override fun getName(): String {
         /** @return module name */
@@ -54,37 +52,8 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
     }
 
     /** get usage list function */
-    // @ReactMethod(isBlockingSynchronousMethod = True)
-    // func showPermission() {}
-
-    /** get total usage time */
     @ReactMethod
-    fun getTotalUsage(interval: Int, startTime: Long, endTime: Long, promise: Promise) {
-        try {
-            /** using promise b.c this function will connect with react native through the bridge
-             * Promise function
-             * @return list of usage data of every single app
-             * */
-
-            // init usage stats manager
-            val usageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-
-            // queryUsageStats
-
-            // return usage list
-
-        } catch (e: Throwable) {
-            /** log exception */
-            // logger
-            println("Exception usage module: ${e}") // just print
-            // Promise reject error
-            promise.reject("Error:", e) //
-        }
-    }
-
-    /** get usage list function */
-    @ReactMethod
-    fun getUsagesList(interval: Int, startTime: Long, endTime: Long, promise: Promise) {
+    fun getUsagesList(interval: Int, startTime: Double, endTime: Double, promise: Promise) {
         try {
             /** Promise function
              * @param interval - (daily, week, month, year)
@@ -142,9 +111,9 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
     private fun isUsageStatsPermissionGranted(context: Context): Boolean {
         val appOpsManager = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
         val mode = appOpsManager.checkOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                android.os.Process.myUid(),
-                context.packageName
+            AppOpsManager.OPSTR_GET_USAGE_STATS,
+            android.os.Process.myUid(),
+            context.packageName
         )
         return mode == AppOpsManager.MODE_ALLOWED
     }

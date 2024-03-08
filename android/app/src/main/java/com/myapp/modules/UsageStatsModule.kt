@@ -64,6 +64,32 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
         promise.resolve(stats)
     }
 
+    /** get current usage data through events */
+    @ReactMethod
+    fun getCurrentUsageData(startTime: Double, endTime: Double, promise: Promise) {
+        try {
+            /**
+             * @param startTime - the time when user move to background state
+             * @param endTime - the time user move to active state
+             * @return list of usage data of every single app
+             * */
+            val usageStatsManager: UsageStatsManager = reactApplicationContext.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+
+            val uEvents: UsageEvents = usageStatsManager.queryEvents(startTime.toLong(), endTime.toLong()) //
+
+            while (uEvents.hasNextEvent()) {
+                val e : UsageEvents.Event = UsageEvents.Event() //
+                uEvents.getNextEvent(e) //
+                if(e != null) {
+                    Log.d("UsageEvent", "package name - ${e.getPackageName()} timestamp: ${e.getTimeStamp()}")
+                }
+            }
+
+        } catch (e: java.lang.Exception) {
+            promise.reject("SOME THING WRONG WHEN GET CURRENT USAGE DATA", e.message)
+        }
+    }
+
     /** check usage data access permission */
     @ReactMethod
     fun checkUsageDataAccess(promise: Promise) {
@@ -76,7 +102,7 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
                     android.os.Process.myUid(),
                     reactApplicationContext.packageName
             )
-            Log.d("Check Usage permission", "${mode}")
+            Log.d("CheckUsagePermission", "${mode}")
             promise.resolve(mode == AppOpsManager.MODE_ALLOWED)
         } catch (e: java.lang.Exception) {
             promise.reject("CHECK_ACCESS_ERROR", e.message)

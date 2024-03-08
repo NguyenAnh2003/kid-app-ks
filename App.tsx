@@ -39,6 +39,7 @@ function App(): React.JSX.Element {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [usageList, setUsageList] = useState();
+  const [eusage, setEUsage] = useState();
 
   useEffect(() => {
     /** check current app state func activate
@@ -55,6 +56,15 @@ function App(): React.JSX.Element {
       );
 
       if (result) setUsageList(result);
+    };
+
+    const getEventUsage = async () => {
+      const startTime = Date.now() - 1000 * 60 * 60;
+      const endTime = Date.now();
+
+      const result = await UsageStats.getCurrentUsageData(startTime, endTime);
+
+      if (result) setEUsage(result);
     };
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
@@ -78,6 +88,7 @@ function App(): React.JSX.Element {
 
     /** call usage stats function */
     getUsageList(); //
+    getEventUsage() //
     console.log('const', UsageStats.getConstants());
     checkPermission(); // permission isGranted
 

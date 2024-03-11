@@ -118,7 +118,7 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
          * */
         try {
             /**  */
-            val calendar = java.util.Calendar()//
+            // val calendar = java.util.Calendar()//
 
             /**  */
             if(isUsageStatsPermissionGranted(reactApplicationContext)) {

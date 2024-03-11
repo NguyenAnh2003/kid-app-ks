@@ -63,7 +63,7 @@ function App(): React.JSX.Element {
         nextAppState === 'active'
       ) {
         console.log('App come to foreground and move to active');
-        RNRestart.Restart();
+        // RNRestart.Restart();
       } else {
         console.log(`Current state ${nextAppState}`);
       }

@@ -23,8 +23,6 @@ import android.content.Context // android content
 import android.util.Log
 import java.lang.Exception
 
-
-
 /** time package */
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -66,7 +64,7 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
 
     /** get current usage data through events */
     @ReactMethod
-    fun getCurrentUsageData(startTime: Double, endTime: Double, promise: Promise) {
+    fun getEventUsageData(startTime: Double, endTime: Double, promise: Promise) {
         try {
             /**
              * @param startTime - the time when user move to background state
@@ -98,9 +96,9 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
         try {
             val appOpsManager = reactApplicationContext.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
             val mode = appOpsManager.checkOpNoThrow(
-                    AppOpsManager.OPSTR_GET_USAGE_STATS,
-                    android.os.Process.myUid(),
-                    reactApplicationContext.packageName
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(),
+                reactApplicationContext.packageName
             )
             Log.d("CheckUsagePermission", "${mode}")
             promise.resolve(mode == AppOpsManager.MODE_ALLOWED)
@@ -112,13 +110,17 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
     /** get usage list function */
     @ReactMethod
     fun getUsagesList(interval: Int, startTime: Double, endTime: Double, promise: Promise) {
+        /**
+         * @param interval - (daily, week, month, year)
+         * @param startTime - the time when user move to background state
+         * @param endTime - the time user move to active state
+         * @return list of HISTORICAL usage data of every single app
+         * */
         try {
-            /**
-             * @param interval - (daily, week, month, year)
-             * @param startTime - the time when user move to background state
-             * @param endTime - the time user move to active state
-             * @return list of HISTORICAL usage data of every single app
-             * */
+            /**  */
+            val calendar = java.util.Calendar()//
+
+            /**  */
             if(isUsageStatsPermissionGranted(reactApplicationContext)) {
                 val result = WritableNativeMap()
 
@@ -133,7 +135,7 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
                 // Log.d("UsageStatsModule", "UsageStats: query usage - ${usageStatsList}")
 
                 for (us in usageStatsList) {
-                    /** */
+                    /**  */
                     val usageStats = WritableNativeMap()
 
                     /**  */
@@ -174,13 +176,20 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
     }
 
     private fun getUsageInterval(interval: Int): Int {
+        /** 
+        * @param: interval
+        * @return: interval converted
+        */
         var result: Int = 0
         when (interval) {
-            0 -> result = UsageStatsManager.INTERVAL_DAILY
-            1 -> result = UsageStatsManager.INTERVAL_WEEKLY
-            2 -> result = UsageStatsManager.INTERVAL_MONTHLY
-            3 -> result = UsageStatsManager.INTERVAL_YEARLY
+            0 -> result = UsageStatsManager.INTERVAL_BEST
+            1 -> result = UsageStatsManager.INTERVAL_DAILY
+            2 -> result = UsageStatsManager.INTERVAL_WEEKLY
+            3 -> result = UsageStatsManager.INTERVAL_MONTHLY
+            4 -> result = UsageStatsManager.INTERVAL_YEARLY
         }
+
+        /**  */
         return result
     }
 

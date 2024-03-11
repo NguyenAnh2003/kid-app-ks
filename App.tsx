@@ -62,7 +62,7 @@ function App(): React.JSX.Element {
       const startTime = Date.now() - 1000 * 60 * 60;
       const endTime = Date.now();
 
-      const result = await UsageStats.getCurrentUsageData(startTime, endTime);
+      const result = await UsageStats.getEventUsageData(startTime, endTime);
 
       if (result) setEUsage(result);
     };

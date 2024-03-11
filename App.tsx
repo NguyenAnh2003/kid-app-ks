@@ -15,6 +15,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { AppState } from 'react-native';
 import { Alert, Text } from 'react-native';
 import { NativeModules, Linking } from 'react-native';
+import RNRestart from 'react-native-restart';
 
 const { UsageStats } = NativeModules;
 
@@ -40,19 +41,20 @@ function App(): React.JSX.Element {
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [usageList, setUsageList] = useState();
   const [eusage, setEUsage] = useState();
-  const [permissionGranted, setPermissionGranted] = useState(false);
 
   useEffect(() => {
     /** check current app state func activate
      * this function when having change */
     /** get usage list */
     const getUsageList = async () => {
-      const startTime = Date.now() - 1000 * 60 * 60;
-      const endTime = Date.now();
-
       const result = await UsageStats.getUsagesList(UsageStats.INTERVAL_DAILY);
-      console.log(result)
+      console.log(result);
       if (result) setUsageList(result);
+    };
+
+    /** check permission and open setting */
+    const checkPermission = async () => {
+      await UsageStats.openUsageDataAccess();
     };
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
@@ -61,6 +63,7 @@ function App(): React.JSX.Element {
         nextAppState === 'active'
       ) {
         console.log('App come to foreground and move to active');
+        RNRestart.Restart();
       } else {
         console.log(`Current state ${nextAppState}`);
       }
@@ -68,15 +71,10 @@ function App(): React.JSX.Element {
       setAppStateVisible(appState.current);
     });
 
-    /** check permission */
-    const checkPermission = async () => {
-      const isGranted = await UsageStats.checkUsageDataAccess();
-      console.log('permission isGranted', isGranted);
-      /**  */
-      setPermissionGranted(isGranted);
-    };
-
     /** call usage stats function */
+    checkPermission();
+
+    /**  */
     getUsageList(); //
     console.log('const', UsageStats.getConstants());
 

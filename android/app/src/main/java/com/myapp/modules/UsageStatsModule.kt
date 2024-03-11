@@ -150,7 +150,7 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
         try {
             /**  */
             val calendar = java.util.Calendar.getInstance() //
-            calendar.set(Calendar.HOUR_OF_DAY, 24)
+            calendar.set(Calendar.HOUR_OF_DAY, 12)
 
             val startTimec = calendar.getTimeInMillis()
             val endTimec = java.lang.System.currentTimeMillis()

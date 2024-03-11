@@ -17,9 +17,10 @@ import android.app.usage.UsageEvents
 import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
 import android.app.AppOpsManager
+import android.provider.Settings;
+import android.content.Context // android context
 
 /** */
-import android.content.Context // android content
 import android.util.Log
 import java.lang.Exception
 
@@ -28,6 +29,10 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.HashMap
 import java.util.List;
+
+/**  */
+import android.content.Intent;
+import java.lang.System
 
 
 class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactApplicationContext) {
@@ -107,9 +112,35 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
         }
     }
 
+    @ReactMethod
+    fun openUsageDataAccess() {
+        /** open usage data access settings to allow the app */
+        try {
+            val appOpsManager = reactApplicationContext.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+            val mode = appOpsManager.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(),
+                reactApplicationContext.packageName
+            )
+
+            /** */
+            if(mode != AppOpsManager.MODE_ALLOWED) {
+                val intent: Intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                if (intent.resolveActivity(getReactApplicationContext().getPackageManager()) != null) {
+                    getReactApplicationContext().startActivity(intent);
+                }
+            } else return
+
+        } catch (e: java.lang.Exception) {
+            println(e.message)
+        }
+    }
+
     /** get usage list function */
     @ReactMethod
-    fun getUsagesList(interval: Int, startTime: Double, endTime: Double, promise: Promise) {
+    fun getUsagesList(interval: Int, promise: Promise) {
         /**
          * @param interval - (daily, week, month, year)
          * @param startTime - the time when user move to background state
@@ -118,7 +149,11 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
          * */
         try {
             /**  */
-            // val calendar = java.util.Calendar()//
+            val calendar = java.util.Calendar.getInstance() //
+            calendar.set(Calendar.HOUR_OF_DAY, 24)
+
+            val startTimec = calendar.getTimeInMillis()
+            val endTimec = java.lang.System.currentTimeMillis()
 
             /**  */
             if(isUsageStatsPermissionGranted(reactApplicationContext)) {
@@ -130,7 +165,8 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
                 // Log.d("UsageStatsModule", "UsageStats: manager - ${usageStatsManager}")
 
                 /** queryUsageStats (interval, startTime, endTime) */
-                val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(getUsageInterval(interval), startTime.toLong(), endTime.toLong())
+                val usageStatsList: MutableList<UsageStats> = usageStatsManager.queryUsageStats(
+                        getUsageInterval(interval), startTimec.toLong(), endTimec.toLong())
 
                 // Log.d("UsageStatsModule", "UsageStats: query usage - ${usageStatsList}")
 
@@ -138,22 +174,26 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
                     /**  */
                     val usageStats = WritableNativeMap()
 
-                    /**  */
-                    usageStats.putString("packageName", us.getPackageName())
-                    usageStats.putDouble("totalTimeInForeground", us.getTotalTimeInForeground().toDouble())
-                    usageStats.putDouble("firstTimeStamp", us.getFirstTimeStamp().toDouble())
-                    usageStats.putDouble("lastTimeStamp", us.getLastTimeStamp().toDouble())
-                    usageStats.putDouble("lastTimeUsed", us.getLastTimeUsed().toDouble())
-                    // usageStats.putInt("describeContents", us.describeContents())
+                    /** hahah */
+                    if(us.getLastTimeUsed().toDouble() > 0.0) {
+                        /**  */
+                        usageStats.putString("packageName", us.getPackageName())
+                        usageStats.putDouble("totalTimeInForeground", us.getTotalTimeInForeground().toDouble())
+                        usageStats.putDouble("firstTimeStamp", us.getFirstTimeStamp().toDouble())
+                        usageStats.putDouble("lastTimeStamp", us.getLastTimeStamp().toDouble())
+                        usageStats.putDouble("lastTimeUsed", us.getLastTimeUsed().toDouble())
+                        // usageStats.putInt("describeContents", us.describeContents())
 
-                    Log.d("UsageStatsModule", "UsageStats: App packge and usage - package name: ${us.packageName} " +
-                            "tottal time in foreground: ${us.totalTimeInForeground.toDouble()} " +
-                            "first timestamp: ${us.firstTimeStamp.toDouble()} " +
-                            "last timestamp: ${us.lastTimeStamp.toDouble()} " +
-                            "last time used: ${us.lastTimeUsed.toDouble()}")
+                        Log.d("UsageStatsModule", "UsageStats: App packge and usage - package name: ${us.packageName} " +
+                                "tottal time in foreground: ${us.totalTimeInForeground.toDouble()} " +
+                                "first timestamp: ${us.firstTimeStamp.toDouble()} " +
+                                "last timestamp: ${us.lastTimeStamp.toDouble()} " +
+                                "last time used: ${us.lastTimeUsed.toDouble()}")
 
-                    /**  */
-                    result.putMap(us.packageName, usageStats)
+                        /**  */
+                        result.putMap(us.packageName, usageStats)
+
+                    }
                 }
 
                 /** log result - adb logcat -s UsageStatsModule */

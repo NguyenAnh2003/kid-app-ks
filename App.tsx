@@ -40,6 +40,7 @@ function App(): React.JSX.Element {
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [usageList, setUsageList] = useState();
   const [eusage, setEUsage] = useState();
+  const [permissionGranted, setPermissionGranted] = useState(false);
 
   useEffect(() => {
     /** check current app state func activate
@@ -49,22 +50,9 @@ function App(): React.JSX.Element {
       const startTime = Date.now() - 1000 * 60 * 60;
       const endTime = Date.now();
 
-      const result = await UsageStats.getUsagesList(
-        UsageStats.INTERVAL_DAILY,
-        startTime,
-        endTime
-      );
-
+      const result = await UsageStats.getUsagesList(UsageStats.INTERVAL_DAILY);
+      console.log(result)
       if (result) setUsageList(result);
-    };
-
-    const getEventUsage = async () => {
-      const startTime = Date.now() - 1000 * 60 * 60;
-      const endTime = Date.now();
-
-      const result = await UsageStats.getEventUsageData(startTime, endTime);
-
-      if (result) setEUsage(result);
     };
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
@@ -84,23 +72,18 @@ function App(): React.JSX.Element {
     const checkPermission = async () => {
       const isGranted = await UsageStats.checkUsageDataAccess();
       console.log('permission isGranted', isGranted);
+      /**  */
+      setPermissionGranted(isGranted);
     };
 
     /** call usage stats function */
     getUsageList(); //
-    getEventUsage() //
     console.log('const', UsageStats.getConstants());
-    checkPermission(); // permission isGranted
 
     return () => {
       subscription.remove();
     };
   }, []);
-
-  useEffect(() => {
-    /** log check usage list -> current: success -> need to analyze data */
-    // console.log('usage list', usageList);
-  }, [usageList]);
 
   return (
     <Provider store={configStore}>

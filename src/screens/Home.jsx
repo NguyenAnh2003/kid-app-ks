@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
 
 const Home = ({ user, navigation, route }) => {
   const [data, setData] = useState();
-  
+
   /** permission */
 
   useEffect(() => {

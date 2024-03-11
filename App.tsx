@@ -14,6 +14,9 @@ import { PersistGate } from 'redux-persist/integration/react';
 import NetInfo from '@react-native-community/netinfo';
 import { AppState } from 'react-native';
 import { Alert, Text } from 'react-native';
+import { NativeModules, Linking } from 'react-native';
+
+const { UsageStats } = NativeModules;
 
 function App(): React.JSX.Element {
   /** net info using USB to connect phone (using adb connect not working) */
@@ -29,11 +32,41 @@ function App(): React.JSX.Element {
   //   unsucbscribe();
   // }, []);
 
+  /** open settings */
+  // Linking.openSettings()
+
   /** app state */
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  const [usageList, setUsageList] = useState();
+  const [eusage, setEUsage] = useState();
 
   useEffect(() => {
+    /** check current app state func activate
+     * this function when having change */
+    /** get usage list */
+    const getUsageList = async () => {
+      const startTime = Date.now() - 1000 * 60 * 60;
+      const endTime = Date.now();
+
+      const result = await UsageStats.getUsagesList(
+        UsageStats.INTERVAL_DAILY,
+        startTime,
+        endTime
+      );
+
+      if (result) setUsageList(result);
+    };
+
+    const getEventUsage = async () => {
+      const startTime = Date.now() - 1000 * 60 * 60;
+      const endTime = Date.now();
+
+      const result = await UsageStats.getEventUsageData(startTime, endTime);
+
+      if (result) setEUsage(result);
+    };
+
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (
         appState.current.match(/inactive|background/) &&
@@ -47,10 +80,27 @@ function App(): React.JSX.Element {
       setAppStateVisible(appState.current);
     });
 
+    /** check permission */
+    const checkPermission = async () => {
+      const isGranted = await UsageStats.checkUsageDataAccess();
+      console.log('permission isGranted', isGranted);
+    };
+
+    /** call usage stats function */
+    getUsageList(); //
+    getEventUsage() //
+    console.log('const', UsageStats.getConstants());
+    checkPermission(); // permission isGranted
+
     return () => {
       subscription.remove();
     };
   }, []);
+
+  useEffect(() => {
+    /** log check usage list -> current: success -> need to analyze data */
+    // console.log('usage list', usageList);
+  }, [usageList]);
 
   return (
     <Provider store={configStore}>

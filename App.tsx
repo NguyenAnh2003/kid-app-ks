@@ -40,7 +40,7 @@ function App(): React.JSX.Element {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [usageList, setUsageList] = useState();
-  const [eusage, setEUsage] = useState();
+  const [process, setProcess] = useState();
 
   useEffect(() => {
     const { ProcessMeasureModule } = NativeModules;
@@ -53,10 +53,10 @@ function App(): React.JSX.Element {
       if (result) setUsageList(result);
     };
 
-    const getProcesses = async () => {
-        const rs = await ProcessMeasureModule.getRunningApps()
-        console.log('process', rs)
-    }
+    const getProcess = async () => {
+      const processRs = await ProcessMeasureModule.getRunningApps();
+      if (!processRs) setProcess(processRs);
+    };
 
     /** check permission and open setting */
     const checkPermission = async () => {
@@ -65,11 +65,9 @@ function App(): React.JSX.Element {
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
+        appState.current.match(/background/)
       ) {
-        console.log('App come to foreground and move to active');
-        // RNRestart.Restart();
+        console.log('activate ');/** */
       } else {
         console.log(`Current state ${nextAppState}`);
       }
@@ -81,12 +79,21 @@ function App(): React.JSX.Element {
     checkPermission();
 
     /** process */
-    getProcesses()
+    getProcess();
 
     return () => {
       subscription.remove();
     };
   }, []);
+
+  useEffect(() => {
+    console.log("state", appStateVisible)
+    if(appStateVisible === 'background') {
+        setInterval(() => {
+           console.log('process', process);
+         }, 1000);
+    }
+  }, [appStateVisible])
 
   return (
     <Provider store={configStore}>

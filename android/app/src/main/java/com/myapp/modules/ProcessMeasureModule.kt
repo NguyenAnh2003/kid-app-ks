@@ -46,14 +46,29 @@ class ProcessMeasureModule(reactApplicationContext: ReactApplicationContext) : R
     /** process killed measure */
     @ReactMethod
     fun getRunningApps(promise: Promise) {
-        val am: ActivityManager = reactApplicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val runningProcesses: MutableList<ActivityManager.RunningAppProcessInfo> = am.getRunningAppProcesses()
+        try {
+            val result = WritableNativeMap()
 
-        for(rp in runningProcesses) {
-            val processName: String = rp.processName
-            val pid: Int = rp.pid
+            val am: ActivityManager = reactApplicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            val runningProcesses: MutableList<ActivityManager.RunningAppProcessInfo> = am.getRunningAppProcesses()
 
-            Log.d("RunningProcess", "package: ${processName} - ${pid}")
+            for(rp in runningProcesses) {
+                val process = WritableNativeMap()
+
+                val name: String = rp.processName.toString()
+                val pid: Int = rp.pid
+
+                process.putString("name", name)
+                process.putInt("pId", pid)
+
+                result.putMap("process", process)
+
+                Log.d("RunningProcess", "package: ${name} - ${pid}")
+            }
+
+            promise.resolve(result)
+        } catch(e: Exception) {
+            promise.reject("ERROR", e.message)
         }
     }
     

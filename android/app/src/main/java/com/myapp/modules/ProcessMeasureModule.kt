@@ -61,9 +61,9 @@ class ProcessMeasureModule(reactApplicationContext: ReactApplicationContext) : R
                 process.putString("name", name)
                 process.putInt("pId", pid)
 
-                result.putMap("process", process)
-
                 Log.d("RunningProcess", "package: ${name} - ${pid}")
+
+                result.putMap("process", process)
             }
 
             promise.resolve(result)

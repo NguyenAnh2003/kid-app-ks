@@ -53,11 +53,6 @@ function App(): React.JSX.Element {
       if (result) setUsageList(result);
     };
 
-    const getProcess = async () => {
-      const processRs = await ProcessMeasureModule.getRunningApps();
-      if (!processRs) setProcess(processRs);
-    };
-
     /** check permission and open setting */
     const checkPermission = async () => {
       await UsageStats.openUsageDataAccess();
@@ -78,9 +73,6 @@ function App(): React.JSX.Element {
     /** call usage stats function */
     checkPermission();
 
-    /** process */
-    getProcess();
-
     return () => {
       subscription.remove();
     };
@@ -88,11 +80,18 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     console.log("state", appStateVisible)
+
+    const getProcess = async () => {
+      const processRs = await ProcessMeasureModule.getRunningApps();
+      if (!processRs) setProcess(processRs);
+    };
+
+    getProcess(); //
+
     if(appStateVisible === 'background') {
-        setInterval(() => {
-           console.log('process', process);
-         }, 1000);
+        console.log('process', process)
     }
+
   }, [appStateVisible])
 
   return (

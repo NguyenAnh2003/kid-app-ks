@@ -63,7 +63,7 @@ class ProcessMeasureModule(reactApplicationContext: ReactApplicationContext) : R
 
                 Log.d("RunningProcess", "package: ${name} - ${pid}")
 
-                result.putMap("process", process)
+                result.putMap(rp.processName, process)
             }
 
             promise.resolve(result)

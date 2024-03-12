@@ -43,7 +43,6 @@ function App(): React.JSX.Element {
   const [process, setProcess] = useState();
 
   useEffect(() => {
-    const { ProcessMeasureModule } = NativeModules;
     /** check current app state func activate
      * this function when having change */
     /** get usage list */
@@ -59,10 +58,8 @@ function App(): React.JSX.Element {
     };
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
-      if (
-        appState.current.match(/background/)
-      ) {
-        console.log('activate ');/** */
+      if (appState.current.match(/background/)) {
+        console.log('activate '); /** */
       } else {
         console.log(`Current state ${nextAppState}`);
       }
@@ -79,20 +76,19 @@ function App(): React.JSX.Element {
   }, []);
 
   useEffect(() => {
-    console.log("state", appStateVisible)
+    const { ProcessMeasureModule } = NativeModules;
 
     const getProcess = async () => {
       const processRs = await ProcessMeasureModule.getRunningApps();
+      console.log('process', processRs);
+
       if (!processRs) setProcess(processRs);
     };
 
-    getProcess(); //
-
-    if(appStateVisible === 'background') {
-        console.log('process', process)
+    if (appStateVisible === 'background') {
+      getProcess();
     }
-
-  }, [appStateVisible])
+  }, [appStateVisible]);
 
   return (
     <Provider store={configStore}>

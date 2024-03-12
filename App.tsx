@@ -36,8 +36,6 @@ function App(): React.JSX.Element {
   /** app state */
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
-  const [usageList, setUsageList] = useState();
-  const [eusage, setEUsage] = useState();
 
   useEffect(() => {
     /** check current app state func activate

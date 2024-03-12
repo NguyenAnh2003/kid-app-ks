@@ -43,6 +43,7 @@ function App(): React.JSX.Element {
   const [eusage, setEUsage] = useState();
 
   useEffect(() => {
+    const { ProcessMeasureModule } = NativeModules;
     /** check current app state func activate
      * this function when having change */
     /** get usage list */
@@ -51,6 +52,11 @@ function App(): React.JSX.Element {
       console.log(result);
       if (result) setUsageList(result);
     };
+
+    const getProcesses = async () => {
+        const rs = await ProcessMeasureModule.getRunningApps()
+        console.log('process', rs)
+    }
 
     /** check permission and open setting */
     const checkPermission = async () => {
@@ -74,9 +80,8 @@ function App(): React.JSX.Element {
     /** call usage stats function */
     checkPermission();
 
-    /**  */
-    getUsageList(); //
-    console.log('const', UsageStats.getConstants());
+    /** process */
+    getProcesses()
 
     return () => {
       subscription.remove();

@@ -16,8 +16,6 @@ import { AppState } from 'react-native';
 import { Alert, Text } from 'react-native';
 import { NativeModules, Linking } from 'react-native';
 
-const { UsageStats } = NativeModules;
-
 function App(): React.JSX.Element {
   /** net info using USB to connect phone (using adb connect not working) */
   // const unsucbscribe = NetInfo.addEventListener((state) => {
@@ -44,28 +42,7 @@ function App(): React.JSX.Element {
   useEffect(() => {
     /** check current app state func activate
      * this function when having change */
-    /** get usage list */
-    const getUsageList = async () => {
-      const startTime = Date.now() - 1000 * 60 * 60;
-      const endTime = Date.now();
-
-      const result = await UsageStats.getUsagesList(
-        UsageStats.INTERVAL_DAILY,
-        startTime,
-        endTime
-      );
-
-      if (result) setUsageList(result);
-    };
-
-    const getEventUsage = async () => {
-      const startTime = Date.now() - 1000 * 60 * 60;
-      const endTime = Date.now();
-
-      const result = await UsageStats.getEventUsageData(startTime, endTime);
-
-      if (result) setEUsage(result);
-    };
+    const { UsageStats } = NativeModules;
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (
@@ -87,8 +64,6 @@ function App(): React.JSX.Element {
     };
 
     /** call usage stats function */
-    getUsageList(); //
-    getEventUsage() //
     console.log('const', UsageStats.getConstants());
     checkPermission(); // permission isGranted
 
@@ -96,11 +71,6 @@ function App(): React.JSX.Element {
       subscription.remove();
     };
   }, []);
-
-  useEffect(() => {
-    /** log check usage list -> current: success -> need to analyze data */
-    // console.log('usage list', usageList);
-  }, [usageList]);
 
   return (
     <Provider store={configStore}>

@@ -5,6 +5,7 @@ import { getHttp } from '../configs/axios.config';
 import globalStyle from '../styles/globalStyle';
 import DeviceInfo from '../components/DeviceInfo';
 import { PermissionsAndroid } from 'react-native';
+import ChildActivity from '../components/ChildActivity';
 
 const styles = StyleSheet.create({
   button: {
@@ -15,7 +16,7 @@ const styles = StyleSheet.create({
 
 const Home = ({ user, navigation, route }) => {
   const [data, setData] = useState();
-  
+
   /** permission */
 
   useEffect(() => {
@@ -36,9 +37,12 @@ const Home = ({ user, navigation, route }) => {
         {/** device info */}
         <DeviceInfo />
         <Text style={globalStyle.text}>{data?.title}</Text>
-        {/**<TouchableOpacity style={styles.button} onPress={submitHandler}>
-          <Text>Click</Text>
-        </TouchableOpacity>*/}
+        <ChildActivity
+          childId={'haha'}
+          appName={'zalo'}
+          appUsageTime={'1ms'}
+          date={'14/3'}
+        />
       </View>
     </View>
   );

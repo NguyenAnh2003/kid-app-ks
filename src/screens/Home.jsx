@@ -37,12 +37,6 @@ const Home = ({ user, navigation, route }) => {
         {/** device info */}
         <DeviceInfo />
         <Text style={globalStyle.text}>{data?.title}</Text>
-        <ChildActivity
-          childId={'haha'}
-          appName={'zalo'}
-          appUsageTime={'1ms'}
-          date={'14/3'}
-        />
       </View>
     </View>
   );

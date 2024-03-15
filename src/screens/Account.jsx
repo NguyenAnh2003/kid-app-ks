@@ -3,6 +3,14 @@ import { Button, Text, View } from 'react-native';
 import globalStyle from '../styles/globalStyle';
 
 const Account = ({ navigation }) => {
+
+  /**
+   * @field username
+   * @field gmail
+   * @field country
+   * @field phone numer
+   */
+
   const { navigate } = navigation;
   return (
     <View

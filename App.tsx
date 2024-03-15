@@ -72,6 +72,12 @@ function App(): React.JSX.Element {
     };
   }, []);
 
+  useEffect(() => {
+    setInterval(() => {
+      console.log('running hahah');
+    }, 1000);
+  }, [appStateVisible]);
+
   return (
     <Provider store={configStore}>
       <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>

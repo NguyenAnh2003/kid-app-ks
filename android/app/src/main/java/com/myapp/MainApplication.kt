@@ -15,6 +15,7 @@ import android.content.Context
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import android.content.Intent
 import com.myapp.*
 
 class MainApplication : Application(), ReactApplication {
@@ -59,7 +60,6 @@ class MainApplication : Application(), ReactApplication {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
-
     ReactNativeFlipper.initializeFlipper(this, reactNativeHost.reactInstanceManager)
   }
 }

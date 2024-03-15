@@ -39,7 +39,7 @@ class ForegroundService : Service() {
     /** */
     override fun onCreate() {
         super.onCreate()
-
+        Log.d("onCreateForeGround", "running")
         /** get process list */
 
         /** get package */
@@ -59,8 +59,7 @@ class ForegroundService : Service() {
         }
 
         /** return? */
-        return START_STICKY
-        // return super.onStartCommand(intent, flags, startId) //
+         return super.onStartCommand(intent, flags, startId) //
     }
 
     /** enum class */
@@ -70,6 +69,7 @@ class ForegroundService : Service() {
     private fun start() {
         val notification = NotificationCompat.Builder(this, "running_channel")
                 .setContentTitle("MyApp is active").setContentText("monitoring app").build()
+        Log.d("StartFservice", "starting")
         startForeground(1, notification)
     }
 

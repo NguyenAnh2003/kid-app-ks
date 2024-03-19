@@ -1,18 +1,40 @@
 import * as React from 'react';
+/** bottom tab */
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Home from '../screens/Home';
-import Account from '../screens/Account';
+/** stack screen */
+import 'react-native-gesture-handler';
+import { createStackNavigator } from '@react-navigation/stack';
+
+/** Screen */
+import { AccountScreen, CreateChildScreen, HomeScreen } from '../screens';
+
+/** icons */
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CreateSthScreen from '../screens/CreateSthScreen';
 
+/** stack setup */
+const Stack = createStackNavigator();
+
+/** tab setup */
 const Tab = createBottomTabNavigator();
 
+/** home navigator */
+const HomeStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="AddChild" component={CreateChildScreen} />
+    </Stack.Navigator>
+  );
+};
+
 const NavBar = (props) => {
+  /** App navigator - nav bar */
   return (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
+        headerShown: false,
         tabBarLabel: '',
         tabBarIconStyle: { marginTop: 10 },
         tabBarStyle: { padding: 0, margin: 0 },
@@ -21,25 +43,11 @@ const NavBar = (props) => {
       {/** home screen */}
       <Tab.Screen
         name="Home"
-        component={Home}
+        component={HomeStack}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'home' : 'home-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
-      {/** create something screen */}
-      <Tab.Screen
-        name="Create"
-        component={CreateSthScreen}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'add-circle' : 'add-circle-outline'}
+            <MaterialCommunityIcons
+              name={focused ? 'account-child' : 'account-child-outline'}
               size={24}
               color={'black'}
             />
@@ -49,7 +57,7 @@ const NavBar = (props) => {
       {/** account screen */}
       <Tab.Screen
         name="Account"
-        component={Account}
+        component={AccountScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons

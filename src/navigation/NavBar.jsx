@@ -6,11 +6,17 @@ import 'react-native-gesture-handler';
 import { createStackNavigator } from '@react-navigation/stack';
 
 /** Screen */
-import { AccountScreen, CreateChildScreen, HomeScreen, SingleChildScreen } from '../screens';
+import {
+  AccountScreen,
+  CreateChildScreen,
+  HomeScreen,
+  SingleChildScreen,
+} from '../screens';
 
 /** icons */
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { IconButton } from 'react-native-paper';
 
 /** stack setup */
 const Stack = createStackNavigator();
@@ -19,12 +25,40 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 /** home navigator */
-const HomeStack = () => {
+const HomeStack = ({ navigation }) => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="SingleChild" component={SingleChildScreen} />
-      <Stack.Screen name="AddChild" component={CreateChildScreen} />
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="SingleChild"
+        component={SingleChildScreen}
+        options={{
+          headerLeft: () => (
+            <IconButton
+              icon="arrow-left"
+              onPress={() => navigation.goBack()}
+              color="#fff" // Change color according to your design
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="AddChild"
+        component={CreateChildScreen}
+        options={{
+          headerLeft: () => (
+            <IconButton
+              icon="arrow-left"
+              onPress={() => navigation.goBack()}
+              color="#fff" // Change color according to your design
+            />
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 };

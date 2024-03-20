@@ -7,7 +7,7 @@ const SingleChildScreen = ({ route, navigation }) => {
   const { childId } = route.params;
 
   return (
-    <View>
+    <View style={globalStyle.container}>
       <Text style={globalStyle.text}>{childId}</Text>
     </View>
   );

@@ -2,7 +2,6 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { itemReducders, userReducers } from './reducers';
 import { persistReducer, persistStore } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { thunk } from 'redux-thunk';
 
 /**
  * @access https://jscrambler.com/blog/how-to-use-redux-persist-in-react-native-with-asyncstorage

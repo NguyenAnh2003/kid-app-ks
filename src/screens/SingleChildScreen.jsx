@@ -1,12 +1,16 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from 'react-native';
+import React from 'react';
+import globalStyle from '../styles/globalStyle';
 
-const SingleChildScreen = () => {
+const SingleChildScreen = ({ route, navigation }) => {
+  /** childId -> fetchDataByChildId */
+  const { childId } = route.params;
+
   return (
     <View>
-      <Text>SingleChildScreen</Text>
+      <Text style={globalStyle.text}>{childId}</Text>
     </View>
-  )
-}
+  );
+};
 
-export default SingleChildScreen
+export default SingleChildScreen;

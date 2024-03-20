@@ -51,9 +51,15 @@ const HomeScreen = ({ user, navigation, route }) => {
         <View style={{ flexDirection: 'row', gap: 10 }}>
           {/** list of child */}
           {childList.map((i, index) => (
-            <View key={i.childId} style={styles.box}>
+            <TouchableOpacity
+              key={i.childId}
+              style={styles.box}
+              onPress={() =>
+                navigation.navigate('SingleChild', { childId: i.childId })
+              }
+            >
               <Text style={styles.text}>{i.avatarUrl}</Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
         {/** create child button */}

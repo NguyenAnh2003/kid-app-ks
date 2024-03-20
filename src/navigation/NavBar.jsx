@@ -6,7 +6,7 @@ import 'react-native-gesture-handler';
 import { createStackNavigator } from '@react-navigation/stack';
 
 /** Screen */
-import { AccountScreen, CreateChildScreen, HomeScreen } from '../screens';
+import { AccountScreen, CreateChildScreen, HomeScreen, SingleChildScreen } from '../screens';
 
 /** icons */
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -23,6 +23,7 @@ const HomeStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="SingleChild" component={SingleChildScreen} />
       <Stack.Screen name="AddChild" component={CreateChildScreen} />
     </Stack.Navigator>
   );

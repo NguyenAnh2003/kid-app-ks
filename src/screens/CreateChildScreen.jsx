@@ -25,7 +25,7 @@ const CreateChildScreen = () => {
       maxWidth: 2000,
     };
 
-    /** */
+    /** launchImage callback */
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -49,7 +49,7 @@ const CreateChildScreen = () => {
       <CustomInput type="text" placeHolder="Your child name" ref={nameRef} />
       {/** ageRef */}
       <CustomInput type="text" placeHolder="Your child age" ref={ageRef} />
-      <Button title="haja" onPress={submitHandler} />
+      <Button title="Click me" onPress={submitHandler} />
       {/** avatar */}
       {avatar && (
         <Image

@@ -42,7 +42,7 @@ const NavBar = (props) => {
     >
       {/** home screen */}
       <Tab.Screen
-        name="Home"
+        name="HomeStack"
         component={HomeStack}
         options={{
           tabBarIcon: ({ color, size, focused }) => (

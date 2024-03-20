@@ -1,7 +1,9 @@
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, Image } from 'react-native';
 import React, { useRef, useState } from 'react';
 import { Alert } from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
+import CustomInput from '../components/CustomInput';
 
 /**
  * must use currentUserId (parentId)
@@ -11,22 +13,52 @@ import globalStyle from '../styles/globalStyle';
 const CreateChildScreen = () => {
   /** ref */
   const nameRef = useRef();
-  const avatarRef = useRef();
   const ageRef = useRef();
+  const [avatar, setAvatar] = useState(null);
+
+  const avatarHandler = () => {
+    /** options */
+    const options = {
+      mediaType: 'photo',
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    /** */
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('Image picker error: ', response.error);
+      } else {
+        let imageUri = response.uri || response.assets?.[0]?.uri;
+        setAvatar(imageUri);
+      }
+    });
+  };
 
   /** handler */
   const submitHandler = async () => {
-    Alert.alert(
-      nameRef.current.getValue(),
-      avatarRef.current.getValue(),
-      ageRef.current.getValue()
-    );
+    Alert.alert(nameRef.current.getValue(), ageRef.current.getValue());
   };
 
   return (
-    <View>
-      <Text style={globalStyle.text}>CreateChildScreen</Text>
+    <View style={globalStyle.container}>
+      {/** name */}
+      <CustomInput type="text" placeHolder="Your child name" ref={nameRef} />
+      {/** ageRef */}
+      <CustomInput type="text" placeHolder="Your child age" ref={ageRef} />
       <Button title="haja" onPress={submitHandler} />
+      {/** avatar */}
+      {avatar && (
+        <Image
+          source={{ uri: avatar }}
+          style={{ flex: 1, width: 250, height: 250 }}
+          resizeMode="cover"
+        />
+      )}
+      <Button title="Choose photo" onPress={avatarHandler} />
     </View>
   );
 };

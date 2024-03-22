@@ -57,6 +57,22 @@ const packageList = [
     timeUsed: '1 min',
     dateUsed: '22/3/2024',
   },
+  {
+    id: '3',
+    name: 'zalo',
+    image:
+      'https://scontent.fdad4-1.fna.fbcdn.net/v/t39.30808-1/425501311_1568971097184351_2984175000429861185_n.jpg?stp=dst-jpg_p100x100&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFuGKlYO-FX7UOWw1MK4RgjmIsKu1lc8vWYiwq7WVzy9UIH3HrTf9T_cpULfVLxssqs7ZOl0EL0qsxA_wK9-i9W&_nc_ohc=IL6rcVXn-rIAX-uit1v&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.fdad4-1.fna&oh=00_AfDwNoK06e0zueKjVxwHndQM5qfswrLwdAi7IMnfyzgqEA&oe=66022134',
+    timeUsed: '1 min',
+    dateUsed: '22/3/2024',
+  },
+  {
+    id: '3',
+    name: 'zalo',
+    image:
+      'https://scontent.fdad4-1.fna.fbcdn.net/v/t39.30808-1/425501311_1568971097184351_2984175000429861185_n.jpg?stp=dst-jpg_p100x100&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFuGKlYO-FX7UOWw1MK4RgjmIsKu1lc8vWYiwq7WVzy9UIH3HrTf9T_cpULfVLxssqs7ZOl0EL0qsxA_wK9-i9W&_nc_ohc=IL6rcVXn-rIAX-uit1v&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.fdad4-1.fna&oh=00_AfDwNoK06e0zueKjVxwHndQM5qfswrLwdAi7IMnfyzgqEA&oe=66022134',
+    timeUsed: '1 min',
+    dateUsed: '22/3/2024',
+  },
 ];
 
 const SingleChildScreen = ({ route, navigation }) => {
@@ -99,7 +115,10 @@ const SingleChildScreen = ({ route, navigation }) => {
   return (
     <View style={[globalStyle.container, { paddingTop: 20, paddingBottom: 0 }]}>
       {/** child info container */}
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         {/** child view */}
         <View
           style={[
@@ -133,24 +152,28 @@ const SingleChildScreen = ({ route, navigation }) => {
           Recent activities
         </Text>
         {/** block all activities */}
-        <View
-          style={{
-            paddingHorizontal: 15,
-            paddingVertical: 15,
-            backgroundColor: '#fff',
-            flexDirection: 'column',
-            gap: 12,
-          }}
-        >
-          {packageList.map((i, index) => (
-            <ActivityCard
-              key={index}
-              packageName={i.name}
-              packageImage={i.image}
-              packageTimeUsed={i.timeUsed}
-              packageDateUsed={i.dateUsed}
-            />
-          ))}
+        <View style={{ height: 280 }}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <View
+              style={{
+                paddingHorizontal: 15,
+                paddingVertical: 15,
+                backgroundColor: '#fff',
+                flexDirection: 'column',
+                gap: 12,
+              }}
+            >
+              {packageList.map((i, index) => (
+                <ActivityCard
+                  key={index}
+                  packageName={i.name}
+                  packageImage={i.image}
+                  packageTimeUsed={i.timeUsed}
+                  packageDateUsed={i.dateUsed}
+                />
+              ))}
+            </View>
+          </ScrollView>
         </View>
       </ScrollView>
     </View>

@@ -77,7 +77,11 @@ const HomeScreen = ({ user, navigation, route }) => {
             <TouchableOpacity
               key={i.childId}
               onPress={() =>
-                navigation.navigate('SingleChild', { childId: i.childId })
+                navigation.navigate('SingleChild', {
+                  childId: i.childId,
+                  childName: i.childName,
+                  childImage: i.avatarUrl,
+                })
               }
             >
               <ChildCard

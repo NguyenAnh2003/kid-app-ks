@@ -7,7 +7,12 @@ const SingleChildScreen = ({ route, navigation }) => {
   const { childId, childName, childImage } = route.params;
 
   /** setup header */
-  useLayoutEffect(() => {
+
+  /** state */
+  const [dataa, setDataa] = useState({});
+
+  useEffect(() => {
+    /** setup header when (childId, navigation) change */
     navigation.setOptions({
       headerTitle: () => (
         <View style={{ flexDirection: 'row', alignContent: 'center', gap: 10 }}>
@@ -19,19 +24,16 @@ const SingleChildScreen = ({ route, navigation }) => {
         </View>
       ),
     });
-  }, [navigation, childId]);
 
-  /** state */
-  const [dataa, setDataa] = useState({});
-
-  useEffect(() => {
     /** fetch child data by childId */
+    
 
+    
     /** remove data */
     return () => {
       setDataa({});
     };
-  }, [childId]);
+  }, [childId, navigation]);
 
   return (
     <View style={globalStyle.container}>

@@ -46,7 +46,7 @@ const childList = [
     childName: 'Bin Bin',
     childPNumber: '0358423237',
     avatarUrl:
-      'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=19M80UHL7OUAX-2OV9R&_nc_ht=scontent.fdad4-1.fna&oh=00_AfD76oKUeKfB5Wu8k0a_3MdD4Sou2SzL54HRcJ17vFGTlA&oe=6624F0B8',
+      'https://scontent.fdad4-1.fna.fbcdn.net/v/t39.30808-1/416167704_2320873964969530_3091803937576343392_n.jpg?stp=dst-jpg_s200x200&_nc_cat=107&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFXUgMaHDLADOcW1y8ihn69FjXwQ_1c8q4WNfBD_VzyrszQ0F2EhicA5IfGKJ_2MwOgAi3W8hVCLN4vAF34CrrF&_nc_ohc=c_IFlPPF8gUAX_s3ex-&_nc_ht=scontent.fdad4-1.fna&oh=00_AfCUdFhSbBJ4__9Xa99Ct5hWJz3N9JJ33g7362OFilnYDQ&oe=6602BBC1',
     phoneType: 'Sam Sung',
   },
   {

@@ -1,6 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Button,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import globalStyle from '../styles/globalStyle';
 import ChildCard from '../components/cards/ChildCard';
 
@@ -53,12 +60,7 @@ const HomeScreen = ({ user, navigation, route }) => {
 
   return (
     <View style={[globalStyle.container, { flex: 1 }]}>
-      <View
-        style={{
-          flexDirection: 'column',
-          gap: 10,
-        }}
-      >
+      <ScrollView contentContainerStyle={{ flexGrow: 1}}>
         <View style={{ flexDirection: 'column', gap: 10, width: '100%' }}>
           {/** list of child */}
           {childList.map((i, index) => (
@@ -83,7 +85,7 @@ const HomeScreen = ({ user, navigation, route }) => {
           title="Create"
           onPress={() => navigation.navigate('AddChild')}
         />
-      </View>
+      </ScrollView>
     </View>
   );
 };

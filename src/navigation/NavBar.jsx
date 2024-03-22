@@ -82,7 +82,7 @@ const NavBar = (props) => {
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons
-              name={focused ? 'account-child' : 'account-child-outline'}
+              name={focused ? 'home' : 'home-outline'}
               size={24}
               color={'black'}
             />

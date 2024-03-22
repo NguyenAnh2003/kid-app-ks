@@ -39,7 +39,7 @@ const SingleChildScreen = ({ route, navigation }) => {
    * @param activities ? (com.package.name, timeUsed, date)
    */
   /** childId -> fetchDataByChildId */
-  const { childId, childName, childImage } = route.params;
+  const { childId, childName, childImage, phoneType } = route.params;
 
   /** state */
   const [dataa, setDataa] = useState({});
@@ -72,6 +72,7 @@ const SingleChildScreen = ({ route, navigation }) => {
     <View style={[globalStyle.container, { paddingTop: 20, paddingBottom: 0 }]}>
       {/** child info container */}
       <ScrollView style={styles.container}>
+        {/** child view */}
         <View
           style={[
             styles.topBox,
@@ -90,6 +91,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             {/** */}
             <View style={{ flexDirection: 'column' }}>
               <Text style={styles.textHeading}>{childName}</Text>
+              <Text style={{ color: '#a5a5a5' }}>{phoneType}</Text>
             </View>
           </View>
           <MaterialCommunityIcons
@@ -98,6 +100,11 @@ const SingleChildScreen = ({ route, navigation }) => {
             color={'black'}
           />
         </View>
+        {/** activities view */}
+        <Text style={[globalStyle.h1, { marginTop: 5, marginLeft: 5 }]}>
+          Activities
+        </Text>
+        {/** block all activities */}
       </ScrollView>
     </View>
   );

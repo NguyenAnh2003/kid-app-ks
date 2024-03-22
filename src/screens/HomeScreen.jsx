@@ -81,6 +81,7 @@ const HomeScreen = ({ user, navigation, route }) => {
                   childId: i.childId,
                   childName: i.childName,
                   childImage: i.avatarUrl,
+                  phoneType: i.phoneType,
                 })
               }
             >

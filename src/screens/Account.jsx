@@ -4,7 +4,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
 
 const Account = ({ navigation }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState();
 
   /**
    * @field avatar

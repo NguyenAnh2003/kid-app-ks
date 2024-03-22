@@ -2,13 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import globalStyle from '../styles/globalStyle';
+import ChildCard from '../components/cards/ChildCard';
 
 const styles = StyleSheet.create({
   button: {
-    padding: 10,
-    backgroundColor: 'black',
-  },
-  box: {
     padding: 10,
     backgroundColor: 'black',
   },
@@ -22,17 +19,26 @@ const childList = [
   {
     childId: '1',
     childName: 'Nguyen Anh',
-    avatarUrl: 'http://1',
+    childPNumber: '0358423237',
+    avatarUrl:
+      'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=19M80UHL7OUAX-2OV9R&_nc_ht=scontent.fdad4-1.fna&oh=00_AfD76oKUeKfB5Wu8k0a_3MdD4Sou2SzL54HRcJ17vFGTlA&oe=6624F0B8',
+    phoneType: 'Sam Sung',
   },
   {
     childId: '2',
     childName: 'Bin Bin',
-    avatarUrl: 'http://2',
+    childPNumber: '0358423237',
+    avatarUrl:
+      'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=19M80UHL7OUAX-2OV9R&_nc_ht=scontent.fdad4-1.fna&oh=00_AfD76oKUeKfB5Wu8k0a_3MdD4Sou2SzL54HRcJ17vFGTlA&oe=6624F0B8',
+    phoneType: 'Sam Sung',
   },
   {
     childId: '3',
     childName: 'Bin Bin',
-    avatarUrl: 'http://3',
+    childPNumber: '0358423237',
+    avatarUrl:
+      'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=19M80UHL7OUAX-2OV9R&_nc_ht=scontent.fdad4-1.fna&oh=00_AfD76oKUeKfB5Wu8k0a_3MdD4Sou2SzL54HRcJ17vFGTlA&oe=6624F0B8',
+    phoneType: 'Sam Sung',
   },
 ];
 
@@ -46,19 +52,29 @@ const HomeScreen = ({ user, navigation, route }) => {
   const [data, setData] = useState();
 
   return (
-    <View style={globalStyle.container}>
-      <View style={{ flexDirection: 'row', gap: 10 }}>
-        <View style={{ flexDirection: 'row', gap: 10 }}>
+    <View style={[globalStyle.container, { flex: 1 }]}>
+      <View
+        style={{
+          flexDirection: 'column',
+          gap: 10,
+        }}
+      >
+        <View style={{ flexDirection: 'column', gap: 10, width: '100%' }}>
           {/** list of child */}
           {childList.map((i, index) => (
             <TouchableOpacity
               key={i.childId}
-              style={styles.box}
               onPress={() =>
                 navigation.navigate('SingleChild', { childId: i.childId })
               }
             >
-              <Text style={styles.text}>{i.avatarUrl}</Text>
+              <ChildCard
+                key={i.childId}
+                childName={i.childName}
+                childPhoneNumber={i.childPNumber}
+                childAvatar={i.avatarUrl}
+                phoneType={i.phoneType}
+              />
             </TouchableOpacity>
           ))}
         </View>

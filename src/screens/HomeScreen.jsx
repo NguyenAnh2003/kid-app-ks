@@ -10,13 +10,23 @@ import {
 } from 'react-native';
 import globalStyle from '../styles/globalStyle';
 import ChildCard from '../components/cards/ChildCard';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const styles = StyleSheet.create({
   button: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     padding: 10,
     backgroundColor: 'black',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   text: {
+    color: 'white',
+  },
+  btnText: {
     color: 'white',
   },
 });
@@ -60,7 +70,7 @@ const HomeScreen = ({ user, navigation, route }) => {
 
   return (
     <View style={[globalStyle.container, { flex: 1 }]}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1}}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{ flexDirection: 'column', gap: 10, width: '100%' }}>
           {/** list of child */}
           {childList.map((i, index) => (
@@ -81,10 +91,12 @@ const HomeScreen = ({ user, navigation, route }) => {
           ))}
         </View>
         {/** create child button */}
-        <Button
-          title="Create"
+        <TouchableOpacity
+          style={styles.button}
           onPress={() => navigation.navigate('AddChild')}
-        />
+        >
+          <AntDesign name="pluscircleo" size={30} color={'white'} />
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );

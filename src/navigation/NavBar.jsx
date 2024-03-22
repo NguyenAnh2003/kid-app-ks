@@ -29,9 +29,9 @@ const HomeStack = ({ navigation }) => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Home"
+        name="Your children"
         component={HomeScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: true }}
       />
       <Stack.Screen
         name="SingleChild"

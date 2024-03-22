@@ -37,6 +37,7 @@ const HomeStack = ({ navigation }) => {
         name="SingleChild"
         component={SingleChildScreen}
         options={{
+          headerTitleStyle: { fontSize: 15, fontWeight: '100' },
           headerLeft: () => (
             <IconButton
               icon="arrow-left"

@@ -8,6 +8,7 @@ import ActivityCard from '../components/cards/ActivityCard';
 const styles = StyleSheet.create({
   /** container */
   container: {
+    flex: 1,
     flexDirection: 'column',
     backgroundColor: '#fafafa',
     paddingHorizontal: 8,
@@ -115,67 +116,86 @@ const SingleChildScreen = ({ route, navigation }) => {
   return (
     <View style={[globalStyle.container, { paddingTop: 20, paddingBottom: 0 }]}>
       {/** child info container */}
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        {/** child view */}
-        <View
-          style={[
-            styles.topBox,
-            {
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignContent: 'center',
-              paddingRight: 10,
-              borderBottomWidth: 1,
-              borderColor: '#f2f2f2',
-            },
-          ]}
-        >
-          <View style={styles.topBox}>
-            <Image source={{ uri: childImage }} style={styles.avatarChild} />
-            {/** */}
-            <View style={{ flexDirection: 'column' }}>
-              <Text style={styles.textHeading}>{childName}</Text>
-              <Text style={{ color: '#a5a5a5' }}>{phoneType}</Text>
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          {/** child view */}
+          <View
+            style={[
+              styles.topBox,
+              {
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignContent: 'center',
+                paddingRight: 10,
+                borderBottomWidth: 1,
+                borderColor: '#f2f2f2',
+              },
+            ]}
+          >
+            <View style={styles.topBox}>
+              <Image source={{ uri: childImage }} style={styles.avatarChild} />
+              {/** */}
+              <View style={{ flexDirection: 'column' }}>
+                <Text style={styles.textHeading}>{childName}</Text>
+                <Text style={{ color: '#a5a5a5' }}>{phoneType}</Text>
+              </View>
             </View>
+            <MaterialCommunityIcons
+              name="account-edit-outline"
+              size={24}
+              color={'black'}
+            />
           </View>
-          <MaterialCommunityIcons
-            name="account-edit-outline"
-            size={24}
-            color={'black'}
-          />
-        </View>
-        {/** activities view */}
-        <Text style={[globalStyle.h1, { marginTop: 5, marginLeft: 5 }]}>
-          Recent activities
-        </Text>
-        {/** block all activities */}
-        <View style={{ height: 280 }}>
-          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-            <View
-              style={{
-                paddingHorizontal: 15,
-                paddingVertical: 15,
-                backgroundColor: '#fff',
-                flexDirection: 'column',
-                gap: 12,
-              }}
-            >
-              {packageList.map((i, index) => (
-                <ActivityCard
-                  key={index}
-                  packageName={i.name}
-                  packageImage={i.image}
-                  packageTimeUsed={i.timeUsed}
-                  packageDateUsed={i.dateUsed}
-                />
-              ))}
-            </View>
-          </ScrollView>
-        </View>
-      </ScrollView>
+          {/** activities view */}
+          <Text
+            style={{
+              color: 'black',
+              marginTop: 5,
+              marginLeft: 5,
+              fontSize: 20,
+              fontWeight: '600',
+            }}
+          >
+            Recent activities
+          </Text>
+          {/** block all activities */}
+          <View style={{ height: 280 }}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+              <View
+                style={{
+                  paddingHorizontal: 15,
+                  paddingVertical: 15,
+                  backgroundColor: '#fff',
+                  flexDirection: 'column',
+                  gap: 12,
+                }}
+              >
+                {packageList.map((i, index) => (
+                  <ActivityCard
+                    key={index}
+                    packageName={i.name}
+                    packageImage={i.image}
+                    packageTimeUsed={i.timeUsed}
+                    packageDateUsed={i.dateUsed}
+                  />
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+          {/** chart usage - screen time */}
+          <Text
+            style={{
+              color: 'black',
+              marginTop: 5,
+              marginLeft: 5,
+              fontSize: 20,
+              fontWeight: '600',
+            }}
+          >
+            Screen time
+          </Text>
+        </ScrollView>
+      </View>
     </View>
   );
 };

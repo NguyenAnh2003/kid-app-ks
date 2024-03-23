@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home';
 import Account from '../screens/Account';
+import LocationTracking from '../screens/LocationTracking';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CreateSthScreen from '../screens/CreateSthScreen';
@@ -26,6 +27,20 @@ const NavBar = (props) => {
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? 'home' : 'home-outline'}
+              size={24}
+              color={'black'}
+            />
+          ),
+        }}
+      />
+      {/** location screen */}
+      <Tab.Screen
+        name="Location tracking"
+        component={LocationTracking}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialCommunityIcons
+              name={focused ? 'map' : 'map-outline'}
               size={24}
               color={'black'}
             />
@@ -60,6 +75,7 @@ const NavBar = (props) => {
           ),
         }}
       />
+      
     </Tab.Navigator>
   );
 };

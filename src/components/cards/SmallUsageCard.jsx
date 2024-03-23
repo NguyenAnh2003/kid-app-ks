@@ -2,6 +2,11 @@ import { View, Text } from 'react-native';
 import React from 'react';
 
 const SmallUsageCard = React.memo(({ color, name, timeUsed }) => {
+  /**
+   * @param color
+   * @param name
+   * @param timeUsed - time usage
+   */
   console.log(color);
   return (
     <View
@@ -18,7 +23,7 @@ const SmallUsageCard = React.memo(({ color, name, timeUsed }) => {
           style={{
             width: 20,
             height: 20,
-            backgroundColor: 'hsl(180, 100%, 50%)',
+            backgroundColor: color,
           }}
         ></View>
         <Text style={{ color: 'black' }}>{name} </Text>

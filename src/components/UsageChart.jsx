@@ -63,13 +63,13 @@ const UsageChart = React.memo(({ activities }) => {
     setSeries(arr);
   }, [activities]);
 
-  useEffect(() => {
+  processedUsage = useMemo(() => {
     if (sliceColor.length === 0) return;
     usages.forEach((item, index) => {
       item.color = sliceColor[index];
     });
-    console.log(usages);
-    return () => {};
+    // console.log(usages);
+    return usages;
   }, [usages, sliceColor]);
 
   const collapseArray = useCallback(
@@ -111,8 +111,8 @@ const UsageChart = React.memo(({ activities }) => {
         coverRadius={0.45}
         coverFill={'#FFF'}
       />
-      {usages &&
-        usages.map((i, index) => (
+      {processedUsage &&
+        processedUsage.map((i, index) => (
           <SmallUsageCard
             key={index}
             color={i.color}

@@ -48,7 +48,7 @@ const ActivityCard = React.memo(
           </View>
         </View>
         {/** time used */}
-        <Text style={styles.timeUsedText}>{packageTimeUsed}</Text>
+        <Text style={styles.timeUsedText}>{packageTimeUsed} mins</Text>
       </View>
     );
   }

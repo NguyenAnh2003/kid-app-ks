@@ -75,6 +75,14 @@ const packageList = [
     timeUsed: 2,
     dateUsed: '22/3/2024',
   },
+  {
+    id: '3',
+    name: 'ai',
+    image:
+      'https://scontent.fdad4-1.fna.fbcdn.net/v/t39.30808-1/425501311_1568971097184351_2984175000429861185_n.jpg?stp=dst-jpg_p100x100&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFuGKlYO-FX7UOWw1MK4RgjmIsKu1lc8vWYiwq7WVzy9UIH3HrTf9T_cpULfVLxssqs7ZOl0EL0qsxA_wK9-i9W&_nc_ohc=IL6rcVXn-rIAX-uit1v&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.fdad4-1.fna&oh=00_AfDwNoK06e0zueKjVxwHndQM5qfswrLwdAi7IMnfyzgqEA&oe=66022134',
+    timeUsed: 20,
+    dateUsed: '22/3/2024',
+  },
 ];
 
 const SingleChildScreen = ({ route, navigation }) => {
@@ -89,6 +97,7 @@ const SingleChildScreen = ({ route, navigation }) => {
 
   /** state */
   const [dataa, setDataa] = useState({});
+  const [activities, setActivities] = useState(packageList);
 
   useEffect(() => {
     /** setup header when (childId, navigation) change */
@@ -196,7 +205,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             Screen time
           </Text>
           {/** */}
-          <UsageChart />
+          <UsageChart activities={activities} />
         </ScrollView>
       </View>
     </View>

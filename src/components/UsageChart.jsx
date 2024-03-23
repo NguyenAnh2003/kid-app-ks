@@ -1,6 +1,13 @@
-import React, { Component, useCallback, useEffect, useState } from 'react';
+import React, {
+  Component,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { StyleSheet, ScrollView, Text, View } from 'react-native';
 import PieChart from 'react-native-pie-chart';
+import SmallUsageCard from './cards/SmallUsageCard';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,7 +23,8 @@ const styles = StyleSheet.create({
 const UsageChart = React.memo(({ activities }) => {
   const widthAndHeight = 200;
   // const series = [10, 1, 4];
-  const [series, setSeries] = useState([10, 1, 4]);
+  const [series, setSeries] = useState([10, 1]);
+  const [usages, setUsages] = useState([]);
 
   const generateSliceColors = useCallback(
     (seriesLength) => {
@@ -37,14 +45,18 @@ const UsageChart = React.memo(({ activities }) => {
   );
 
   /** set slice color */
-  const sliceColor = generateSliceColors(series.length);
+  const sliceColor = useMemo(() => {
+    return generateSliceColors(series.length);
+  }, [series]);
 
   /** process activities */
   useEffect(() => {
-    hh = collapseArray(activities);
-    arr = [];
-    console.log(hh);
-    hh.forEach(({ number }) => {
+    processedActivities = collapseArray(activities);
+    /** set usage */
+    setUsages(processedActivities);
+    arr = []; // define statis array
+    processedActivities.forEach(({ number }) => {
+      /** pushing each number to array */
       arr.push(number);
       return arr;
     });
@@ -52,8 +64,13 @@ const UsageChart = React.memo(({ activities }) => {
   }, [activities]);
 
   useEffect(() => {
-    console.log('c', series);
-  }, [series]);
+    if (sliceColor.length === 0) return;
+    usages.forEach((item, index) => {
+      item.color = sliceColor[index];
+    });
+    console.log(usages);
+    return () => {};
+  }, [usages, sliceColor]);
 
   const collapseArray = useCallback(
     (arr) => {
@@ -94,6 +111,15 @@ const UsageChart = React.memo(({ activities }) => {
         coverRadius={0.45}
         coverFill={'#FFF'}
       />
+      {usages &&
+        usages.map((i, index) => (
+          <SmallUsageCard
+            key={index}
+            color={i.color}
+            name={i.name}
+            timeUsed={i.number}
+          />
+        ))}
     </View>
   );
 });

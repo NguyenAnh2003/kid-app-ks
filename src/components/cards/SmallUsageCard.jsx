@@ -7,7 +7,6 @@ const SmallUsageCard = React.memo(({ color, name, timeUsed }) => {
    * @param name
    * @param timeUsed - time usage
    */
-  console.log(color);
   return (
     <View
       style={{

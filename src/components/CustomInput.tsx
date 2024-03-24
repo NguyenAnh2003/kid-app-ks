@@ -13,7 +13,7 @@ type InputProps = {
 const styles = StyleSheet.create({
   input: {
     color: 'black',
-    padding: 10,
+    padding: 10,  
     borderWidth: 1,
     borderColor: 'gray',
   },
@@ -31,7 +31,6 @@ const CustomInput = forwardRef<InputHandle, InputProps>(
     return (
       <TextInput
         onChangeText={setValue}
-        type={type}
         placeholderTextColor={'black'}
         secureTextEntry={type === 'password' ? true : false}
         style={styles.input}

@@ -27,10 +27,10 @@ const Account = ({ navigation }) => {
   const { navigate } = navigation;
 
   /** state ; ref */
-  const nameRef = useRef({ getValue: () => 'nguyen anh123' });
-  const gmailRef = useRef({ getValue: () => 'cunho@gmail.com' });
-  const countryRef = useRef({ getValue: () => 'DN' });
-  const phoneRef = useRef({ getValue: () => '0000' });
+  const nameRef = useRef();
+  const gmailRef = useRef();
+  const countryRef = useRef();
+  const phoneRef = useRef();
 
   const imageHandler = async () => {
     const options = {
@@ -52,11 +52,19 @@ const Account = ({ navigation }) => {
   };
 
   const submitHandler = async () => {
-    console.log(
-      nameRef.current.getValue(),
-      gmailRef.current.getValue(),
-      phoneRef.current.getValue()
-    );
+    if (
+      !nameRef.current.getValue() ||
+      !gmailRef.current.getValue() ||
+      !countryRef.current.getValue() ||
+      !phoneRef.current.getValue()
+    ) {
+      console.log('null value');
+    } else
+      console.log(
+        nameRef.current.getValue(),
+        gmailRef.current.getValue(),
+        phoneRef.current.getValue()
+      );
   };
 
   useEffect(() => {
@@ -93,26 +101,14 @@ const Account = ({ navigation }) => {
       </View>
       {/** from view */}
       <View style={styles.profileInformation}>
-        <CustomInput
-          ref={nameRef}
-          defauleVal={nameRef.current.getValue()}
-          type="text"
-        />
+        <CustomInput ref={nameRef} defauleVal={'nguyen anh'} type="text" />
         <CustomInput
           ref={gmailRef}
-          defauleVal={gmailRef.current.getValue()}
+          defauleVal={'cunho@gmail.com'}
           type="gmail"
         />
-        <CustomInput
-          ref={countryRef}
-          defauleVal={countryRef.current.getValue()}
-          type="text"
-        />
-        <CustomInput
-          ref={phoneRef}
-          defauleVal={phoneRef.current.getValue()}
-          type="text"
-        />
+        <CustomInput ref={countryRef} defauleVal={'ĐN'} type="text" />
+        <CustomInput ref={phoneRef} defauleVal={'00'} type="text" />
         {/** save button */}
         <TouchableOpacity
           style={{

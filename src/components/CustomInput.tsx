@@ -20,14 +20,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 16,
     paddingLeft: 15,
-    backgroundColor: "#fffdfd"
+    backgroundColor: '#fffdfd',
   },
 });
 
 const CustomInput = forwardRef<InputHandle, InputProps>(
   ({ placeHolder, type, defauleVal }, ref) => {
     /** guide: https://www.youtube.com/watch?v=NT6FlJv8VoI */
-    const [value, setValue] = useState(defauleVal);
+    const [value, setValue] = useState('');
 
     useImperativeHandle(ref, () => ({
       getValue: () => value,

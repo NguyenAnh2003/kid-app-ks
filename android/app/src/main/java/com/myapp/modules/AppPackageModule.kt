@@ -40,14 +40,23 @@ class AppPackageModule(reactApplicationContext: ReactApplicationContext) : React
 
             for(i in 0 until appPackages.size()) {
                 /** temp var */
+                val packageMap = WritableNativeMap()
                 val packageInfo = appPackages.getMap(i)
                 /** put */
                 Log.d("spackages", "${packageInfo}")
+
+                packageMap.putString("id", packageInfo.getString("id"))
+                packageMap.putString("name", packageInfo.getString("name"))
+                packageMap.putString("packageName", packageInfo.getString("packageName"))
+                packageMap.putInt("timeUsed", packageInfo.getInt("timeUsed"))
+                packageMap.putString("dateUsed", packageInfo.getString("dateUsed"))
+                /** put result */
+                processedPackages.putMap(packageInfo.getString("id").toString(),
+                        packageMap)
             }
 
-            Log.d("packages", "${appPackages}")
-            val stats = "haha-test native module"
-            promise.resolve(stats)
+            /** return result */
+            promise.resolve(processedPackages)
         } catch (e: java.lang.Exception) {
             promise.reject("${e.message}")
         }

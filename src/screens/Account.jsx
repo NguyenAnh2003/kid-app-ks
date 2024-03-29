@@ -27,7 +27,7 @@ const Account = ({ navigation }) => {
   const { navigate } = navigation;
 
   /** state ; ref */
-  const nameRef = useRef({ getValue: () => 'nguyen anh' });
+  const nameRef = useRef({ getValue: () => 'nguyen anh123' });
   const gmailRef = useRef({ getValue: () => 'cunho@gmail.com' });
   const countryRef = useRef({ getValue: () => 'DN' });
   const phoneRef = useRef({ getValue: () => '0000' });
@@ -49,6 +49,14 @@ const Account = ({ navigation }) => {
         setSelectedImage(imageUri);
       }
     });
+  };
+
+  const submitHandler = async () => {
+    console.log(
+      nameRef.current.getValue(),
+      gmailRef.current.getValue(),
+      phoneRef.current.getValue()
+    );
   };
 
   useEffect(() => {
@@ -111,10 +119,13 @@ const Account = ({ navigation }) => {
             backgroundColor: 'black',
             padding: 10,
             alignSelf: 'flex-end',
-            borderRadius: 5
+            borderRadius: 5,
           }}
+          onPress={submitHandler}
         >
-          <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>Save</Text>
+          <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>
+            Save
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -132,7 +143,7 @@ const styles = StyleSheet.create({
   profile: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20
+    marginBottom: 20,
   },
 
   avatar: {

@@ -16,6 +16,14 @@ import com.facebook.react.common.MapBuilder
 import android.content.Context // android content
 import android.util.Log
 import java.lang.Exception
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
+import android.graphics.BitmapFactory
+import android.util.Base64
+import android.graphics.drawable.BitmapDrawable
+import java.io.ByteArrayOutputStream
+import android.graphics.drawable.Drawable
 
 /** time package */
 import java.text.SimpleDateFormat
@@ -26,17 +34,30 @@ import java.util.List;
 
 
 class AppPackageModule(reactApplicationContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactApplicationContext) {
+
     override fun getName(): String {
         /** @return module name */
         return "AppPackaging"
     }
 
     /** preprocessing app package icon */
-    private fun preprocessAppIcon(appPackage: WritableNativeMap) {
-        val result = WritableNativeMap()
-        /** process icon */
-        val icon = appPackage.getString("packageName")
-        Log.d("iconApp", "${icon}")
+    private fun preprocessAppIcon(appPackage: WritableNativeMap, context: Context): String {
+        try {
+            var result: String = ""
+            /** process icon */
+            Log.d("hahah", "${appPackage.getString("packageName").toString()}")
+            val drawable: BitmapDrawable = context.getPackageManager().getApplicationIcon(appPackage.getString("packageName").toString()) as BitmapDrawable
+            if(drawable != null) {
+                val bitmap = drawable.bitmap
+                val outputStream = ByteArrayOutputStream()
+                bitmap.compress(CompressFormat.PNG, 100, outputStream)
+                val imageBytes = outputStream.toByteArray()
+                result = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+            }
+            return result
+        } catch (e: java.lang.Exception) {
+            throw java.lang.Exception("${e.message}")
+        }
     }
 
     /** test function */
@@ -54,10 +75,14 @@ class AppPackageModule(reactApplicationContext: ReactApplicationContext) : React
                 packageMap.putString("id", packageInfo.getString("id"))
                 packageMap.putString("name", packageInfo.getString("name"))
                 packageMap.putString("packageName", packageInfo.getString("packageName"))
+
+                /** base64 icon */
+                var iconBas64: String = preprocessAppIcon(packageMap, reactApplicationContext) //
+                packageMap.putString("icon", iconBas64)
+
                 packageMap.putInt("timeUsed", packageInfo.getInt("timeUsed"))
                 packageMap.putString("dateUsed", packageInfo.getString("dateUsed"))
 
-                preprocessAppIcon(packageMap) //
 
                 /** put result */
                 processedPackages.putMap(packageInfo.getString("id").toString(),

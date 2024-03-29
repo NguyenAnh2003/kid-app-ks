@@ -69,6 +69,7 @@ const HomeScreen = ({ user, navigation, route }) => {
 
   const [data, setData] = useState();
 
+
   return (
     <View style={[globalStyle.container, { flex: 1 }]}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>

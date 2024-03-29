@@ -44,7 +44,6 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
         /** constants return (daily, weekly, monthly, yearly)
          * [0: daily, 1: weekly, 2: monthly, 3: yearly] */
         val constants: MutableMap<String, Any> = MapBuilder.newHashMap()
-        constants.put("INTERVAL_BEST", UsageStatsManager.INTERVAL_BEST)
         constants.put("INTERVAL_DAILY", UsageStatsManager.INTERVAL_DAILY)
         constants.put("INTERVAL_WEEKLY", UsageStatsManager.INTERVAL_WEEKLY)
         constants.put("INTERVAL_MONTHLY", UsageStatsManager.INTERVAL_MONTHLY)
@@ -182,11 +181,10 @@ class UsageStatsModule(reactApplicationContext: ReactApplicationContext) : React
         */
         var result: Int = 0
         when (interval) {
-            0 -> result = UsageStatsManager.INTERVAL_BEST
-            1 -> result = UsageStatsManager.INTERVAL_DAILY
-            2 -> result = UsageStatsManager.INTERVAL_WEEKLY
-            3 -> result = UsageStatsManager.INTERVAL_MONTHLY
-            4 -> result = UsageStatsManager.INTERVAL_YEARLY
+            0 -> result = UsageStatsManager.INTERVAL_DAILY
+            1 -> result = UsageStatsManager.INTERVAL_WEEKLY
+            2 -> result = UsageStatsManager.INTERVAL_MONTHLY
+            3 -> result = UsageStatsManager.INTERVAL_YEARLY
         }
 
         /**  */

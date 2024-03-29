@@ -31,6 +31,14 @@ class AppPackageModule(reactApplicationContext: ReactApplicationContext) : React
         return "AppPackaging"
     }
 
+    /** preprocessing app package icon */
+    private fun preprocessAppIcon(appPackage: WritableNativeMap) {
+        val result = WritableNativeMap()
+        /** process icon */
+        val icon = appPackage.getString("packageName")
+        Log.d("iconApp", "${icon}")
+    }
+
     /** test function */
     @ReactMethod
     fun preprocessAppPackageInfo(appPackages: ReadableArray,
@@ -42,14 +50,15 @@ class AppPackageModule(reactApplicationContext: ReactApplicationContext) : React
                 /** temp var */
                 val packageMap = WritableNativeMap()
                 val packageInfo = appPackages.getMap(i)
-                /** put */
-                Log.d("spackages", "${packageInfo}")
 
                 packageMap.putString("id", packageInfo.getString("id"))
                 packageMap.putString("name", packageInfo.getString("name"))
                 packageMap.putString("packageName", packageInfo.getString("packageName"))
                 packageMap.putInt("timeUsed", packageInfo.getInt("timeUsed"))
                 packageMap.putString("dateUsed", packageInfo.getString("dateUsed"))
+
+                preprocessAppIcon(packageMap) //
+
                 /** put result */
                 processedPackages.putMap(packageInfo.getString("id").toString(),
                         packageMap)

@@ -66,7 +66,7 @@ const Account = ({ navigation }) => {
           {/** choose image button */}
           <Entypo
             name={'edit'}
-            size={24}
+            size={20}
             color="black"
             style={styles.avatarEditor}
             onPress={imageHandler}
@@ -126,12 +126,15 @@ const styles = StyleSheet.create({
   },
 
   avatarEditor: {
-    padding: 5,
+    padding: 3,
+    paddingLeft: 5,
     backgroundColor: '#fff',
     position: 'absolute',
     bottom: 0,
-    right: 3,
+    right: 0,
     borderRadius: 50,
+    borderWidth: 2,
+    borderColor: "#333"
   },
 
   accountName: {

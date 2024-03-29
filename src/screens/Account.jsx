@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, StyleSheet, Image, Text, View, Pressable } from 'react-native';
+import {
+  Button,
+  StyleSheet,
+  Image,
+  Text,
+  View,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
@@ -58,6 +66,7 @@ const Account = ({ navigation }) => {
       {/** image view */}
       <View style={[styles.profile]}>
         <View style={[styles.avatar]}>
+          {/** image uri read from user info fetch from service */}
           <Image
             style={styles.avatarImage}
             resizeMode="cover"
@@ -96,6 +105,17 @@ const Account = ({ navigation }) => {
           defauleVal={phoneRef.current.getValue()}
           type="text"
         />
+        {/** save button */}
+        <TouchableOpacity
+          style={{
+            backgroundColor: 'black',
+            padding: 10,
+            alignSelf: 'flex-end',
+            borderRadius: 5
+          }}
+        >
+          <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>Save</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -134,7 +154,7 @@ const styles = StyleSheet.create({
     right: 0,
     borderRadius: 50,
     borderWidth: 2,
-    borderColor: "#333"
+    borderColor: '#333',
   },
 
   accountName: {

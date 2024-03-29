@@ -26,7 +26,6 @@ import java.util.List;
 
 
 class AppPackageModule(reactApplicationContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactApplicationContext) {
-
     override fun getName(): String {
         /** @return module name */
         return "AppPackaging"
@@ -37,6 +36,15 @@ class AppPackageModule(reactApplicationContext: ReactApplicationContext) : React
     fun preprocessAppPackageInfo(appPackages: ReadableArray,
                                  promise: Promise) {
         try {
+            val processedPackages = WritableNativeMap()
+
+            for(i in 0 until appPackages.size()) {
+                /** temp var */
+                val packageInfo = appPackages.getMap(i)
+                /** put */
+                Log.d("spackages", "${packageInfo}")
+            }
+
             Log.d("packages", "${appPackages}")
             val stats = "haha-test native module"
             promise.resolve(stats)
@@ -44,5 +52,5 @@ class AppPackageModule(reactApplicationContext: ReactApplicationContext) : React
             promise.reject("${e.message}")
         }
     }
-    
+
 }

@@ -66,9 +66,20 @@ const HomeScreen = ({ user, navigation, route }) => {
    * create child -> button to create child
    * list of child - get child -> return list of child
    */
+  const { UsageStats } = NativeModules;
 
   const [data, setData] = useState();
 
+  useEffect(() => {
+      const fa = async () => {
+          endTime = Date.now()
+          startTime = endTime - 1000
+          console.log('cac', UsageStats.INTERVAL_DAILY)
+          const rs = await UsageStats.getUsagesList(UsageStats.INTERVAL_DAILY, startTime, endTime)
+          console.log('data', rs)
+      }
+      fa();
+    }, [])
 
   return (
     <View style={[globalStyle.container, { flex: 1 }]}>

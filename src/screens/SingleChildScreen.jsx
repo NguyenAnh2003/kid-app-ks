@@ -38,7 +38,7 @@ const packageList = [
   {
     id: '1',
     name: 'facebook',
-    packageName: 'com.zing.zalo',
+    packageName: 'com.myapp',
     image:
       'https://scontent.fdad4-1.fna.fbcdn.net/v/t39.30808-1/425501311_1568971097184351_2984175000429861185_n.jpg?stp=dst-jpg_p100x100&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFuGKlYO-FX7UOWw1MK4RgjmIsKu1lc8vWYiwq7WVzy9UIH3HrTf9T_cpULfVLxssqs7ZOl0EL0qsxA_wK9-i9W&_nc_ohc=IL6rcVXn-rIAX-uit1v&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.fdad4-1.fna&oh=00_AfDwNoK06e0zueKjVxwHndQM5qfswrLwdAi7IMnfyzgqEA&oe=66022134',
     timeUsed: 10,
@@ -47,7 +47,16 @@ const packageList = [
   {
     id: '2',
     name: 'facebook',
-    packageName: 'com.zing.zalo',
+    packageName: 'com.myapp',
+    image:
+      'https://scontent.fdad4-1.fna.fbcdn.net/v/t39.30808-1/425501311_1568971097184351_2984175000429861185_n.jpg?stp=dst-jpg_p100x100&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFuGKlYO-FX7UOWw1MK4RgjmIsKu1lc8vWYiwq7WVzy9UIH3HrTf9T_cpULfVLxssqs7ZOl0EL0qsxA_wK9-i9W&_nc_ohc=IL6rcVXn-rIAX-uit1v&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.fdad4-1.fna&oh=00_AfDwNoK06e0zueKjVxwHndQM5qfswrLwdAi7IMnfyzgqEA&oe=66022134',
+    timeUsed: 1,
+    dateUsed: '22/3/2024',
+  },
+  {
+    id: '3',
+    name: 'instagram',
+    packageName: 'com.myapp',
     image:
       'https://scontent.fdad4-1.fna.fbcdn.net/v/t39.30808-1/425501311_1568971097184351_2984175000429861185_n.jpg?stp=dst-jpg_p100x100&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFuGKlYO-FX7UOWw1MK4RgjmIsKu1lc8vWYiwq7WVzy9UIH3HrTf9T_cpULfVLxssqs7ZOl0EL0qsxA_wK9-i9W&_nc_ohc=IL6rcVXn-rIAX-uit1v&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.fdad4-1.fna&oh=00_AfDwNoK06e0zueKjVxwHndQM5qfswrLwdAi7IMnfyzgqEA&oe=66022134',
     timeUsed: 1,
@@ -56,7 +65,7 @@ const packageList = [
   {
     id: '3',
     name: 'zalo',
-    packageName: 'com.zing.zalo',
+    packageName: 'com.myapp',
     image:
       'https://scontent.fdad4-1.fna.fbcdn.net/v/t39.30808-1/425501311_1568971097184351_2984175000429861185_n.jpg?stp=dst-jpg_p100x100&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFuGKlYO-FX7UOWw1MK4RgjmIsKu1lc8vWYiwq7WVzy9UIH3HrTf9T_cpULfVLxssqs7ZOl0EL0qsxA_wK9-i9W&_nc_ohc=IL6rcVXn-rIAX-uit1v&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.fdad4-1.fna&oh=00_AfDwNoK06e0zueKjVxwHndQM5qfswrLwdAi7IMnfyzgqEA&oe=66022134',
     timeUsed: 1,
@@ -65,16 +74,7 @@ const packageList = [
   {
     id: '3',
     name: 'zalo',
-    packageName: 'com.zing.zalo',
-    image:
-      'https://scontent.fdad4-1.fna.fbcdn.net/v/t39.30808-1/425501311_1568971097184351_2984175000429861185_n.jpg?stp=dst-jpg_p100x100&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFuGKlYO-FX7UOWw1MK4RgjmIsKu1lc8vWYiwq7WVzy9UIH3HrTf9T_cpULfVLxssqs7ZOl0EL0qsxA_wK9-i9W&_nc_ohc=IL6rcVXn-rIAX-uit1v&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.fdad4-1.fna&oh=00_AfDwNoK06e0zueKjVxwHndQM5qfswrLwdAi7IMnfyzgqEA&oe=66022134',
-    timeUsed: 1,
-    dateUsed: '22/3/2024',
-  },
-  {
-    id: '3',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
+    packageName: 'com.myapp',
     image:
       'https://scontent.fdad4-1.fna.fbcdn.net/v/t39.30808-1/425501311_1568971097184351_2984175000429861185_n.jpg?stp=dst-jpg_p100x100&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFuGKlYO-FX7UOWw1MK4RgjmIsKu1lc8vWYiwq7WVzy9UIH3HrTf9T_cpULfVLxssqs7ZOl0EL0qsxA_wK9-i9W&_nc_ohc=IL6rcVXn-rIAX-uit1v&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.fdad4-1.fna&oh=00_AfDwNoK06e0zueKjVxwHndQM5qfswrLwdAi7IMnfyzgqEA&oe=66022134',
     timeUsed: 2,

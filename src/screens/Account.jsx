@@ -52,10 +52,11 @@ const Account = ({ navigation }) => {
   };
 
   const submitHandler = async () => {
+    /** get all data field */
     if (
-      !nameRef.current.getValue() ||
-      !gmailRef.current.getValue() ||
-      !countryRef.current.getValue() ||
+      !nameRef.current.getValue() &&
+      !gmailRef.current.getValue() &&
+      !countryRef.current.getValue() &&
       !phoneRef.current.getValue()
     ) {
       console.log('null value');

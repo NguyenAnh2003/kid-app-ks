@@ -3,6 +3,7 @@ import { Button, StyleSheet, Image, Text, View, Pressable } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const Account = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -63,10 +64,12 @@ const Account = ({ navigation }) => {
             source={require('../assets/avatar.png')}
           />
           {/** choose image button */}
-          <Image
-            style={styles.avatarEditIcon}
-            resizeMode="cover"
-            source={require('../assets/avatar.png')}
+          <Entypo
+            name={'edit'}
+            size={24}
+            color="black"
+            style={styles.avatarEditor}
+            onPress={imageHandler}
           />
         </View>
         <Text style={[styles.accountName]}>Nomnom</Text>
@@ -112,18 +115,23 @@ const styles = StyleSheet.create({
     marginVertical: 32,
   },
 
+  avatar: {
+    position: 'relative',
+  },
+
   avatarImage: {
     width: 120,
     height: 120,
     borderRadius: 90,
   },
 
-  avatarEditIcon: {
-    height: 26,
-    width: 26,
+  avatarEditor: {
+    padding: 5,
+    backgroundColor: '#fff',
     position: 'absolute',
     bottom: 0,
-    right: 0,
+    right: 3,
+    borderRadius: 50,
   },
 
   accountName: {

@@ -65,7 +65,7 @@ class AppPackageModule(reactApplicationContext: ReactApplicationContext) : React
     fun preprocessAppPackageInfo(appPackages: ReadableArray,
                                  promise: Promise) {
         try {
-            val processedPackages = WritableNativeMap()
+            val processedPackages = WritableNativeArray()
 
             for(i in 0 until appPackages.size()) {
                 /** temp var */
@@ -85,8 +85,7 @@ class AppPackageModule(reactApplicationContext: ReactApplicationContext) : React
 
 
                 /** put result */
-                processedPackages.putMap(packageInfo.getString("id").toString(),
-                        packageMap)
+                processedPackages.pushMap(packageMap)
             }
 
             /** return result */

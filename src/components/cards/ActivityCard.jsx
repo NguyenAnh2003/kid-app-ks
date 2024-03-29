@@ -40,7 +40,7 @@ const ActivityCard = React.memo(
         <View style={styles.topBox}>
           <Image
             style={styles.pImage}
-            source={{ uri: packageImage, width: 50, height: 50 }}
+            source={{ uri: `data:image/png;base64,${packageImage}`, width: 50, height: 50 }}
           />
           <View style={{flexDirection: 'column', gap: 3}}>
             <Text style={styles.pName}>{packageName}</Text>

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, StyleSheet, Image, Text, View, Pressable } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
+import CustomInput, { InputHandle } from '../components/CustomInput';
 
 const Account = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -16,8 +17,13 @@ const Account = ({ navigation }) => {
 
   const { navigate } = navigation;
 
+  /** state ; ref */
+  const nameRef = useRef({ getValue: () => 'nguyen anh' });
+  const gmailRef = useRef({ getValue: () => 'cunho@gmail.com' });
+  const countryRef = useRef({ getValue: () => 'DN' });
+  const phoneRef = useRef({ getValue: () => '0000' });
+
   const imageHandler = async () => {
-    /** follow this guide: https://www.educative.io/answers/how-to-use-react-native-image-picker */
     const options = {
       mediaType: 'photo',
       includeBase64: false,
@@ -47,135 +53,46 @@ const Account = ({ navigation }) => {
   }, [selectedImage]);
 
   return (
-    // <View
-    //   style={{
-    //     flex: 1,
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    //     backgroundColor: '#fdf6e2',
-    //   }}
-    // >
-    //   <View style={[{
-    //     position: 'absolute',
-    //     width: 412,
-    //     height: 100,
-    //     top: 90,
-    //     left: 0,
-    //     borderColor: 'black',
-    //     borderWidth: 1,
-    //   }]}>
-    //     <Image
-    //       style={[{
-    //         width: 90,
-    //         height: 90,
-    //         borderRadius: 90,
-    //         borderWidth: 1,
-    //         borderColor: 'black',
-    //         position: 'absolute',
-    //         top: 4,
-    //         left: 25,
-    //       }]}
-    //         resizeMode="cover"
-    //         // source={("")}
-    //     />
-    //   </View>
-    //   <Text
-    //     style={[
-    //       globalStyle.h1,
-    //       {
-    //         position: 'absolute',
-    //         top: 20,
-    //         left: 125,
-    //         marginBottom: 0,
-    //         paddingLeft: 20,
-    //         paddingRight: 20,
-    //         fontSize: 28,
-    //         fontFamily: 'Trebuchet MS',
-    //         fontWeight: 'bold',
-    //         color: 'black',
-    //       },
-    //     ]}
-    //   >
-    //     My Profile
-    //   </Text>
-    //   {selectedImage && (
-    //     <Image
-    //       source={{ uri: selectedImage }}
-    //       style={{ flex: 1, width: 250, height: 250 }}
-    //       resizeMode="contain"
-    //     />
-    //   )}
-    //   <Image />
-    //   <Text style={globalStyle.h1}>Upload image</Text>
-    //   <Button title="Choose photo" onPress={imageHandler} />
-    //   {/**<Button title={'Move to home'} onPress={() => navigate('Home')} /> */}
-    //   {/**<Button title="Go back" onPress={() => navigation.goBack()} />*/}
-    // </View>
-    <View style={styles.profileContainer}>
-      <View style={styles.imageProfile}>
-        <View style={[styles.avatarProfile]}>
-          <View style={[styles.avatar]}>
-            <Image
-              style={styles.avatarImage}
-              resizeMode="cover"
-              source={require('../assets/lie.png')}
-            />
-            <Image
-              style={styles.avatarEditIcon}
-              resizeMode="cover"
-              source={require('../assets/lie.png')}
-            />
-          </View>
-          <Text style={[styles.accountName]}>Nomnom</Text>
+    <View style={[styles.profileContainer, globalStyle.container]}>
+      {/** image view */}
+      <View style={[styles.profile]}>
+        <View style={[styles.avatar]}>
+          <Image
+            style={styles.avatarImage}
+            resizeMode="cover"
+            source={require('../assets/avatar.png')}
+          />
+          {/** choose image button */}
+          <Image
+            style={styles.avatarEditIcon}
+            resizeMode="cover"
+            source={require('../assets/avatar.png')}
+          />
         </View>
+        <Text style={[styles.accountName]}>Nomnom</Text>
       </View>
+      {/** from view */}
       <View style={styles.profileInformation}>
-        <View style={styles.borderBox}>
-          <View style={[styles.userNameTextView, styles.alignCenter]}>
-            <Image
-              style={styles.userNameIcon}
-              //resizeMode="cover"
-              source={require('../assets/lie.png')}
-            />
-
-            <Text style={[styles.userName, styles.informationText]}>
-              Pham Van Nam
-            </Text>
-          </View>
-        </View>
-        <View style={styles.borderBox}>
-          <View style={[styles.emailTextView, styles.alignCenter]}>
-            <Image
-              style={styles.emailIcon}
-              source={require('../assets/lie.png')}
-            />
-            <Text style={[styles.email, styles.informationText]}>
-              namnam@gmail.com
-            </Text>
-          </View>
-        </View>
-        <View style={styles.borderBox}>
-          <View style={[styles.addressTextView, styles.alignCenter]}>
-            <Image
-              style={styles.addressIcon}
-              resizeMode="cover"
-              source={require('../assets/lie.png')}
-            />
-            <Text style={[styles.address, styles.informationText]}>Danang</Text>
-          </View>
-        </View>
-        <View style={styles.borderBox}>
-          <View style={[styles.phoneNumberTextView, styles.alignCenter]}>
-            <Image
-              style={styles.phoneNumberIcon}
-              resizeMode="cover"
-              source={require('../assets/lie.png')}
-            />
-            <Text style={[styles.phoneNumber, styles.informationText]}>
-              123456789
-            </Text>
-          </View>
-        </View>
+        <CustomInput
+          ref={nameRef}
+          defauleVal={nameRef.current.getValue()}
+          type="text"
+        />
+        <CustomInput
+          ref={gmailRef}
+          defauleVal={gmailRef.current.getValue()}
+          type="gmail"
+        />
+        <CustomInput
+          ref={countryRef}
+          defauleVal={countryRef.current.getValue()}
+          type="text"
+        />
+        <CustomInput
+          ref={phoneRef}
+          defauleVal={phoneRef.current.getValue()}
+          type="text"
+        />
       </View>
     </View>
   );
@@ -184,26 +101,15 @@ const styles = StyleSheet.create({
   profileContainer: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 20,
   },
   alignCenter: {
-    paddingLeft: 14,
     display: 'flex',
     flexDirection: 'row',
   },
-  imageProfile: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  avatarProfile: {
+  profile: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
     marginVertical: 32,
-  },
-
-  avatar: {
-    position: 'relative',
   },
 
   avatarImage: {
@@ -226,79 +132,10 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginLeft: 20,
   },
-
-  userName: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
   profileInformation: {
     flex: 1,
-  },
-  informationText: {
-    fontSize: 20,
-    color: '#333333',
-  },
-
-  borderBox: {
-    width: '100%',
-    height: 60,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: 'gray',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'left',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  userNameTextView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  userNameIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-  },
-  emailTextView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  emailIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-  },
-  email: {
-    color: '#333333',
-    fontSize: 16,
-  },
-  addressTextView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  addressIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-  },
-  address: {
-    color: '#333333',
-    fontSize: 16,
-  },
-  phoneNumberTextView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  phoneNumberIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-  },
-  phoneNumber: {
-    color: '#333333',
-    fontSize: 16,
+    flexDirection: 'column',
+    gap: 10,
   },
 });
 

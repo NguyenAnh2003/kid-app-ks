@@ -8,21 +8,25 @@ export type InputHandle = {
 type InputProps = {
   placeHolder: string;
   type: string;
+  defauleVal: string;
 };
 
 const styles = StyleSheet.create({
   input: {
     color: 'black',
-    padding: 10,  
+    padding: 10,
     borderWidth: 1,
     borderColor: 'gray',
+    borderRadius: 5,
+    fontSize: 16,
+    paddingLeft: 15
   },
 });
 
 const CustomInput = forwardRef<InputHandle, InputProps>(
-  ({ placeHolder, type }, ref) => {
+  ({ placeHolder, type, defauleVal }, ref) => {
     /** guide: https://www.youtube.com/watch?v=NT6FlJv8VoI */
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState(defauleVal);
 
     useImperativeHandle(ref, () => ({
       getValue: () => value,
@@ -33,6 +37,8 @@ const CustomInput = forwardRef<InputHandle, InputProps>(
         onChangeText={setValue}
         placeholderTextColor={'black'}
         secureTextEntry={type === 'password' ? true : false}
+        type={type}
+        defaultValue={defauleVal}
         style={styles.input}
         placeholder={placeHolder}
       />

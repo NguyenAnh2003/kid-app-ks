@@ -100,8 +100,9 @@ const SingleChildScreen = ({ route, navigation }) => {
   const [activities, setActivities] = useState(packageList);
 
   useEffect(() => {
+    if(!activities) return;
     const fetchDataa = async () => {
-      const processedPackage = await AppPackaging.preprocessAppPackageInfo();
+      const processedPackage = await AppPackaging.preprocessAppPackageInfo(activities);
       console.log('process packages', processedPackage);
     };
     fetchDataa();

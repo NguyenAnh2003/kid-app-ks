@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, NativeModules } from 'react-native';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import globalStyle from '../styles/globalStyle';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -89,12 +89,23 @@ const SingleChildScreen = ({ route, navigation }) => {
    * @param childImage (avatar)
    * @param activities ? (com.package.name, timeUsed, date)
    */
+  /** native module */
+  const { AppPackaging } = NativeModules;
+
   /** childId -> fetchDataByChildId */
   const { childId, childName, childImage, phoneType } = route.params;
 
   /** state */
   const [dataa, setDataa] = useState({});
   const [activities, setActivities] = useState(packageList);
+
+  useEffect(() => {
+    const fetchDataa = async () => {
+      const processedPackage = await AppPackaging.preprocessAppPackageInfo();
+      console.log('process packages', processedPackage);
+    };
+    fetchDataa();
+  }, [activities]);
 
   useEffect(() => {
     /** setup header when (childId, navigation) change */

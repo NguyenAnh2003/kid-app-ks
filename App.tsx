@@ -1,65 +1,81 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import * as React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Login from "./src/screens/Login";
+import Register from "./src/screens/Register";
+import ForgotPasswordInputEmail from "./src/screens/ForgotPasswordInputEmail";
+import ForgotPasswordInstruction from "./src/screens/ForgotPasswordInstruction";
+import ForgotPasswordCreateNewP from "./src/screens/ForgotPasswordCreateNewP";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
+import { Session } from "@supabase/supabase-js";
+import { useState, useEffect } from "react";
+import { supabase } from "./src/libs/supabase";
+import Home from "./src/screens/Home";
 
-import { NavigationContainer } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
-import NavBar from './src/navigation/NavBar';
-import { Provider } from 'react-redux';
-import { configStore, persistor } from './src/redux/store';
-import { PersistGate } from 'redux-persist/integration/react';
-import NetInfo from '@react-native-community/netinfo';
-import { AppState } from 'react-native';
-import { Alert, Text } from 'react-native';
+const Stack = createNativeStackNavigator();
 
-function App(): React.JSX.Element {
-  /** net info using USB to connect phone (using adb connect not working) */
-  // const unsucbscribe = NetInfo.addEventListener((state) => {
-  //   if (state.isConnected === false) {
-  //     Alert.alert('NO INTERNET CONNECTION');
-  //   } else {
-  //     Alert.alert("CONNECTED")
-  //   }
-  // });
-
-  // useEffect(() => {
-  //   unsucbscribe();
-  // }, []);
-
-  /** app state */
-  const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+const App = () => {
+  const [hideSplashScreen, setHideSplashScreen] = React.useState(true);
+  const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        console.log('App come to foreground and move to active');
+    const fetchSession = async () => {
+      const { data: session, error } = await supabase.auth.getSession();
+      if (session) {
+        setSession(session.session); // Extracting the 'session' property
       } else {
-        console.log(`Current state ${nextAppState}`);
+        setSession(null);
       }
-      appState.current = nextAppState; //
-      setAppStateVisible(appState.current);
+      setHideSplashScreen(false);
+    };
+
+    fetchSession();
+
+    const authListener = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setSession(session); // Extracting the 'session' property
+      } else {
+        setSession(null);
+      }
     });
 
     return () => {
-      subscription.remove();
+      authListener.data.subscription.unsubscribe();
     };
   }, []);
 
   return (
-    <Provider store={configStore}>
-      <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>
+    <>
+      {hideSplashScreen ? null : (
         <NavigationContainer>
-          <NavBar />
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {session ? (
+              <Stack.Screen name="Home">
+                {props => <Home {...props} session={session} />}
+              </Stack.Screen>
+            ) : (
+              <>
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="Register" component={Register} />
+                <Stack.Screen
+                  name="ForgotPasswordInputEmail"
+                  component={ForgotPasswordInputEmail}
+                />
+                <Stack.Screen
+                  name="ForgotPasswordInstruction"
+                  component={ForgotPasswordInstruction}
+                />
+                <Stack.Screen
+                  name="ForgotPasswordCreateNewP"
+                  component={ForgotPasswordCreateNewP}
+                />
+              </>
+            )}
+          </Stack.Navigator>
         </NavigationContainer>
-      </PersistGate>
-    </Provider>
+      )}
+    </>
   );
-}
+};
+
 export default App;

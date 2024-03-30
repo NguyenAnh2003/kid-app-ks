@@ -4,8 +4,6 @@ import { useNavigation } from "@react-navigation/native";
 import { Padding, Border, Color, FontSize, FontFamily } from "../../GlobalStyles";
 import { useState } from "react";
 import { supabase } from '../libs/supabase'
-import CustomInput from "../components/CustomInput";
-import { Button } from "react-native-elements";
 const Login = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('')
@@ -51,7 +49,7 @@ const Login = () => {
             source={require("../assets/vector2.png")}
           />
           <View>
-            <TextInput value={email} onChange={() => { setEmail(email) }} style={styles.form_input_text} placeholder="Email/NumberPhone">
+            <TextInput value={email} autoCapitalize={'none'} onChangeText={(text) => { setEmail(text) }} style={styles.form_input_text} placeholder="Email/NumberPhone">
 
             </TextInput>
           </View>
@@ -63,7 +61,7 @@ const Login = () => {
             source={require("../assets/vector3.png")}
           />
           <View>
-            <TextInput value={password} onChange={() => { setPassword(password) }} style={styles.form_input_text} placeholder="Password">
+            <TextInput value={password} secureTextEntry={true} autoCapitalize={'none'} onChange={(text) => { setPassword(text) }} style={styles.form_input_text} placeholder="Password">
 
             </TextInput>
           </View>

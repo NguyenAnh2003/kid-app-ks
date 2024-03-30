@@ -59,7 +59,7 @@ const Register = () => {
                 source={require("../assets/vector2.png")}
               />
               <View>
-                <TextInput value={email} onChange={() => { setEmail(email) }} style={styles.form_input_text} placeholder="Email/NumberPhone">
+                <TextInput value={email} onChange={(text) => { setEmail(text) }} style={styles.form_input_text} placeholder="Email/NumberPhone">
 
                 </TextInput>
               </View>
@@ -71,7 +71,7 @@ const Register = () => {
                 source={require("../assets/vector3.png")}
               />
               <View>
-                <TextInput value={password} onChange={() => { setPassword(password) }} style={styles.form_input_text} placeholder="Password">
+                <TextInput value={password} secureTextEntry={true} onChange={(text) => { setPassword(text) }} style={styles.form_input_text} placeholder="Password">
 
                 </TextInput>
               </View>
@@ -83,7 +83,7 @@ const Register = () => {
                 source={require("../assets/vector3.png")}
               />
               <View>
-                <TextInput value={confirm_pass} onChange={() => { setConfirmPass(confirm_pass) }} style={styles.form_input_text} placeholder="Confirm Password">
+                <TextInput value={confirm_pass} secureTextEntry={true} onChange={(text) => { setConfirmPass(text) }} style={styles.form_input_text} placeholder="Confirm Password">
 
                 </TextInput>
               </View>

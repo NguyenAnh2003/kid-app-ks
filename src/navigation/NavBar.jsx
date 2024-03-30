@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home';
+import BackgroundTimer from '../screens/BackgroundTimer';
 import Account from '../screens/Account';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -60,7 +61,21 @@ const NavBar = (props) => {
           ),
         }}
       />
+      <Tab.Screen
+        name="BackgroundTimer"
+        component={BackgroundTimer}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'home' : 'home-outline'}
+              size={24}
+              color={'black'}
+            />
+          ),
+        }}
+      />
     </Tab.Navigator>
+    
   );
 };
 

@@ -102,30 +102,6 @@ const Register = () => {
             </View>
           </View>
         </View>
-        {/* Login khác */}
-        <View style={styles.text_other}>
-          <Text style={styles.text_other_login}>
-            Or login by social media
-          </Text>
-        </View>
-        <View style={styles.com_social}>
-
-          <View style={styles.com_social_icon}>
-            <Image
-
-              resizeMode="contain"
-              source={require("../assets/facebook.png")}
-            />
-          </View>
-          <View style={styles.com_social_icon}>
-            <Image
-
-              resizeMode="contain"
-              source={require("../assets/icon--button--google-plus.png")}
-            />
-          </View>
-
-        </View>
       </View>
     </>
   );

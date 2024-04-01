@@ -13,8 +13,9 @@ const Register = () => {
   const [loading, setLoading] = useState(false)
 
 
-  async function signUpWithEmail() {
+  async function signUp() {
     setLoading(true)
+    
     const {
       data: { session },
       error,
@@ -91,7 +92,7 @@ const Register = () => {
 
             <View style={styles.com_btn}>
               <Pressable
-                onPress={() => signUpWithEmail()}
+                onPress={() => signUp()}
               >
                 <Text style={styles.btn_text}>
                   Register

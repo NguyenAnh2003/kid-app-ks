@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StyleSheet, View, Image, Text, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Padding, FontFamily, FontSize, Color, Border } from "../../GlobalStyles";
+import { Padding, FontFamily, FontSize, Color, Border } from "../styles/globalStyle";
 
 const ForgotPasswordCreateNewP = () => {
   const navigation = useNavigation();

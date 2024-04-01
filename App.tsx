@@ -1,8 +1,8 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Login from "./src/screens/Login";
-import Register from "./src/screens/Register";
+import Login from "./src/screens/LoginScreen";
+import Register from "./src/screens/RegisterScreen";
 import ForgotPasswordInputEmail from "./src/screens/ForgotPasswordInputEmail";
 import ForgotPasswordInstruction from "./src/screens/ForgotPasswordInstruction";
 import ForgotPasswordCreateNewP from "./src/screens/ForgotPasswordCreateNewP";

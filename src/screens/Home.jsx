@@ -5,9 +5,7 @@ import { getHttp } from '../configs/axios.config';
 import globalStyle from '../styles/globalStyle';
 import DeviceInfo from '../components/DeviceInfo';
 import { PermissionsAndroid } from 'react-native';
-import { Session } from '@supabase/supabase-js'
-import { Button } from 'react-native-elements';
-import { supabase } from '../libs/supabase'
+import ChildActivity from '../components/ChildActivity';
 
 const styles = StyleSheet.create({
   button: {
@@ -16,11 +14,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const Home = ({ session }: { session: Session }) => {
+const Home = ({ user, navigation, route }) => {
   const [data, setData] = useState();
-  async function signOut() {
-    const { error } = await supabase.auth.signOut()
-  }
+
   /** permission */
 
   useEffect(() => {
@@ -40,7 +36,7 @@ const Home = ({ session }: { session: Session }) => {
         <Text style={globalStyle.h1}>Hello</Text>
         {/** device info */}
         <DeviceInfo />
-        <Button onPress={() => signOut()}>Logout</Button>
+        <Text style={globalStyle.text}>{data?.title}</Text>
       </View>
     </View>
   );

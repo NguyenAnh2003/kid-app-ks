@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Image, StyleSheet, Text, View, Pressable, TextInput, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Padding, FontFamily, FontSize, Color, Border } from "../../GlobalStyles";
+import { Padding, Border, Color, FontSize, FontFamily } from "../styles/globalStyle";
+
 import { useState } from "react";
 import { supabase } from '../libs/supabase'
 import { Button } from "react-native-elements";
@@ -15,7 +16,7 @@ const Register = () => {
 
   async function signUp() {
     setLoading(true)
-    
+
     const {
       data: { session },
       error,

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Image, StyleSheet, Text, View, Pressable, TextInput, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Padding, Border, Color, FontSize, FontFamily } from "../../GlobalStyles";
+import { Padding, Border, Color, FontSize, FontFamily } from "../styles/globalStyle";
 import { useState } from "react";
 import { supabase } from '../libs/supabase'
 const Login = () => {

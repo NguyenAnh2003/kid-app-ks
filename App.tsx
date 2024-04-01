@@ -5,7 +5,7 @@ import Login from "./src/screens/LoginScreen";
 import Register from "./src/screens/RegisterScreen";
 import ForgotPasswordInputEmail from "./src/screens/ForgotPasswordInputEmail";
 import ForgotPasswordInstruction from "./src/screens/ForgotPasswordInstruction";
-import ForgotPasswordCreateNewP from "./src/screens/ForgotPasswordCreateNewP";
+import ForgotPasswordCreateNewP from "./src/screens/CreateNewPasswordScreen";
 import { View, Text, Pressable, TouchableOpacity } from "react-native";
 import { Session } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";

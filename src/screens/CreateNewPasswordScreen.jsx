@@ -17,12 +17,10 @@ const ForgotPasswordCreateNewP = () => {
         source={require("../assets/tool-bar.png")}
       />
       <View style={[styles.bigTitle, styles.bigTitlePosition]}>
-        <Text style={styles.bigTitle1}>{`Create New
-Password`}</Text>
+        <Text style={styles.bigTitle1}>{`Create New Password`}</Text>
         <Text
           style={[styles.yourDescriptionHere, styles.inputTextTypo]}
-        >{`Your new password must be different from 
-previous used password.`}</Text>
+        >{`Your new password must be different from previous used password.`}</Text>
       </View>
       <View style={[styles.formCreateNewPassword, styles.bigTitlePosition]}>
         <View style={styles.inputParent}>

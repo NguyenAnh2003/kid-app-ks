@@ -20,9 +20,7 @@ const ForgotPasswordInputEmail = () => {
         <Text style={styles.bigTitle1}>Check your mail</Text>
         <Text
           style={[styles.yourDescriptionHere, styles.inputTextTypo]}
-        >{`Enter the email associated with your account 
-and we’ll send an email with instructios to 
-reset your password.`}</Text>
+        >{`Enter the email associated with your account and we’ll send an email with instructios to reset your password.`}</Text>
       </View>
       <View style={[styles.formEmail, styles.bigTitlePosition]}>
         <View style={styles.inputParent}>

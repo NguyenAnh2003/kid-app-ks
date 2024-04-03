@@ -30,9 +30,6 @@ function App(): React.JSX.Element {
   //   unsucbscribe();
   // }, []);
 
-  /** open settings */
-  // Linking.openSettings()
-
   /** app state */
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);

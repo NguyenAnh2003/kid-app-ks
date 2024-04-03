@@ -20,12 +20,7 @@
     "@supabase/supabase-js": "^2.39.8",
     "@vonage/server-sdk": "^3.13.1",
     "axios": "^1.6.7",
-<<<<<<< HEAD
-    "react": "18.2.0",
-=======
-    "firebase": "^10.8.0",
     "react": "^18.2.0",
->>>>>>> d5b78089dda1739b262efc7be6850d0343aebb1a
     "react-native": "^0.73.3",
     "react-native-device-info": "^10.13.1",
     "react-native-elements": "^3.4.3",

@@ -18,6 +18,7 @@ import {
 } from '../styles/globalStyle';
 import { useState } from 'react';
 import { supabase } from '../libs/supabase';
+
 const Login = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
@@ -108,6 +109,7 @@ const Login = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     marginTop: 10,

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   Image,
   StyleSheet,
@@ -16,14 +15,15 @@ import {
   FontSize,
   FontFamily,
 } from '../styles/globalStyle';
-import { useState } from 'react';
+import { useReducer, useRef, useState } from 'react';
 import { supabase } from '../libs/supabase';
 
-const Login = () => {
-  const navigation = useNavigation();
+const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const passwordRef = useRef()
+  const emailRef = useRef()
 
   async function signInWithEmail() {
     setLoading(true);
@@ -94,11 +94,7 @@ const Login = () => {
           </View>
         </View>
         <View style={styles.forgot_pass}>
-          <Pressable
-            onPress={() => navigator.navigate('ForgotPasswordInputEmail')}
-          >
-            <Text style={styles.forgot_pass_text}> Forgot your password?</Text>
-          </Pressable>
+          <Text style={styles.forgot_pass_text}> Forgot your password?</Text>
         </View>
         <View style={styles.com_btn}>
           <Pressable onPress={() => signInWithEmail()}>

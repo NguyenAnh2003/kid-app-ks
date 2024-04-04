@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home';
 import Account from '../screens/Account';
+import AddChild from '../screens/AddChild';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CreateSthScreen from '../screens/CreateSthScreen';
@@ -50,6 +51,19 @@ const NavBar = (props) => {
       <Tab.Screen
         name="Account"
         component={Account}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialCommunityIcons
+              name={focused ? 'account' : 'account-outline'}
+              size={24}
+              color={'black'}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Manage Child"
+        component={AddChild}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons

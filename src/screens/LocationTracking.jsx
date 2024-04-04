@@ -4,12 +4,18 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { View, StyleSheet, Text, PermissionsAndroid, Alert } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import { check, request } from 'react-native-permissions';
-
+import io from 'socket.io-client';
+const socket = io.connect('http://192.168.1.13:3001/');
 const LocationTracking = () => {
   const [region, setRegion] = useState(null);
 
   useEffect(() => {
 
+    
+    socket.on('location',(test)=>{
+      console.log(test);
+    })
+    
     // Request location permission
     const requestLocationPermission = async () => {
       try {
@@ -35,6 +41,8 @@ const LocationTracking = () => {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
               });
+
+              socket.emit('location', { latitude, longitude });
             },
             (error) => console.error(error),
             { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }

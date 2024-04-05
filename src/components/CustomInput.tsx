@@ -16,6 +16,10 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderColor: 'gray',
+    borderRadius: 5,
+    fontSize: 16,
+    paddingLeft: 15,
+    backgroundColor: '#fffdfd',
   },
 });
 

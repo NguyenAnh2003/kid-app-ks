@@ -11,7 +11,7 @@ import { Provider } from 'react-redux';
 import { configStore, persistor } from './src/redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Text } from 'react-native';
-import AppNavigator from './src/navigation/NavBar';
+import AppNavigator from './src/navigation/AppNavigator';
 
 function App(): React.JSX.Element {
 

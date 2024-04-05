@@ -6,7 +6,7 @@ import { Padding, Border, Color, FontSize, FontFamily } from "../styles/globalSt
 import { useState } from "react";
 import { supabase } from '../libs/supabase'
 import { Button } from "react-native-elements";
-const Register = () => {
+const RegisterScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -196,4 +196,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Register;
+export default RegisterScreen;

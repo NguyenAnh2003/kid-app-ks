@@ -1,14 +1,37 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../screens/Home';
 import Account from '../screens/Account';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CreateSthScreen from '../screens/CreateSthScreen';
+import LoginScreen from '../screens/LoginScreen';
+import RegisterScreen from '../screens/RegisterScreen';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-const NavBar = (props) => {
+const AppNavigator = () => {
+  const [isAuth, setIsAuth] = React.useState(true);
+  return (
+    <Stack.Navigator>
+      {isAuth ? (
+        <Stack.Screen
+          name="Home"
+          component={HomeTabs}
+          options={{ headerShown: false }}
+        ></Stack.Screen>
+      ) : (
+        <>
+          <Stack.Screen name="SignIn" component={LoginScreen}></Stack.Screen>
+          <Stack.Screen name="SignUp" component={RegisterScreen}></Stack.Screen>
+        </>
+      )}
+    </Stack.Navigator>
+  );
+};
+
+const HomeTabs = (props) => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -26,20 +49,6 @@ const NavBar = (props) => {
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? 'home' : 'home-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
-      {/** create something screen */}
-      <Tab.Screen
-        name="Create"
-        component={CreateSthScreen}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'add-circle' : 'add-circle-outline'}
               size={24}
               color={'black'}
             />
@@ -64,4 +73,4 @@ const NavBar = (props) => {
   );
 };
 
-export default NavBar;
+export default AppNavigator;

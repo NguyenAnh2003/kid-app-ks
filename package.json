@@ -17,6 +17,7 @@
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
+    "@react-navigation/stack": "^6.3.29",
     "@supabase/supabase-js": "^2.39.8",
     "@vonage/server-sdk": "^3.13.1",
     "axios": "^1.6.7",

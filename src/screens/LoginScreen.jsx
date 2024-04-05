@@ -18,7 +18,7 @@ import {
 import { useReducer, useRef, useState } from 'react';
 import { supabase } from '../libs/supabase';
 
-const Login = ({navigation}) => {
+const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -192,4 +192,4 @@ const styles = StyleSheet.create({
   com_social_icon: {},
 });
 
-export default Login;
+export default LoginScreen;

@@ -114,8 +114,7 @@ const LoginScreen = ({ navigation }) => {
           <TouchableOpacity
             style={{}}
             onPress={() => {
-              // navigation.navigate('SignUp');
-              console.log(currentSession ? currentSession : 'NOPE');
+              navigation.navigate('SignUp');
             }}
           >
             <Text style={{ fontSize: 13, color: 'black', fontWeight: 600 }}>

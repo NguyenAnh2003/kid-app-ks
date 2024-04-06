@@ -34,6 +34,8 @@ export const userReducers = (state = initState.user, action) => {
     case appConstants.USER_LOGIN:
       console.log(action.payload);
       return { ...state, user: { session: action.payload } };
+    case appConstants.USER_LOGOUT:
+      return { ...state, user: { session: null } };
     default:
       return state;
   }

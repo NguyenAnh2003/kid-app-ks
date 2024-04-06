@@ -23,3 +23,10 @@ export const userLogin = (data) => {
     payload: data,
   };
 };
+
+/** signout */
+export const userLogout = () => {
+  return {
+    type: appConstants.USER_LOGOUT,
+  };
+};

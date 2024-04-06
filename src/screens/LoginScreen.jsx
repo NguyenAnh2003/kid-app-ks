@@ -43,7 +43,6 @@ const LoginScreen = ({ navigation }) => {
         });
         if (session && user) {
           dispatch(userLogin(JSON.stringify(session)));
-
         }
       }
     } catch (error) {

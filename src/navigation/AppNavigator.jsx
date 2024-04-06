@@ -15,13 +15,17 @@ const Stack = createStackNavigator();
 const AppNavigator = () => {
   // const [isAuth, setIsAuth] = React.useState(false);
   /** currentSession - accessToken ... */
-  const currentSession = useSelector((state) => state.userReducers?.user);
+  const currentUser = useSelector((state) => state.userReducers?.user);
 
-  console.log(currentSession);
+  const session = React.useMemo(() => {
+    if (!currentUser) return;
+    const { session } = currentUser;
+    return session;
+  }, [currentUser]);
 
   return (
     <Stack.Navigator>
-      {currentSession ? (
+      {session ? (
         <Stack.Screen
           name="Home"
           component={HomeTabs}

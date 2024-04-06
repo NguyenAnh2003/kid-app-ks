@@ -2,7 +2,15 @@ import appConstants from './actions/constants';
 
 const initState = {
   item: { name: '' },
-  user: { userId: '' },
+  user: {
+    /**
+     * @param accessToken
+     * @param refreshToken
+     * @param username
+     * @param user gmail
+     */
+    session: {},
+  },
 };
 
 export const itemReducders = (state = initState.item, action) => {
@@ -23,7 +31,9 @@ export const userReducers = (state = initState.user, action) => {
   switch (action.type) {
     case appConstants.USER_ACTIVITY:
       return { ...state };
-
+    case appConstants.USER_LOGIN:
+      console.log(action.payload);
+      return { ...state, user: { session: action.payload } };
     default:
       return state;
   }

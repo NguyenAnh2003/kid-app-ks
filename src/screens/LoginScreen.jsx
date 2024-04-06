@@ -19,13 +19,17 @@ import globalStyle, {
 import { useReducer, useRef, useState } from 'react';
 import { supabase } from '../libs/supabase';
 import CustomInput from '../components/CustomInput';
+import { useDispatch, useSelector } from 'react-redux';
+import { userLogin } from '../redux/actions/actions';
 
 const styles = StyleSheet.create({});
 
 const LoginScreen = ({ navigation }) => {
-  const [loading, setLoading] = useState(false);
+  /** */
+  const dispatch = useDispatch();
   const passwordRef = useRef();
   const emailRef = useRef();
+  const currentSession = useSelector((state) => state.userReducers?.user);
 
   const loginHandler = async () => {
     try {
@@ -37,7 +41,10 @@ const LoginScreen = ({ navigation }) => {
           email: emailRef.current?.getValue(),
           password: passwordRef.current?.getValue(),
         });
-        if (session && user) console.log(session, user);
+        if (session && user) {
+          dispatch(userLogin(JSON.stringify(session)));
+
+        }
       }
     } catch (error) {
       Alert.alert(error.message);
@@ -108,7 +115,8 @@ const LoginScreen = ({ navigation }) => {
           <TouchableOpacity
             style={{}}
             onPress={() => {
-              navigation.navigate('SignUp');
+              // navigation.navigate('SignUp');
+              console.log(currentSession ? currentSession : 'NOPE');
             }}
           >
             <Text style={{ fontSize: 13, color: 'black', fontWeight: 600 }}>

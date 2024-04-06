@@ -7,15 +7,21 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import { useSelector } from 'react-redux';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
-  const [isAuth, setIsAuth] = React.useState(false);
+  // const [isAuth, setIsAuth] = React.useState(false);
+  /** currentSession - accessToken ... */
+  const currentSession = useSelector((state) => state.userReducers?.user);
+
+  console.log(currentSession);
+
   return (
     <Stack.Navigator>
-      {isAuth ? (
+      {currentSession ? (
         <Stack.Screen
           name="Home"
           component={HomeTabs}
@@ -42,7 +48,7 @@ const AppNavigator = () => {
 const HomeTabs = (props) => {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="HomeTabs"
       screenOptions={{
         tabBarLabel: '',
         tabBarIconStyle: { marginTop: 10 },

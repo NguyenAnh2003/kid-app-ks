@@ -42,8 +42,6 @@ const RegisterScreen = ({ navigation }) => {
             emailRedirectTo: 'https://example.com/welcome',
           },
         });
-
-        if (error) Alert.alert(error.message);
         if (!session && !user) {
           const alertPedning = async () => {
             Alert.alert(

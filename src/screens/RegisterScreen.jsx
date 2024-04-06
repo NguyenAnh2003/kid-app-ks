@@ -44,11 +44,23 @@ const RegisterScreen = ({ navigation }) => {
         });
 
         if (error) Alert.alert(error.message);
-        if (!session && !user)
-          Alert.alert('Please check your inbox for email verification!');
-
-        /** navigate to login */
-        navigation.navigate('SignIn');
+        if (!session && !user) {
+          const alertPedning = async () => {
+            Alert.alert(
+              'Confirmation',
+              'Please check your inbox for email verification!',
+              [
+                {
+                  text: 'ok',
+                  onPress: () => {
+                    navigation.navigate('SignIn');
+                  },
+                },
+              ]
+            );
+          };
+          await alertPedning();
+        }
       }
     } catch (error) {
       Alert.alert(error.message);

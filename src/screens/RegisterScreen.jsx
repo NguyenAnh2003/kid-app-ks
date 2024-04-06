@@ -31,20 +31,25 @@ const RegisterScreen = ({ navigation }) => {
 
   const registerHandler = async () => {
     try {
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.signUp({
-        email: emailRef.current?.getValue(),
-        password: passwordRef.current?.getValue(),
-        options: {
-          emailRedirectTo: 'https://example.com/welcome',
-        },
-      });
+      if (emailRef.current?.getValue() && passwordRef.current?.getValue()) {
+        const {
+          data: { session, user },
+          error,
+        } = await supabase.auth.signUp({
+          email: emailRef.current?.getValue(),
+          password: passwordRef.current?.getValue(),
+          options: {
+            emailRedirectTo: 'https://example.com/welcome',
+          },
+        });
 
-      if (error) Alert.alert(error.message);
-      if (!session)
-        Alert.alert('Please check your inbox for email verification!');
+        if (error) Alert.alert(error.message);
+        if (!session && !user)
+          Alert.alert('Please check your inbox for email verification!');
+
+        /** navigate to login */
+        navigation.navigate('SignIn');
+      }
     } catch (error) {
       Alert.alert(error.message);
     }

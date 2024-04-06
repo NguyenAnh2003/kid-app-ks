@@ -30,10 +30,14 @@ const LoginScreen = ({ navigation }) => {
   const loginHandler = async () => {
     try {
       if (emailRef.current.getValue() && passwordRef.current.getValue()) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const {
+          error,
+          data: { session, user },
+        } = await supabase.auth.signInWithPassword({
           email: emailRef.current?.getValue(),
           password: passwordRef.current?.getValue(),
         });
+        if (session && user) console.log(session, user);
       }
     } catch (error) {
       Alert.alert(error.message);

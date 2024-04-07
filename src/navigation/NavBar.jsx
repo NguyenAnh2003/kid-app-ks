@@ -6,6 +6,7 @@ import LocationTracking from '../screens/LocationTracking';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CreateSthScreen from '../screens/CreateSthScreen';
+import ListChildToTrack from '../screens/ListChildToTrack';
 
 const Tab = createBottomTabNavigator();
 
@@ -36,7 +37,7 @@ const NavBar = (props) => {
       {/** location screen */}
       <Tab.Screen
         name="Location tracking"
-        component={LocationTracking}
+        component={() => <ListChildToTrack items={["id1","id2"]}/>}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons

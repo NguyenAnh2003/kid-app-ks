@@ -28,6 +28,7 @@ const reducer = (state, action) => {
         gmail: action.payload.gmail,
         country: action.payload.country,
         phone: action.payload.phone,
+        isFetching: false,
       };
 
     default:
@@ -38,6 +39,7 @@ const reducer = (state, action) => {
 const Account = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [state, dispatch] = useReducer(reducer, {
+    isFetching: true,
     avatar: '',
     username: '',
     gmail: '',

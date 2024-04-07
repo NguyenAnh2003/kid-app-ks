@@ -21,8 +21,14 @@ import Entypo from 'react-native-vector-icons/Entypo';
  */
 const reducer = (state, action) => {
   switch (action.type) {
-    case value:
-      break;
+    case 'USER_DATA':
+      /** return fetched data from api */
+      return {
+        username: action.payload.username,
+        gmail: action.payload.gmail,
+        country: action.payload.country,
+        phone: action.payload.phone,
+      };
 
     default:
       return state;
@@ -33,10 +39,10 @@ const Account = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [state, dispatch] = useReducer(reducer, {
     avatar: '',
-    username: 'nguyen anh',
-    gmail: 'cunho@gmail.com',
-    country: 'DN',
-    phone: '01234567',
+    username: '',
+    gmail: '',
+    country: '',
+    phone: '',
   });
 
   /**
@@ -54,6 +60,17 @@ const Account = ({ navigation }) => {
   const gmailRef = useRef();
   const countryRef = useRef();
   const phoneRef = useRef();
+
+  setTimeout(() => {
+    const data = {
+      avatar: '',
+      username: 'nguyen anh',
+      gmail: 'cunho@gmail.com',
+      country: 'DN',
+      phone: '01234567',
+    };
+    dispatch({ type: 'USER_DATA', payload: data });
+  }, 2000);
 
   const imageHandler = async () => {
     const options = {
@@ -132,14 +149,26 @@ const Account = ({ navigation }) => {
       </View>
       {/** from view */}
       <View style={styles.profileInformation}>
-        <CustomInput ref={nameRef} defauleVal={'nguyen anh'} type="text" />
+        <CustomInput
+          ref={nameRef}
+          defauleVal={state && state.username}
+          type="text"
+        />
         <CustomInput
           ref={gmailRef}
-          defauleVal={'cunho@gmail.com'}
+          defauleVal={state && state.gmail}
           type="gmail"
         />
-        <CustomInput ref={countryRef} defauleVal={'ĐN'} type="text" />
-        <CustomInput ref={phoneRef} defauleVal={'00'} type="text" />
+        <CustomInput
+          ref={countryRef}
+          defauleVal={state && state.country}
+          type="text"
+        />
+        <CustomInput
+          ref={phoneRef}
+          defauleVal={state && state.phone}
+          type="text"
+        />
         {/** save button */}
         <TouchableOpacity
           style={{

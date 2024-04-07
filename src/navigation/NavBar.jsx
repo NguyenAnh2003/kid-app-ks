@@ -61,19 +61,6 @@ const NavBar = (props) => {
           ),
         }}
       />
-      <Tab.Screen
-        name="ManageChild"
-        component={AddChild}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? 'account' : 'account-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
     </Tab.Navigator>
   );
 };

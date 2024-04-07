@@ -14,7 +14,6 @@ import {
 } from '../screens';
 
 /** icons */
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { IconButton } from 'react-native-paper';
 

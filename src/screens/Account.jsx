@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import {
   Button,
   StyleSheet,
@@ -13,8 +13,31 @@ import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
 
+/** reducer
+ * username
+ * gmail
+ * country
+ * phone
+ */
+const reducer = (state, action) => {
+  switch (action.type) {
+    case value:
+      break;
+
+    default:
+      return state;
+  }
+};
+
 const Account = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [state, dispatch] = useReducer(reducer, {
+    avatar: '',
+    username: 'nguyen anh',
+    gmail: 'cunho@gmail.com',
+    country: 'DN',
+    phone: '01234567',
+  });
 
   /**
    * @field avatar
@@ -52,20 +75,31 @@ const Account = ({ navigation }) => {
   };
 
   const submitHandler = async () => {
-    /** get all data field */
-    if (
-      !nameRef.current.getValue() &&
-      !gmailRef.current.getValue() &&
-      !countryRef.current.getValue() &&
-      !phoneRef.current.getValue()
-    ) {
-      console.log('null value');
-    } else
-      console.log(
-        nameRef.current.getValue(),
-        gmailRef.current.getValue(),
-        phoneRef.current.getValue()
-      );
+    /**
+     * @param name
+     * @param gmail
+     * @param country
+     * @param phone
+     */
+
+    console.log({
+      /** name */
+      name: nameRef.current.getValue()
+        ? nameRef.current.getValue()
+        : state.username,
+      /** gmail */
+      gmail: gmailRef.current.getValue()
+        ? gmailRef.current.getValue()
+        : state.gmail,
+      /** country */
+      country: countryRef.current.getValue()
+        ? countryRef.current.getValue()
+        : state.country,
+      /** phone */
+      phone: phoneRef.current.getValue()
+        ? phoneRef.current.getValue()
+        : state.phone,
+    });
   };
 
   useEffect(() => {
@@ -73,10 +107,6 @@ const Account = ({ navigation }) => {
       setSelectedImage('');
     };
   }, []);
-
-  useEffect(() => {
-    console.log(selectedImage);
-  }, [selectedImage]);
 
   return (
     <View style={[styles.profileContainer, globalStyle.container]}>

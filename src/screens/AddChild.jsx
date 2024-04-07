@@ -56,19 +56,11 @@ const AddChild = ({ navigation }) => {
   };
 
   const submitHandler = async () => {
-    if (
-      !nameRef.current.getValue() ||
-      !gmailRef.current.getValue() ||
-      !countryRef.current.getValue() ||
-      !phoneRef.current.getValue()
-    ) {
-      console.log('null value');
-    } else
-      console.log(
-        nameRef.current.getValue(),
-        gmailRef.current.getValue(),
-        phoneRef.current.getValue()
-      );
+    console.log(
+      nameRef.current.getValue(),
+      gmailRef.current.getValue(),
+      phoneRef.current.getValue()
+    );
   };
 
   const validateEmail = (text) => {
@@ -103,10 +95,6 @@ const AddChild = ({ navigation }) => {
       setSelectedImage('');
     };
   }, []);
-
-  useEffect(() => {
-    console.log(selectedImage);
-  }, [selectedImage]);
 
   return (
     <View style={[styles.profileContainer, globalStyle.container]}>

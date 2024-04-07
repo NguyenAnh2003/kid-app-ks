@@ -62,7 +62,7 @@ const NavBar = (props) => {
         }}
       />
       <Tab.Screen
-        name="Manage Child"
+        name="ManageChild"
         component={AddChild}
         options={{
           tabBarIcon: ({ color, size, focused }) => (

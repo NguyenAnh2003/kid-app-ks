@@ -14,10 +14,10 @@ import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
 
 /** reducer
- * username
- * gmail
- * country
- * phone
+ * @param username
+ * @param gmail
+ * @param country
+ * @param phone
  */
 const reducer = (state, action) => {
   switch (action.type) {

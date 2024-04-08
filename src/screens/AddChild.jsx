@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Button,
   StyleSheet,
@@ -12,41 +12,14 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { Form, TextValidator } from 'react-native-validator-form';
 
-/** reducer
- * @param username
- * @param gmail
- * @param country
- * @param phone
- */
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'USER_DATA':
-      /** return fetched data from api */
-      return {
-        username: action.payload.username,
-        gmail: action.payload.gmail,
-        country: action.payload.country,
-        phone: action.payload.phone,
-        isFetching: false,
-      };
-
-    default:
-      return state;
-  }
-};
-
-const Account = ({ navigation }) => {
+const AddChild = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [state, dispatch] = useReducer(reducer, {
-    isFetching: true,
-    avatar: '',
-    username: '',
-    gmail: '',
-    country: '',
-    phone: '',
-  });
-
+  const [emailInvalid, setEmailInvalid] = useState(false);
+  const [mail, setMail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [phoneInvalid, setPhoneInvalid] = useState(false);
   /**
    * @field avatar
    * @field username
@@ -62,17 +35,6 @@ const Account = ({ navigation }) => {
   const gmailRef = useRef();
   const countryRef = useRef();
   const phoneRef = useRef();
-
-  setTimeout(() => {
-    const data = {
-      avatar: '',
-      username: 'nguyen anh',
-      gmail: 'cunho@gmail.com',
-      country: 'DN',
-      phone: '01234567',
-    };
-    dispatch({ type: 'USER_DATA', payload: data });
-  }, 2000);
 
   const imageHandler = async () => {
     const options = {
@@ -94,31 +56,38 @@ const Account = ({ navigation }) => {
   };
 
   const submitHandler = async () => {
-    /**
-     * @param name
-     * @param gmail
-     * @param country
-     * @param phone
-     */
+    console.log(
+      nameRef.current.getValue(),
+      gmailRef.current.getValue(),
+      phoneRef.current.getValue()
+    );
+  };
 
-    console.log({
-      /** name */
-      name: nameRef.current.getValue()
-        ? nameRef.current.getValue()
-        : state.username,
-      /** gmail */
-      gmail: gmailRef.current.getValue()
-        ? gmailRef.current.getValue()
-        : state.gmail,
-      /** country */
-      country: countryRef.current.getValue()
-        ? countryRef.current.getValue()
-        : state.country,
-      /** phone */
-      phone: phoneRef.current.getValue()
-        ? phoneRef.current.getValue()
-        : state.phone,
-    });
+  const validateEmail = (text) => {
+    setMail(text);
+    console.log(mail);
+    regex =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (regex.test(text)) {
+      console.log('valid email');
+      setEmailInvalid(false);
+    } else {
+      setEmailInvalid(true);
+      console.log('invalid email');
+    }
+  };
+
+  const validatePhone = (text) => {
+    setPhone(text);
+    console.log(phone);
+    regex = /^(\+?84|0)(\d{9,10})$/;
+    if (regex.test(text)) {
+      console.log('valid phone');
+      setPhoneInvalid(false);
+    } else {
+      setPhoneInvalid(true);
+      console.log('invalid phone');
+    }
   };
 
   useEffect(() => {
@@ -152,25 +121,32 @@ const Account = ({ navigation }) => {
       {/** from view */}
       <View style={styles.profileInformation}>
         <CustomInput
+          style={{}}
           ref={nameRef}
-          defauleVal={state && state.username}
           type="text"
+          placeHolder="Enter your name"
         />
         <CustomInput
           ref={gmailRef}
-          defauleVal={state && state.gmail}
-          type="gmail"
+          placeHolder="Enter your email"
+          type="mail"
+          value={mail}
+          onChangeText={validateEmail}
         />
+        {emailInvalid && <Text style={{ color: 'red' }}>Invalid input</Text>}
         <CustomInput
           ref={countryRef}
-          defauleVal={state && state.country}
           type="text"
+          placeHolder="Enter your address"
         />
         <CustomInput
           ref={phoneRef}
-          defauleVal={state && state.phone}
-          type="text"
+          type="phone"
+          placeHolder="Enter your phone"
+          value={phone}
+          onChangeText={validatePhone}
         />
+        {phoneInvalid && <Text style={{ color: 'red' }}>Invalid input</Text>}
         {/** save button */}
         <TouchableOpacity
           style={{
@@ -239,4 +215,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Account;
+export default AddChild;

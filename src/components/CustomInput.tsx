@@ -8,6 +8,7 @@ export type InputHandle = {
 type InputProps = {
   placeHolder: string;
   type: string;
+  defauleVal: string;
 };
 
 const styles = StyleSheet.create({
@@ -24,19 +25,23 @@ const styles = StyleSheet.create({
 });
 
 const CustomInput = forwardRef<InputHandle, InputProps>(
-  ({ placeHolder, type }, ref) => {
+  ({ placeHolder, type, defauleVal }, ref) => {
     /** guide: https://www.youtube.com/watch?v=NT6FlJv8VoI */
     const [value, setValue] = useState('');
 
     useImperativeHandle(ref, () => ({
       getValue: () => value,
     }));
+    
+       
 
     return (
       <TextInput
         onChangeText={setValue}
         placeholderTextColor={'black'}
+        // type={type}
         secureTextEntry={type === 'password' ? true : false}
+        defaultValue={defauleVal}
         style={styles.input}
         placeholder={placeHolder}
       />

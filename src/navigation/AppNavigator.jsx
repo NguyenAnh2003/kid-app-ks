@@ -1,13 +1,17 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../screens/HomeScreen';
-import AccountScreen from '../screens/AccountScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
 import { useSelector } from 'react-redux';
+
+/** import screens folder */
+import {
+  AccountScreen,
+  HomeScreen,
+  LoginScreen,
+  RegisterScreen,
+} from '../screens';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

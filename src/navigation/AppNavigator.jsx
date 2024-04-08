@@ -8,13 +8,14 @@ import { useSelector } from 'react-redux';
 /** import screens folder */
 import {
   AccountScreen,
+  AddChildScreen,
   HomeScreen,
   LoginScreen,
   RegisterScreen,
 } from '../screens';
 
-const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator(); // tab bar
+const Stack = createStackNavigator(); // stack navigator
 
 const AppNavigator = () => {
   // const [isAuth, setIsAuth] = React.useState(false);

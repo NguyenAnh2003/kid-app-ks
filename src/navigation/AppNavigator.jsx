@@ -62,7 +62,7 @@ const HomeTabs = (props) => {
       {/** home screen */}
       <Tab.Screen
         name="Home"
-        component={Home}
+        component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
@@ -76,7 +76,7 @@ const HomeTabs = (props) => {
       {/** account screen */}
       <Tab.Screen
         name="Account"
-        component={Account}
+        component={AccountScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons

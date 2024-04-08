@@ -39,7 +39,7 @@ const CustomInput = forwardRef<InputHandle, InputProps>(
       <TextInput
         onChangeText={setValue}
         placeholderTextColor={'black'}
-        // type={type}
+        type={type}
         secureTextEntry={type === 'password' ? true : false}
         defaultValue={defauleVal}
         style={styles.input}

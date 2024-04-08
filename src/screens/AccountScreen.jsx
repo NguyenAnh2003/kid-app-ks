@@ -36,7 +36,7 @@ const reducer = (state, action) => {
   }
 };
 
-const Account = ({ navigation }) => {
+const AccountScreen = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [state, dispatch] = useReducer(reducer, {
     isFetching: true,
@@ -239,4 +239,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Account;
+export default AccountScreen;

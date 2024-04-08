@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import Home from '../screens/Home';
-import Account from '../screens/Account';
+import HomeScreen from '../screens/HomeScreen';
+import AccountScreen from '../screens/AccountScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import LoginScreen from '../screens/LoginScreen';

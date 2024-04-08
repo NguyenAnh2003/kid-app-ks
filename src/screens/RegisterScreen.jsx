@@ -1,26 +1,7 @@
 import * as React from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  TextInput,
-  Alert,
-  TouchableOpacity,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import globalStyle, {
-  Padding,
-  Border,
-  Color,
-  FontSize,
-  FontFamily,
-} from '../styles/globalStyle';
-
-import { useState } from 'react';
+import { Text, View, Alert, TouchableOpacity } from 'react-native';
+import globalStyle from '../styles/globalStyle';
 import { supabase } from '../libs/supabase';
-import { Button } from 'react-native-elements';
 import CustomInput from '../components/CustomInput';
 
 const RegisterScreen = ({ navigation }) => {

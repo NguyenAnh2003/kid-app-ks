@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Home = ({ user, navigation, route }) => {
+const HomeScreen = ({ user, navigation, route }) => {
   const [data, setData] = useState();
   const dispatch = useDispatch();
 
@@ -53,4 +53,4 @@ const Home = ({ user, navigation, route }) => {
   );
 };
 
-export default Home;
+export default HomeScreen;

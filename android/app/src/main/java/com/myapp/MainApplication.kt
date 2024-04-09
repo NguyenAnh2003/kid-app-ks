@@ -11,6 +11,11 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.flipper.ReactNativeFlipper
 import com.facebook.soloader.SoLoader
+import android.content.Context
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
+import android.content.Intent
 import com.myapp.*
 
 class MainApplication : Application(), ReactApplication {
@@ -42,6 +47,18 @@ class MainApplication : Application(), ReactApplication {
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       load()
+    }
+    /** create channel */
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        /** channel */
+        val channel = NotificationChannel("running_channel",
+                "Running Notification",
+                NotificationManager.IMPORTANCE_HIGH
+        )
+
+        /**  */
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
     ReactNativeFlipper.initializeFlipper(this, reactNativeHost.reactInstanceManager)
   }

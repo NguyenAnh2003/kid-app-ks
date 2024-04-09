@@ -66,7 +66,7 @@ const HomeTabs = (props) => {
     >
       {/** home screen */}
       <Tab.Screen
-        name="Home"
+        name="HomeScreen"
         component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (

@@ -12,6 +12,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { useSelector } from 'react-redux';
 
 /** reducer
  * @param username
@@ -47,6 +48,8 @@ const AccountScreen = ({ navigation }) => {
     country: '',
     phone: '',
   });
+
+  const currentUser = useSelector((state) => state.userReducers?.user);
 
   /**
    * @field avatar
@@ -149,9 +152,11 @@ const AccountScreen = ({ navigation }) => {
             <Image
               style={styles.avatarImage}
               resizeMode="cover"
-              // source={require('../assets/avatar.png')}
+              source={require('../assets/avatar.png')}
               /**  */
-              source={{ uri: selectedImage ? selectedImage : state.avatar }}
+              // source={{
+              //   uri: selectedImage ? selectedImage : state.avatar,
+              // }}
             />
           )}
           {/** choose image button */}

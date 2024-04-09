@@ -29,6 +29,14 @@ const HomeScreen = ({ user, navigation, route }) => {
       if (status === 200) setData(data);
     };
     fetchDataaa();
+
+    /** config header */
+    navigation.setOptions({
+      headerTitle: () => <Text></Text>,
+    });
+
+    /** remove state */
+    return () => {};
   }, []);
 
   return (

@@ -10,6 +10,7 @@ const initState = {
      * @param user gmail
      */
     session: {},
+    userData: {}
   },
 };
 

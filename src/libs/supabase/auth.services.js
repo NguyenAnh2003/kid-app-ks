@@ -6,7 +6,7 @@ export const loginEmail = async (email, password) => {
    * @param password
    */
   try {
-    const { error, data } = await supabase.auth.signInWithPassword({
+    const { data } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
@@ -17,14 +17,13 @@ export const loginEmail = async (email, password) => {
   }
 };
 
-/** register */
 export const registerEmail = async (email, password) => {
   /** register
    * @param email
    * @param password
    */
   try {
-    const { data, error } = await supabase.auth.signUp({
+    const { data } = await supabase.auth.signUp({
       email: email,
       password: password,
       options: {
@@ -38,5 +37,3 @@ export const registerEmail = async (email, password) => {
     console.log(error.message);
   }
 };
-
-/** logout */

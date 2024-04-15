@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text, View, Alert, TouchableOpacity } from 'react-native';
 import globalStyle from '../styles/globalStyle';
-import { supabase } from '../libs/supabase';
+import { supabase } from '../libs/supabase/supabase';
 import CustomInput from '../components/CustomInput';
 import { registerEmail } from '../libs/supabase/auth.services';
 

@@ -23,10 +23,4 @@ export const appTables = {
   NOTIFICATIONS: 'notifications',
 };
 
-AppState.addEventListener('change', (state) => {
-  if (state === 'active') {
-    supabase.auth.startAutoRefresh();
-  } else {
-    supabase.auth.stopAutoRefresh();
-  }
-});
+// export const appStorage = supabase.storage

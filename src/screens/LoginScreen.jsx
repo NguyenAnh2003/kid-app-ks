@@ -38,7 +38,7 @@ const LoginScreen = ({ navigation }) => {
           dispatch(userLogin(JSON.stringify(session)));
         } else {
           /** handle error here */
-          console.log('cac');
+          console.log('Invalid info');
         }
       }
     } catch (error) {

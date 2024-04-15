@@ -26,12 +26,19 @@ const LoginScreen = ({ navigation }) => {
   const loginHandler = async () => {
     try {
       if (emailRef.current.getValue() && passwordRef.current.getValue()) {
-        const { session, user } = await loginEmail(
+        /** get response */
+        const response = await loginEmail(
           emailRef.current?.getValue(),
           passwordRef.current?.getValue()
         );
+
+        /** session & user */
+        const { session, user } = response;
         if (session && user) {
           dispatch(userLogin(JSON.stringify(session)));
+        } else {
+          /** handle error here */
+          console.log('cac');
         }
       }
     } catch (error) {

@@ -6,18 +6,15 @@ export const loginEmail = async (email, password) => {
    * @param password
    */
   try {
-    const {
-      error,
-      data: { session, user },
-    } = await supabase.auth.signInWithPassword({
+    const { error, data } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
     /** return session (access token, refresh token) */
-    if (session && user) {
-      const responseData = { session, user };
-      return responseData;
+    if (data) {
+      return data;
     }
+    return;
   } catch (error) {
     console.log(error);
   }

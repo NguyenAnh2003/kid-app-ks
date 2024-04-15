@@ -30,16 +30,12 @@ const LoginScreen = ({ navigation }) => {
           emailRef.current?.getValue(),
           passwordRef.current?.getValue()
         );
-        console.log(
-          (emailRef.current.getValue(), passwordRef.current.getValue())
-        );
         if (session && user) {
-          console.log('s',session, user);
           dispatch(userLogin(JSON.stringify(session)));
         }
       }
     } catch (error) {
-      Alert.alert(error.message);
+      Alert.alert();
     }
   };
 

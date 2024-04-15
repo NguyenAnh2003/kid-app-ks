@@ -3,6 +3,7 @@ import { Text, View, Alert, TouchableOpacity } from 'react-native';
 import globalStyle from '../styles/globalStyle';
 import { supabase } from '../libs/supabase';
 import CustomInput from '../components/CustomInput';
+import { registerEmail } from '../libs/supabase/auth.services';
 
 const RegisterScreen = ({ navigation }) => {
   /** states */
@@ -13,16 +14,14 @@ const RegisterScreen = ({ navigation }) => {
   const registerHandler = async () => {
     try {
       if (emailRef.current?.getValue() && passwordRef.current?.getValue()) {
-        const {
-          data: { session, user },
-          error,
-        } = await supabase.auth.signUp({
-          email: emailRef.current?.getValue(),
-          password: passwordRef.current?.getValue(),
-          options: {
-            emailRedirectTo: 'https://example.com/welcome',
-          },
-        });
+        const { session, user } = await registerEmail(
+          emailRef.current?.getValue(),
+          passwordRef.current?.getValue()
+        );
+
+        /** checking session and user if not needed to
+         * confirm on mail then move to login
+         */
         if (!session && !user) {
           const alertPedning = async () => {
             Alert.alert(

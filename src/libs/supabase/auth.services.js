@@ -18,5 +18,25 @@ export const loginEmail = async (email, password) => {
 };
 
 /** register */
+export const registerEmail = async (email, password) => {
+  /** register
+   * @param email
+   * @param password
+   */
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        emailRedirectTo: 'https://example.com/welcome',
+      },
+    });
+
+    /** return session && user */
+    return data ? data : null;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 /** logout */

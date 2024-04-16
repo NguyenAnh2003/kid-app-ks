@@ -3,7 +3,6 @@ import { supabase } from './supabase';
 
 const childrenTable = supabase.from(appTables.CHILDREN); // init childrenTable
 
-export const uploadChildImage = async () => {};
 
 export const createChild = async (parentId, name, age, phone, avatarUrl) => {
   /**

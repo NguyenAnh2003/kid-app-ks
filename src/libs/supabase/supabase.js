@@ -23,4 +23,4 @@ export const appTables = {
   NOTIFICATIONS: 'notifications',
 };
 
-// export const appStorage = supabase.storage
+export const appStorage = supabase.storage.from('images'); //

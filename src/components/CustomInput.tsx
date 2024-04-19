@@ -34,7 +34,6 @@ const CustomInput = forwardRef<InputHandle, InputProps>(
     }));
     
        
-
     return (
       <TextInput
         onChangeText={setValue}

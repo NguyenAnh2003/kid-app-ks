@@ -2,13 +2,15 @@ import React from 'react'
 import { View, Pressable, Text } from 'react-native'
 import { NativeModules } from 'react-native';
 import { AppRegistry } from 'react-native'
-import BackGroundHeadlessTask from "./"
 
-AppRegistry.registerHeadlessTask('BackgroundHeadlessTask', () =>
-    require('./BackgroundHeadlessTask')
-);
+const BackgroundHeadlessTask = async () => {
+    // Your background task logic here
+    console.log('Headless task executed.');
+};
 
-/** */
+// Register the headless task
+AppRegistry.registerHeadlessTask('BackgroundHeadlessTask', () => BackgroundHeadlessTask);
+
 const StateApp = () => {
     const { BackgroundManager } = NativeModules;
 
@@ -34,13 +36,7 @@ const StateApp = () => {
                     Start
                 </Text>
             </Pressable>
-            <Pressable
-                onPress={() => onCancelBtnPress()}
-            >
-                <Text >
-                    End
-                </Text>
-            </Pressable>
+        
         </View>
 
     </>)

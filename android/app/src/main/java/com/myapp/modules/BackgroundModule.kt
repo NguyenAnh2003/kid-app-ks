@@ -1,6 +1,7 @@
 package com.myapp
 
 import android.content.Context
+import android.util.Log
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
@@ -21,6 +22,7 @@ class BackgroundModule(reactContext: ReactApplicationContext) : ReactContextBase
             WorkManager.getInstance(mContext).enqueueUniquePeriodicWork(
                 "testWork", ExistingPeriodicWorkPolicy.KEEP, workRequest
             )
+        Log.d("start", "test")
     }
 
     @ReactMethod

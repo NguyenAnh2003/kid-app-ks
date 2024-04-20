@@ -16,14 +16,17 @@ class BackgroundWorker(context: Context, workerParams: WorkerParameters) :
 
     override fun doWork(): Result {
         Log.d("BackgroundWorker", "Worker started executing.")
-        val extras: Bundle = bundleExtras()
+        val extras = Bundle()
         val service = Intent(applicationContext, BackgroundHeadlessTaskService::class.java)
         service.putExtras(extras)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel()
             applicationContext.startForegroundService(service)
+            Log.d("BackgroundWorker", "start services foreground.")
+            showNotification("Foreground Service", "Background task is running")
         } else {
+            Log.d("BackgroundWorker", "start services.")
             applicationContext.startService(service)
         }
         return Result.success()
@@ -46,9 +49,16 @@ class BackgroundWorker(context: Context, workerParams: WorkerParameters) :
             Log.e("BackgroundWorker", "Error creating notification channel: ${e.message}")
         }
     }
+    private fun showNotification(title: String, message: String) {
+        val channelId = "demo" // Change this to your channel ID
+        val notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
-    private fun bundleExtras(): Bundle {
-        // Add extras to the bundle if needed
-        return Bundle()
+        val notificationManager =
+            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(1, notificationBuilder.build()) // Notification ID can be any unique integer
     }
+
 }

@@ -8,6 +8,9 @@ import { registerEmail } from '../libs/supabase/auth.services';
 const RegisterScreen = ({ navigation }) => {
   /** states */
   const emailRef = React.useRef();
+  const nameRef = React.useRef();
+  const countryRef = React.useRef();
+  const phoneRef = React.useRef();
   const passwordRef = React.useRef();
   const confirmPassRef = React.useRef();
 
@@ -60,6 +63,21 @@ const RegisterScreen = ({ navigation }) => {
         {/** input */}
         <View style={{ flexDirection: 'column', gap: 10 }}>
           <View style={{ flexDirection: 'column', gap: 10 }}>
+            <CustomInput
+              ref={nameRef}
+              placeHolder="Enter your name"
+              type="gmail"
+            />
+            <CustomInput
+              ref={countryRef}
+              placeHolder="Your country"
+              type="gmail"
+            />
+            <CustomInput
+              ref={phoneRef}
+              placeHolder="Your phone number"
+              type="gmail"
+            />
             {/** email */}
             <CustomInput
               ref={emailRef}

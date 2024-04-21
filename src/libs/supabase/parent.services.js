@@ -2,14 +2,18 @@ import { supabase } from './supabase';
 
 const profileTable = supabase.auth;
 
-export const getCurrentUser = async () => {
+const userTable = supabase.from('profiles');
+
+export const getCurrentUser = async (userId) => {
+  console.log('userId', userId);
   try {
     const {
       data: { user },
-    } = await profileTable.getUser();
-    return user ? user : null;
+      status,
+    } = await userTable.select().eq('id', userId);
+    if (status === 200) return user;
   } catch (error) {
-    console.log(error.message);
+    console.log('error', error.message);
   }
 };
 

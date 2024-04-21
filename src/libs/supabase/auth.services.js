@@ -17,7 +17,13 @@ export const loginEmail = async (email, password) => {
   }
 };
 
-export const registerEmail = async (email, password) => {
+export const registerEmail = async (
+  email,
+  password,
+  username,
+  country,
+  phone
+) => {
   /** register
    * @param email
    * @param password
@@ -27,9 +33,16 @@ export const registerEmail = async (email, password) => {
       email: email,
       password: password,
       options: {
-        emailRedirectTo: 'https://example.com/welcome',
+        data: {
+          gmail: email,
+          username,
+          country,
+          phone,
+        },
       },
     });
+
+    console.log(data);
 
     /** return session && user */
     return data ? data : null;

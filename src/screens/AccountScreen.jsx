@@ -145,7 +145,7 @@ const AccountScreen = ({ navigation }) => {
       <View style={[styles.profile]}>
         <View style={[styles.avatar]}>
           {/** image uri read from user info fetch from service */}
-          {state.avatar && (
+          {state && (
             <Image
               style={styles.avatarImage}
               resizeMode="cover"

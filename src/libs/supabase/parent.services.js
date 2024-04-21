@@ -14,6 +14,7 @@ export const getCurrentUser = async (userId) => {
 };
 
 export const updateUserData = async (
+  userId,
   name,
   avatarUrl,
   gmail,
@@ -28,15 +29,17 @@ export const updateUserData = async (
      * @param country
      * @param phone
      */
-    const { data } = await profileTable.updateUser({
-      username: name,
-      avatarUrl: avatarUrl,
-      gmail: gmail,
-      country: country,
-      phone: phone,
-    });
+    const { data, status } = await userTable
+      .update({
+        username: name,
+        avatarUrl: avatarUrl,
+        gmail: gmail,
+        country: country,
+        phone: phone,
+      })
+      .eq('id', userId);
 
-    return data ? data : null;
+    if (status === 200) return data;
   } catch (error) {
     console.log(error.message);
   }

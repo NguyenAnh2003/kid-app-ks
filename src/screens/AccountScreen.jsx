@@ -1,11 +1,9 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import {
-  Button,
   StyleSheet,
   Image,
   Text,
   View,
-  Pressable,
   TouchableOpacity,
 } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';

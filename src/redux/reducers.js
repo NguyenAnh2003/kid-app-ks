@@ -10,8 +10,9 @@ const initState = {
      * @param user gmail
      */
     session: {},
-    userData: {}
+    userData: {},
   },
+  loading: false,
 };
 
 export const itemReducders = (state = initState.item, action) => {
@@ -36,6 +37,17 @@ export const userReducers = (state = initState.user, action) => {
       return { ...state, user: { session: action.payload } };
     case appConstants.USER_LOGOUT:
       return { ...state, user: { session: null } };
+    default:
+      return state;
+  }
+};
+
+export const loadingReducers = (state = initState.loading, action) => {
+  switch (action.type) {
+    case appConstants.START_FETCHING:
+      return true;
+    case appConstants.STOP_FETCHING:
+      return false;
     default:
       return state;
   }

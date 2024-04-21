@@ -13,6 +13,7 @@ import {
   LoginScreen,
   RegisterScreen,
 } from '../screens';
+import SplashScreen from '../screens/SplashScreen';
 
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
@@ -21,6 +22,8 @@ const AppNavigator = () => {
   // const [isAuth, setIsAuth] = React.useState(false);
   /** currentSession - accessToken ... */
   const currentUser = useSelector((state) => state.userReducers?.user);
+  const isFetching = useSelector((state) => state.loadingReducers);
+  
 
   const session = React.useMemo(() => {
     if (!currentUser) return;
@@ -31,11 +34,19 @@ const AppNavigator = () => {
   return (
     <Stack.Navigator>
       {session ? (
-        <Stack.Screen
-          name="Home"
-          component={HomeTabs}
-          options={{ headerShown: false }}
-        ></Stack.Screen>
+        !isFetching ? (
+          <Stack.Screen
+            name="Home"
+            component={HomeTabs}
+            options={{ headerShown: false }}
+          ></Stack.Screen>
+        ) : (
+          <Stack.Screen
+            name="Splash"
+            component={SplashScreen}
+            options={{ headerShown: false }}
+          ></Stack.Screen>
+        )
       ) : (
         <>
           <Stack.Screen

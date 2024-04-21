@@ -15,12 +15,9 @@ const styles = StyleSheet.create({
   },
 });
 
-
-
 const HomeScreen = ({ user, navigation, route }) => {
   const [data, setData] = useState();
   const dispatch = useDispatch();
-  
 
   const currentUserSession = useSelector((state) => state.userReducers?.user);
 
@@ -29,6 +26,12 @@ const HomeScreen = ({ user, navigation, route }) => {
   useEffect(() => {
     /** exp caching data */
     const fetchDataaa = async () => {
+      const userData = JSON.parse(currentUserSession.session);
+      if (userData) {
+        const { id } = userData.user;
+        const data = await getCurrentUser(id);
+        console.log('current user', data);
+      }
     };
     fetchDataaa();
 

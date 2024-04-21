@@ -41,14 +41,3 @@ export const userReducers = (state = initState.user, action) => {
       return state;
   }
 };
-
-export const loadingReducers = (state = initState.loading, action) => {
-  switch (action.type) {
-    case appConstants.START_FETCHING:
-      return true;
-    case appConstants.STOP_FETCHING:
-      return false;
-    default:
-      return state;
-  }
-};

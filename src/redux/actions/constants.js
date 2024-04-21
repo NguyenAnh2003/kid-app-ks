@@ -4,9 +4,6 @@ const appConstants = {
   USER_ACTIVITY: 'USER_ACTIVITY',
   USER_LOGIN: 'USER_LOGIN',
   USER_LOGOUT: 'USER_LOGOUT',
-  /** loading state */
-  START_FETCHING: 'START_FETCHING',
-  STOP_FETCHING: 'STOP_FETCHING',
 };
 
 export default appConstants;

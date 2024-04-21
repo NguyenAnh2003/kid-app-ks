@@ -1,17 +1,12 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
-import {
-  StyleSheet,
-  Image,
-  Text,
-  View,
-  TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, Image, Text, View, TouchableOpacity } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUser } from '../libs/supabase/parent.services';
+import SplashScreen from './SplashScreen';
 
 /** reducer
  * @param username
@@ -47,6 +42,8 @@ const AccountScreen = ({ navigation }) => {
     country: '',
     phone: '',
   });
+
+  const dispatchFetching = useDispatch();
 
   const currentUserSession = useSelector((state) => state.userReducers?.user);
 
@@ -137,7 +134,9 @@ const AccountScreen = ({ navigation }) => {
     });
   };
 
-  return (
+  return state.isFetching ? (
+    <SplashScreen />
+  ) : (
     <View style={[styles.profileContainer, globalStyle.container]}>
       {/** image view */}
       <View style={[styles.profile]}>

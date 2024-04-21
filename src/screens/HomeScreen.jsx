@@ -15,9 +15,12 @@ const styles = StyleSheet.create({
   },
 });
 
+
+
 const HomeScreen = ({ user, navigation, route }) => {
   const [data, setData] = useState();
   const dispatch = useDispatch();
+  
 
   const currentUserSession = useSelector((state) => state.userReducers?.user);
 
@@ -25,7 +28,8 @@ const HomeScreen = ({ user, navigation, route }) => {
 
   useEffect(() => {
     /** exp caching data */
-    const fetchDataaa = async () => {};
+    const fetchDataaa = async () => {
+    };
     fetchDataaa();
 
     /** config header */

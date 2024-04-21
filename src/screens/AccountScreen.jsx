@@ -13,6 +13,7 @@ import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
+import { getCurrentUser } from '../libs/supabase/parent.services';
 
 /** reducer
  * @param username
@@ -25,11 +26,11 @@ const reducer = (state, action) => {
     case 'USER_DATA':
       /** return fetched data from api */
       return {
-        avatar: action.payload.avatar,
+        avatar: action.payload.avatarUrl,
         username: action.payload.username,
         gmail: action.payload.gmail,
         country: action.payload.country,
-        phone: action.payload.phone,
+        phone: JSON.stringify(action.payload.phone),
         isFetching: false,
       };
 
@@ -49,7 +50,7 @@ const AccountScreen = ({ navigation }) => {
     phone: '',
   });
 
-  const currentUser = useSelector((state) => state.userReducers?.user);
+  const currentUserSession = useSelector((state) => state.userReducers?.user);
 
   /**
    * @field avatar
@@ -68,29 +69,25 @@ const AccountScreen = ({ navigation }) => {
   const phoneRef = useRef();
 
   useEffect(() => {
-    /** fetch data from service */
-    const fetchDataa = async () => {};
+    const fetchDataaa = async () => {
+      const userData = JSON.parse(currentUserSession.session);
+      if (userData) {
+        const { id } = userData.user;
+        const data = await getCurrentUser(id);
+        if (data) {
+          console.log(data[0]);
+          dispatch({ type: 'USER_DATA', payload: data[0] });
+        }
+      }
+    };
 
-    /** function call */
-    fetchDataa();
+    fetchDataaa();
 
     /** remove state */
     return () => {
       setSelectedImage('');
     };
   }, [navigation]);
-
-  setTimeout(() => {
-    const data = {
-      avatar:
-        'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=RKGYlzhnRFYAb6v0RvL&_nc_ht=scontent.fdad4-1.fna&oh=00_AfDwBYskRsDG8Rp8j04chjwA73YA4ZgZT0maDJtZxZuyUA&oe=663B5A38',
-      username: 'nguyen anh',
-      gmail: 'cunho@gmail.com',
-      country: 'DN',
-      phone: '01234567',
-    };
-    dispatch({ type: 'USER_DATA', payload: data });
-  }, 2000);
 
   const imageHandler = async () => {
     /** options */
@@ -148,15 +145,14 @@ const AccountScreen = ({ navigation }) => {
       <View style={[styles.profile]}>
         <View style={[styles.avatar]}>
           {/** image uri read from user info fetch from service */}
-          {state && (
+          {state.avatar && (
             <Image
               style={styles.avatarImage}
               resizeMode="cover"
-              source={require('../assets/avatar.png')}
               /**  */
-              // source={{
-              //   uri: selectedImage ? selectedImage : state.avatar,
-              // }}
+              source={{
+                uri: selectedImage ? selectedImage : state.avatar,
+              }}
             />
           )}
           {/** choose image button */}

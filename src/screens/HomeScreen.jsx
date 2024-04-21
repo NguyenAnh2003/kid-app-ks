@@ -25,18 +25,7 @@ const HomeScreen = ({ user, navigation, route }) => {
 
   useEffect(() => {
     /** exp caching data */
-    const fetchDataaa = async () => {
-      const userData = JSON.parse(currentUserSession.session);
-      console.log(userData.user.id);
-      if (userData) {
-        const { id } = userData.user;
-        const user = await getCurrentUser(id);
-        if (user) {
-          console.log(user);
-          setData(user);
-        }
-      }
-    };
+    const fetchDataaa = async () => {};
     fetchDataaa();
 
     /** config header */

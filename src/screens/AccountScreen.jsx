@@ -129,8 +129,8 @@ const AccountScreen = ({ navigation }) => {
         : state.country,
       /** phone */
       phone: phoneRef.current.getValue()
-        ? phoneRef.current.getValue()
-        : state.phone,
+        ? parseInt(phoneRef.current.getValue())
+        : parseInt(state.phone),
     });
   };
 

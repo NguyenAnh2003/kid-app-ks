@@ -16,5 +16,6 @@ class AppModulesPackage : ReactPackage {
     ): MutableList<ViewManager<View, ReactShadowNode<*>>> = mutableListOf()
 
     override fun createNativeModules(reactContext: ReactApplicationContext):
-        MutableList<NativeModule> = listOf(UsageStatsModule(reactContext)).toMutableList()
+        MutableList<NativeModule> = listOf(UsageStatsModule(reactContext),
+                                            BackgroundModule(reactContext)).toMutableList()
 }

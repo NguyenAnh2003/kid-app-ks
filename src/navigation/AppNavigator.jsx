@@ -13,7 +13,7 @@ import {
   LoginScreen,
   RegisterScreen,
 } from '../screens';
-
+import StateApp from '../screens/StateApp';
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
 
@@ -38,6 +38,11 @@ const AppNavigator = () => {
         ></Stack.Screen>
       ) : (
         <>
+          <Stack.Screen
+              name="state"
+              component={StateApp}
+              options={{ headerShown: false }}
+            ></Stack.Screen>
           <Stack.Screen
             name="SignIn"
             component={LoginScreen}

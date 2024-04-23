@@ -38,39 +38,46 @@ const packageList = [
   {
     id: '1',
     name: 'facebook',
-    packageName: 'com.facebook.katana',
+    packageName: 'com.myapp',
     timeUsed: 10,
-    dateUsed: '22/3/2024',
+    dateUsed: '2024-04-23',
   },
   {
     id: '2',
     name: 'facebook',
-    packageName: 'com.facebook.katana',
+    packageName: 'com.myapp',
     timeUsed: 1,
-    dateUsed: '22/3/2024',
+    dateUsed: '2024-04-23',
   },
   {
     id: '3',
     name: 'instagram',
-    packageName: 'com.instagram.android',
+    packageName: 'com.myapp',
     timeUsed: 1,
-    dateUsed: '22/3/2024',
+    dateUsed: '2024-04-21',
   },
   {
     id: '3',
     name: 'zalo',
-    packageName: 'com.zing.zalo',
+    packageName: 'com.myapp',
     timeUsed: 1,
-    dateUsed: '22/3/2024',
+    dateUsed: '2024-04-22',
   },
   {
     id: '3',
     name: 'zalo',
-    packageName: 'com.zing.zalo',
+    packageName: 'com.myapp',
     timeUsed: 2,
-    dateUsed: '22/3/2024',
+    dateUsed: '2024-04-19',
   },
 ];
+
+// đây là số lương ngày và tuần muốn hiển thị, 
+// ví dụ numDay = 1 thì hiển thị thống kê trong vòng 1 ngày trước,
+// numDay = 2 thì hiển thị thống kê trong vòng 2 ngày trước
+
+const numDay = 1
+const numWeek = 1
 
 const SingleChildScreen = ({ route, navigation }) => {
   /**
@@ -88,6 +95,70 @@ const SingleChildScreen = ({ route, navigation }) => {
   /** state */
   const [dataa, setDataa] = useState({});
   const [activities, setActivities] = useState(packageList);
+  const [activitiesDay, setActivitiesDay] = useState(packageList);
+  const [activitiesWeek, setActivitiesWeek] = useState(packageList);
+
+  useEffect(() => {
+    const today = new Date();
+    
+    const previousDay = new Date(today);
+    previousDay.setDate(today.getDate() - 1*numDay);
+  
+    console.log("Today: " + today);
+    console.log("Previous Day: " + previousDay);
+  
+    // Filter data for the previous day
+    const previousDayData = packageList.filter(item => {
+      const itemDate = new Date(item.dateUsed);
+      // Compare timestamps of itemDate and previousDay
+      return itemDate.getTime() >= previousDay.getTime() && 
+             itemDate.getTime() < today.getTime();
+    });
+  
+    console.log("Previous Day Data: ", previousDayData);
+  
+    const fetchData = async () => {
+      const processedPackage = await AppPackaging.preprocessAppPackageInfo(previousDayData);
+      if (processedPackage) {
+        setActivitiesDay(processedPackage);
+      }
+    };
+     
+    fetchData(); 
+  
+  }, []);
+  
+
+
+  useEffect(() => {
+    const today = new Date();
+    
+    const previousWeek = new Date(today);
+    previousWeek.setDate(today.getDate() - 7*numWeek); 
+  
+    console.log("Today: " + today);
+    console.log("Previous Week: " + previousWeek);
+  
+    // Filter data for the previous day
+    const previousWeekData = packageList.filter(item => {
+      const itemDate = new Date(item.dateUsed);
+      // Compare timestamps of itemDate and previousWeek
+      return itemDate >= previousWeek && 
+             itemDate < today;
+    });
+  
+    console.log("Previous Week Data: ", previousWeekData);
+  
+    const fetchData = async () => {
+      const processedPackage = await AppPackaging.preprocessAppPackageInfo(previousWeekData);
+      if (processedPackage) {
+        setActivitiesWeek(processedPackage);
+      }
+    };
+     
+    fetchData(); // Call fetchData function
+  
+  }, [])
 
   useEffect(() => {
     const fetchDataa = async () => {
@@ -95,11 +166,14 @@ const SingleChildScreen = ({ route, navigation }) => {
         packageList
       );
       if (processedPackage) {
+        // console.log(processedPackage);
         setActivities(processedPackage);
       }
     };
+     
     fetchDataa();
   }, []);
+
 
   useEffect(() => {
     /** setup header when (childId, navigation) change */
@@ -116,6 +190,8 @@ const SingleChildScreen = ({ route, navigation }) => {
         </View>
       ),
     });
+
+    // console.log(activitiesDay[0].dateUsed);
 
     /** fetch child data by childId */
 
@@ -206,9 +282,21 @@ const SingleChildScreen = ({ route, navigation }) => {
               fontWeight: '600',
             }}
           >
-            Screen time
+            Screen time last day
           </Text>
-          {activities && <UsageChart activities={activities} />}
+          {activitiesDay && <UsageChart activities={activitiesDay} />}
+          <Text
+            style={{
+              color: 'black',
+              marginTop: 5,
+              marginLeft: 5,
+              fontSize: 20,
+              fontWeight: '600',
+            }}
+          >
+            Screen time last week
+          </Text>
+          {activitiesWeek && <UsageChart activities={activitiesWeek} />}
         </ScrollView>
       </View>
     </View>

@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import globalStyle from '../styles/globalStyle';
 import { useReducer, useRef, useState } from 'react';
-import { supabase } from '../libs/supabase/supabase';
 import CustomInput from '../components/CustomInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogin } from '../redux/actions/actions';
@@ -21,17 +20,15 @@ const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const passwordRef = useRef();
   const emailRef = useRef();
-  const currentSession = useSelector((state) => state.userReducers?.user);
 
   const loginHandler = async () => {
     try {
-      if (emailRef.current.getValue() && passwordRef.current.getValue()) {
+      if (emailRef.current?.getValue() && passwordRef.current?.getValue()) {
         /** get response */
         const response = await loginEmail(
           emailRef.current?.getValue(),
           passwordRef.current?.getValue()
         );
-
         /** session & user */
         const { session, user } = response;
         if (session && user) {

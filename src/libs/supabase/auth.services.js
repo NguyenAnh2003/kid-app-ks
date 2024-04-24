@@ -10,6 +10,7 @@ export const loginEmail = async (email, password) => {
       email: email,
       password: password,
     });
+    console.log(data);
     /** return session (access token, refresh token) */
     return data ? data : null;
   } catch (error) {

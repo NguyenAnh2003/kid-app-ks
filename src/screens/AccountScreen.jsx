@@ -6,6 +6,8 @@ import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUser } from '../libs/supabase/parent.services';
+import { updateUserData } from '../libs/supabase/parent.services';
+import { supabase } from '../libs/supabase/supabase';
 import SplashScreen from './SplashScreen';
 
 /** reducer
@@ -34,6 +36,7 @@ const reducer = (state, action) => {
 
 const AccountScreen = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState('');
   const [state, dispatch] = useReducer(reducer, {
     isFetching: true,
     avatar: '',
@@ -84,6 +87,37 @@ const AccountScreen = ({ navigation }) => {
     };
   }, [navigation]);
 
+  const getImageUrl = (avaUrl) => {
+    try {
+      const { data } = supabase.storage.from('avatars').getPublicUrl(avaUrl);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const uploadImage = async (imageUri) => {
+    let avaUrl = `public/${Date.now()}.jpg`;
+    try {
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(avaUrl, {
+          uri: imageUri,
+        });
+      if (data) {
+        // avaUrl = getImageUrl(avaUrl);
+        setAvatarUrl(getImageUrl(avaUrl).publicUrl);
+      }
+      console.log(data);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  };
+
+  useEffect(() => {
+    console.log('Avatar url:', avatarUrl);
+  }, [avatarUrl]);
+
   const imageHandler = async () => {
     /** options */
     const options = {
@@ -102,37 +136,74 @@ const AccountScreen = ({ navigation }) => {
       } else {
         let imageUri = response.uri || response.assets?.[0]?.uri;
         setSelectedImage(imageUri);
+        console.log('Image uri:', imageUri);
+        uploadImage(imageUri);
       }
     });
   };
 
   const submitHandler = async () => {
     /**
+     * @param userId
      * @param name
      * @param gmail
      * @param country
      * @param phone
+     * @param avatarUrl
      */
-
-    console.log({
-      /** name */
-      name: nameRef.current.getValue()
-        ? nameRef.current.getValue()
-        : state.username,
-      /** gmail */
-      gmail: gmailRef.current.getValue()
-        ? gmailRef.current.getValue()
-        : state.gmail,
-      /** country */
-      country: countryRef.current.getValue()
-        ? countryRef.current.getValue()
-        : state.country,
-      /** phone */
-      phone: phoneRef.current.getValue()
-        ? parseInt(phoneRef.current.getValue())
-        : parseInt(state.phone),
-    });
+    // console.log({
+    //   /** name */
+    //   name: nameRef.current.getValue()
+    //     ? nameRef.current.getValue()
+    //     : state.username,
+    //   /** gmail */
+    //   gmail: gmailRef.current.getValue()
+    //     ? gmailRef.current.getValue()
+    //     : state.gmail,
+    //   /** country */
+    //   country: countryRef.current.getValue()
+    //     ? countryRef.current.getValue()
+    //     : state.country,
+    //   /** phone */
+    //   phone: phoneRef.current.getValue()
+    //     ? parseInt(phoneRef.current.getValue())
+    //     : parseInt(state.phone),
+    //   id: JSON.parse(currentUserSession.session).user.id,
+    // });
+    try {
+      const userId = JSON.parse(currentUserSession.session).user.id;
+      const name = nameRef.current.getValue();
+      const gmail = gmailRef.current.getValue();
+      const country = countryRef.current.getValue();
+      const phone = parseInt(phoneRef.current.getValue());
+      console.log(
+        'Update user information:',
+        userId,
+        name,
+        avatarUrl,
+        gmail,
+        country,
+        phone
+      );
+      const data = await updateUserData(
+        userId,
+        name,
+        avatarUrl,
+        gmail,
+        country,
+        phone
+      );
+      console.log('User acount updated:', data);
+    } catch (error) {
+      console.error('Error update user information:', error);
+    }
   };
+
+  useEffect(() => {
+    return () => {
+      setSelectedImage('');
+    };
+  }, []);
 
   return state.isFetching ? (
     <SplashScreen />

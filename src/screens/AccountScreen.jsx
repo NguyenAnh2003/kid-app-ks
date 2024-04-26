@@ -24,6 +24,7 @@ import { updateUserData } from '../libs/supabase/parent.services';
 import { supabase } from '../libs/supabase/supabase';
 import SplashScreen from './SplashScreen';
 import { getImageUrl } from '../libs';
+import getCurrentuserInfo from '../libs/getCurrentUser';
 
 /** reducer
  * @param username
@@ -78,14 +79,8 @@ const AccountScreen = ({ navigation }) => {
 
   useEffect(() => {
     const fetchDataaa = async () => {
-      const userData = JSON.parse(currentUserSession.session);
-      if (userData) {
-        const { id } = userData.user;
-        const data = await getCurrentUser(id);
-        if (data) {
-          dispatch({ type: 'USER_DATA', payload: data[0] });
-        }
-      }
+      const data = await getCurrentuserInfo(currentUserSession);
+      if (data) dispatch({ type: 'USER_DATA', payload: data[0] });
     };
 
     fetchDataaa();
@@ -99,14 +94,8 @@ const AccountScreen = ({ navigation }) => {
   const onRefresh = useCallback(() => {
     setRefresh(true);
     const fetchDataaa = async () => {
-      const userData = JSON.parse(currentUserSession.session);
-      if (userData) {
-        const { id } = userData.user;
-        const data = await getCurrentUser(id);
-        if (data) {
-          dispatch({ type: 'USER_DATA', payload: data[0] });
-        }
-      }
+      const data = await getCurrentuserInfo(currentUserSession);
+      if (data) dispatch({ type: 'USER_DATA', payload: data[0] });
     };
 
     fetchDataaa();

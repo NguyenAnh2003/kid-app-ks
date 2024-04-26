@@ -40,7 +40,7 @@ const packageList = [
     name: 'facebook',
     packageName: 'com.myapp',
     timeUsed: 10,
-    dateUsed: '2024-04-23',
+    dateUsed: '2024-04-26',
   },
   {
     id: '2',
@@ -54,7 +54,7 @@ const packageList = [
     name: 'instagram',
     packageName: 'com.myapp',
     timeUsed: 1,
-    dateUsed: '2024-04-21',
+    dateUsed: '2024-04-26',
   },
   {
     id: '3',
@@ -68,7 +68,7 @@ const packageList = [
     name: 'zalo',
     packageName: 'com.myapp',
     timeUsed: 2,
-    dateUsed: '2024-04-19',
+    dateUsed: '2024-04-24',
   },
 ];
 
@@ -264,6 +264,82 @@ const SingleChildScreen = ({ route, navigation }) => {
                 {activities &&
                   Array.isArray(activities) &&
                   activities?.map((i, index) => (
+                    <ActivityCard
+                      key={index}
+                      packageName={i.name}
+                      packageImage={i.icon}
+                      packageTimeUsed={i.timeUsed}
+                      packageDateUsed={i.dateUsed}
+                    />
+                  ))}
+              </View>
+            </ScrollView>
+          </View>
+          {/** activities last day view */}
+          <Text
+            style={{
+              color: 'black',
+              marginTop: 5,
+              marginLeft: 5,
+              fontSize: 20,
+              fontWeight: '600',
+            }}
+          >
+            Last day activities
+          </Text>
+          {/** block activities last day */}
+          <View style={{ height: 280 }}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+              <View
+                style={{
+                  paddingHorizontal: 15,
+                  paddingVertical: 15,
+                  backgroundColor: '#fff',
+                  flexDirection: 'column',
+                  gap: 12,
+                }}
+              >
+                {activitiesDay &&
+                  Array.isArray(activitiesDay) &&
+                  activitiesDay?.map((i, index) => (
+                    <ActivityCard
+                      key={index}
+                      packageName={i.name}
+                      packageImage={i.icon}
+                      packageTimeUsed={i.timeUsed}
+                      packageDateUsed={i.dateUsed}
+                    />
+                  ))}
+              </View>
+            </ScrollView>
+          </View>
+          {/** activities last week view */}
+          <Text
+            style={{
+              color: 'black',
+              marginTop: 5,
+              marginLeft: 5,
+              fontSize: 20,
+              fontWeight: '600',
+            }}
+          >
+            Last Week activities
+          </Text>
+          {/** block activities last week */}
+          <View style={{ height: 280 }}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+              <View
+                style={{
+                  paddingHorizontal: 15,
+                  paddingVertical: 15,
+                  backgroundColor: '#fff',
+                  flexDirection: 'column',
+                  gap: 12,
+                }}
+              >
+                {activitiesWeek &&
+                  Array.isArray(activitiesWeek) &&
+                  activitiesWeek?.map((i, index) => (
                     <ActivityCard
                       key={index}
                       packageName={i.name}

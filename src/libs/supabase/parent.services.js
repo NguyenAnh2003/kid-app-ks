@@ -39,7 +39,9 @@ export const updateUserData = async (
       })
       .eq('id', userId);
 
-    if (status === 200) return data;
+    if (status === 200) {
+      return data;
+    }
   } catch (error) {
     console.log(error.message);
   }

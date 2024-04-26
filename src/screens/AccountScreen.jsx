@@ -1,5 +1,19 @@
-import React, { useEffect, useReducer, useRef, useState } from 'react';
-import { StyleSheet, Image, Text, View, TouchableOpacity } from 'react-native';
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
+import {
+  StyleSheet,
+  Image,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
@@ -35,19 +49,6 @@ const reducer = (state, action) => {
 };
 
 const AccountScreen = ({ navigation }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const [state, dispatch] = useReducer(reducer, {
-    isFetching: true,
-    avatar: '',
-    username: '',
-    gmail: '',
-    country: '',
-    phone: '',
-  });
-
-  const currentUserSession = useSelector((state) => state.userReducers?.user);
-
   /**
    * @field avatar
    * @field username
@@ -56,7 +57,17 @@ const AccountScreen = ({ navigation }) => {
    * @field phone numer
    */
 
-  const { navigate } = navigation;
+  const currentUserSession = useSelector((state) => state.userReducers?.user);
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [refresh, setRefresh] = useState(false);
+  const [state, dispatch] = useReducer(reducer, {
+    isFetching: true,
+    avatar: '',
+    username: '',
+    gmail: '',
+    country: '',
+    phone: '',
+  });
 
   /** state ; ref */
   const nameRef = useRef();
@@ -80,9 +91,26 @@ const AccountScreen = ({ navigation }) => {
 
     /** remove state */
     return () => {
-      setAvatarUrl('')
+      setAvatarUrl('');
     };
   }, [navigation]);
+
+  const onRefresh = useCallback(() => {
+    setRefresh(true);
+    const fetchDataaa = async () => {
+      const userData = JSON.parse(currentUserSession.session);
+      if (userData) {
+        const { id } = userData.user;
+        const data = await getCurrentUser(id);
+        if (data) {
+          dispatch({ type: 'USER_DATA', payload: data[0] });
+        }
+      }
+    };
+
+    fetchDataaa();
+    setRefresh(false);
+  }, []);
 
   const getImageUrl = (avaUrl) => {
     try {
@@ -110,10 +138,6 @@ const AccountScreen = ({ navigation }) => {
       console.error('Error uploading image:', error);
     }
   };
-
-  useEffect(() => {
-    console.log('Avatar url:', avatarUrl);
-  }, [avatarUrl]);
 
   const imageHandler = async () => {
     /** options */
@@ -176,85 +200,86 @@ const AccountScreen = ({ navigation }) => {
         country,
         phone
       );
-      console.log('User acount updated:', data);
+      if (data) console.log('User acount updated:', data);
     } catch (error) {
-      console.error('Error update user information:', error);
+      console.log('Error update user information:', error.message);
     }
   };
-
-  useEffect(() => {
-    return () => {
-      setSelectedImage('');
-    };
-  }, []);
 
   return state.isFetching ? (
     <SplashScreen />
   ) : (
-    <View style={[styles.profileContainer, globalStyle.container]}>
-      {/** image view */}
-      <View style={[styles.profile]}>
-        <View style={[styles.avatar]}>
-          {/** image uri read from user info fetch from service */}
-          {state && (
-            <Image
-              style={styles.avatarImage}
-              resizeMode="cover"
-              /**  */
-              source={{
-                uri: avatarUrl ? avatarUrl : state.avatar,
-              }}
+    <ScrollView
+      contentContainerStyle={{ flex: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+      }
+    >
+      <View style={[styles.profileContainer, globalStyle.container]}>
+        {/** image view */}
+        <View style={[styles.profile]}>
+          <View style={[styles.avatar]}>
+            {/** image uri read from user info fetch from service */}
+            {state && (
+              <Image
+                style={styles.avatarImage}
+                resizeMode="cover"
+                /**  */
+                source={{
+                  uri: avatarUrl ? avatarUrl : state.avatar,
+                }}
+              />
+            )}
+            {/** choose image button */}
+            <Entypo
+              name={'edit'}
+              size={20}
+              color="black"
+              style={styles.avatarEditor}
+              onPress={imageHandler}
             />
-          )}
-          {/** choose image button */}
-          <Entypo
-            name={'edit'}
-            size={20}
-            color="black"
-            style={styles.avatarEditor}
-            onPress={imageHandler}
-          />
+          </View>
+          <Text style={[styles.accountName]}>Nomnom</Text>
         </View>
-        <Text style={[styles.accountName]}>Nomnom</Text>
+        {/** from view */}
+        <View style={styles.profileInformation}>
+          <CustomInput
+            ref={nameRef}
+            defauleVal={state && state.username}
+            type="text"
+          />
+          <CustomInput
+            ref={gmailRef}
+            defauleVal={state && state.gmail}
+            type="gmail"
+          />
+          <CustomInput
+            ref={countryRef}
+            defauleVal={state && state.country}
+            type="text"
+          />
+          <CustomInput
+            ref={phoneRef}
+            defauleVal={state && state.phone}
+            type="text"
+          />
+          {/** save button */}
+          <TouchableOpacity
+            style={{
+              backgroundColor: 'black',
+              padding: 10,
+              alignSelf: 'flex-end',
+              borderRadius: 5,
+            }}
+            onPress={submitHandler}
+          >
+            <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>
+              Save
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      {/** from view */}
-      <View style={styles.profileInformation}>
-        <CustomInput
-          ref={nameRef}
-          defauleVal={state && state.username}
-          type="text"
-        />
-        <CustomInput
-          ref={gmailRef}
-          defauleVal={state && state.gmail}
-          type="gmail"
-        />
-        <CustomInput
-          ref={countryRef}
-          defauleVal={state && state.country}
-          type="text"
-        />
-        <CustomInput
-          ref={phoneRef}
-          defauleVal={state && state.phone}
-          type="text"
-        />
-        {/** save button */}
-        <TouchableOpacity
-          style={{
-            backgroundColor: 'black',
-            padding: 10,
-            alignSelf: 'flex-end',
-            borderRadius: 5,
-          }}
-          onPress={submitHandler}
-        >
-          <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>
-            Save
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({

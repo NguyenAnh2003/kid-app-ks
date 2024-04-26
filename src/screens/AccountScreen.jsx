@@ -23,6 +23,7 @@ import { getCurrentUser } from '../libs/supabase/parent.services';
 import { updateUserData } from '../libs/supabase/parent.services';
 import { supabase } from '../libs/supabase/supabase';
 import SplashScreen from './SplashScreen';
+import { getImageUrl } from '../libs';
 
 /** reducer
  * @param username
@@ -112,15 +113,6 @@ const AccountScreen = ({ navigation }) => {
     setRefresh(false);
   }, []);
 
-  const getImageUrl = (avaUrl) => {
-    try {
-      const { data } = supabase.storage.from('avatars').getPublicUrl(avaUrl);
-      return data;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const uploadImage = async (imageUri) => {
     let avaUrl = `public/${Date.now()}.jpg`;
     try {
@@ -130,8 +122,8 @@ const AccountScreen = ({ navigation }) => {
           uri: imageUri,
         });
       if (data) {
-        // avaUrl = getImageUrl(avaUrl);
-        setAvatarUrl(getImageUrl(avaUrl).publicUrl);
+        const imageUrl = getImageUrl(data.path);
+        setAvatarUrl(imageUrl);
       }
       console.log(data);
     } catch (error) {

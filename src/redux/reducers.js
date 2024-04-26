@@ -10,7 +10,9 @@ const initState = {
      * @param user gmail
      */
     session: {},
+    userData: {},
   },
+  loading: false,
 };
 
 export const itemReducders = (state = initState.item, action) => {

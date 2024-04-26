@@ -13,6 +13,7 @@ import {
   LoginScreen,
   RegisterScreen,
 } from '../screens';
+import SplashScreen from '../screens/SplashScreen';
 
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator

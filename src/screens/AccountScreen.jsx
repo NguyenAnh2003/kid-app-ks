@@ -1,18 +1,30 @@
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import {
-  Button,
   StyleSheet,
   Image,
   Text,
   View,
-  Pressable,
   TouchableOpacity,
+  ScrollView,
+  RefreshControl,
 } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
+import { updateUserData } from '../libs/supabase/parent.services';
+import { supabase } from '../libs/supabase/supabase';
+import SplashScreen from './SplashScreen';
+import { getImageUrl } from '../libs';
+import getCurrentuserInfo from '../libs/getCurrentUser';
 
 /** reducer
  * @param username
@@ -25,21 +37,37 @@ const reducer = (state, action) => {
     case 'USER_DATA':
       /** return fetched data from api */
       return {
-        avatar: action.payload.avatar,
+        avatar: action.payload.avatarUrl,
         username: action.payload.username,
         gmail: action.payload.gmail,
         country: action.payload.country,
-        phone: action.payload.phone,
+        phone: JSON.stringify(action.payload.phone),
         isFetching: false,
       };
-
+    case 'UPLOAD_IMAGE':
+      return { ...state, isFetching: true };
+    case 'UPLOAD_IMAGE_SUCCESS':
+      return { ...state, avatar: action.payload, isFetching: false };
+    case 'PROCESSING_UPDATE_DATA':
+      return { ...state, isFetching: true };
+    case 'UPDATE_COMPLETED':
+      return { ...state, isFetching: false };
     default:
       return state;
   }
 };
 
 const AccountScreen = ({ navigation }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
+  /**
+   * @field avatar
+   * @field username
+   * @field gmail
+   * @field country
+   * @field phone numer
+   */
+
+  const currentUserSession = useSelector((state) => state.userReducers?.user);
+  const [refresh, setRefresh] = useState(false);
   const [state, dispatch] = useReducer(reducer, {
     isFetching: true,
     avatar: '',
@@ -49,18 +77,6 @@ const AccountScreen = ({ navigation }) => {
     phone: '',
   });
 
-  const currentUser = useSelector((state) => state.userReducers?.user);
-
-  /**
-   * @field avatar
-   * @field username
-   * @field gmail
-   * @field country
-   * @field phone numer
-   */
-
-  const { navigate } = navigation;
-
   /** state ; ref */
   const nameRef = useRef();
   const gmailRef = useRef();
@@ -68,29 +84,42 @@ const AccountScreen = ({ navigation }) => {
   const phoneRef = useRef();
 
   useEffect(() => {
-    /** fetch data from service */
-    const fetchDataa = async () => {};
-
-    /** function call */
-    fetchDataa();
-
-    /** remove state */
-    return () => {
-      setSelectedImage('');
+    const fetchDataaa = async () => {
+      const data = await getCurrentuserInfo(currentUserSession);
+      if (data) dispatch({ type: 'USER_DATA', payload: data[0] });
     };
+
+    fetchDataaa();
   }, [navigation]);
 
-  setTimeout(() => {
-    const data = {
-      avatar:
-        'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=RKGYlzhnRFYAb6v0RvL&_nc_ht=scontent.fdad4-1.fna&oh=00_AfDwBYskRsDG8Rp8j04chjwA73YA4ZgZT0maDJtZxZuyUA&oe=663B5A38',
-      username: 'nguyen anh',
-      gmail: 'cunho@gmail.com',
-      country: 'DN',
-      phone: '01234567',
+  const onRefresh = useCallback(() => {
+    setRefresh(true);
+    const fetchDataaa = async () => {
+      const data = await getCurrentuserInfo(currentUserSession);
+      if (data) dispatch({ type: 'USER_DATA', payload: data[0] });
     };
-    dispatch({ type: 'USER_DATA', payload: data });
-  }, 2000);
+
+    fetchDataaa();
+    setRefresh(false);
+  }, []);
+
+  const uploadImage = async (imageUri) => {
+    try {
+      dispatch({ type: 'UPLOAD_IMAGE' });
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(`public/${Date.now()}.jpg`, {
+          uri: imageUri,
+        });
+      if (data) {
+        const avatarUrl = getImageUrl(data.path);
+        if (avatarUrl)
+          dispatch({ type: 'UPLOAD_IMAGE_SUCCESS', payload: avatarUrl });
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  };
 
   const imageHandler = async () => {
     /** options */
@@ -109,105 +138,130 @@ const AccountScreen = ({ navigation }) => {
         console.log('Image picker error: ', response.error);
       } else {
         let imageUri = response.uri || response.assets?.[0]?.uri;
-        setSelectedImage(imageUri);
+        uploadImage(imageUri);
       }
     });
   };
 
   const submitHandler = async () => {
     /**
+     * @param userId
      * @param name
      * @param gmail
      * @param country
      * @param phone
+     * @param avatarUrl
      */
-
-    console.log({
+    try {
+      dispatch({ type: 'PROCESSING_UPDATE_DATA' });
+      /** */
+      const userId = JSON.parse(currentUserSession.session).user.id;
       /** name */
-      name: nameRef.current.getValue()
+      const name = nameRef.current.getValue()
         ? nameRef.current.getValue()
-        : state.username,
+        : state.username;
       /** gmail */
-      gmail: gmailRef.current.getValue()
+      const gmail = gmailRef.current.getValue()
         ? gmailRef.current.getValue()
-        : state.gmail,
+        : state.gmail;
       /** country */
-      country: countryRef.current.getValue()
+      const country = countryRef.current.getValue()
         ? countryRef.current.getValue()
-        : state.country,
+        : state.country;
       /** phone */
-      phone: phoneRef.current.getValue()
-        ? phoneRef.current.getValue()
-        : state.phone,
-    });
+      const phone = phoneRef.current.getValue()
+        ? parseInt(phoneRef.current.getValue())
+        : parseInt(state.phone);
+      const avatar = state.avatar;
+      /** update info */
+      const status = await updateUserData(
+        userId,
+        name,
+        avatar,
+        gmail,
+        country,
+        phone
+      );
+      if (status === 204) dispatch({ type: 'UPDATE_COMPLETED' });
+    } catch (error) {
+      console.log('Error update user information:', error.message);
+    }
   };
 
-  return (
-    <View style={[styles.profileContainer, globalStyle.container]}>
-      {/** image view */}
-      <View style={[styles.profile]}>
-        <View style={[styles.avatar]}>
-          {/** image uri read from user info fetch from service */}
-          {state && (
-            <Image
-              style={styles.avatarImage}
-              resizeMode="cover"
-              source={require('../assets/avatar.png')}
-              /**  */
-              // source={{
-              //   uri: selectedImage ? selectedImage : state.avatar,
-              // }}
+  return state.isFetching ? (
+    <SplashScreen />
+  ) : (
+    <ScrollView
+      contentContainerStyle={{ flex: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+      }
+    >
+      <View style={[styles.profileContainer, globalStyle.container]}>
+        {/** image view */}
+        <View style={[styles.profile]}>
+          <View style={[styles.avatar]}>
+            {/** image uri read from user info fetch from service */}
+            {state && (
+              <Image
+                style={styles.avatarImage}
+                resizeMode="cover"
+                /**  */
+                source={{
+                  uri: state.avatar,
+                }}
+              />
+            )}
+            {/** choose image button */}
+            <Entypo
+              name={'edit'}
+              size={20}
+              color="black"
+              style={styles.avatarEditor}
+              onPress={imageHandler}
             />
-          )}
-          {/** choose image button */}
-          <Entypo
-            name={'edit'}
-            size={20}
-            color="black"
-            style={styles.avatarEditor}
-            onPress={imageHandler}
-          />
+          </View>
+          <Text style={[styles.accountName]}>{state.username}</Text>
         </View>
-        <Text style={[styles.accountName]}>Nomnom</Text>
+        {/** from view */}
+        <View style={styles.profileInformation}>
+          <CustomInput
+            ref={nameRef}
+            defauleVal={state && state.username}
+            type="text"
+          />
+          <CustomInput
+            ref={gmailRef}
+            defauleVal={state && state.gmail}
+            type="gmail"
+          />
+          <CustomInput
+            ref={countryRef}
+            defauleVal={state && state.country}
+            type="text"
+          />
+          <CustomInput
+            ref={phoneRef}
+            defauleVal={state && state.phone}
+            type="text"
+          />
+          {/** save button */}
+          <TouchableOpacity
+            style={{
+              backgroundColor: 'black',
+              padding: 10,
+              alignSelf: 'flex-end',
+              borderRadius: 5,
+            }}
+            onPress={submitHandler}
+          >
+            <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>
+              Save
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      {/** from view */}
-      <View style={styles.profileInformation}>
-        <CustomInput
-          ref={nameRef}
-          defauleVal={state && state.username}
-          type="text"
-        />
-        <CustomInput
-          ref={gmailRef}
-          defauleVal={state && state.gmail}
-          type="gmail"
-        />
-        <CustomInput
-          ref={countryRef}
-          defauleVal={state && state.country}
-          type="text"
-        />
-        <CustomInput
-          ref={phoneRef}
-          defauleVal={state && state.phone}
-          type="text"
-        />
-        {/** save button */}
-        <TouchableOpacity
-          style={{
-            backgroundColor: 'black',
-            padding: 10,
-            alignSelf: 'flex-end',
-            borderRadius: 5,
-          }}
-          onPress={submitHandler}
-        >
-          <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>
-            Save
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({
@@ -248,10 +302,11 @@ const styles = StyleSheet.create({
   },
 
   accountName: {
-    fontSize: 28,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#333333',
     marginLeft: 20,
+    marginBottom: 75
   },
   profileInformation: {
     flex: 1,

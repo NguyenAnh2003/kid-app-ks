@@ -4,8 +4,9 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getHttp } from '../configs/axios.config';
 import globalStyle from '../styles/globalStyle';
 import DeviceInfo from '../components/DeviceInfo';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { userLogout } from '../redux/actions/actions';
+import { getCurrentUser } from '../libs/supabase/parent.services';
 
 const styles = StyleSheet.create({
   button: {
@@ -18,15 +19,19 @@ const HomeScreen = ({ user, navigation, route }) => {
   const [data, setData] = useState();
   const dispatch = useDispatch();
 
+  const currentUserSession = useSelector((state) => state.userReducers?.user);
+
   /** permission */
 
   useEffect(() => {
     /** exp caching data */
     const fetchDataaa = async () => {
-      const { data, status } = await getHttp(
-        'https://jsonplaceholder.typicode.com/todos/1'
-      );
-      if (status === 200) setData(data);
+      const userData = JSON.parse(currentUserSession.session);
+      if (userData) {
+        const { id } = userData.user;
+        const data = await getCurrentUser(id);
+        console.log('current user', data);
+      }
     };
     fetchDataaa();
 

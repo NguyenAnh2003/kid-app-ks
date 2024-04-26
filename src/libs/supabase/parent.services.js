@@ -29,7 +29,7 @@ export const updateUserData = async (
      * @param country
      * @param phone
      */
-    const { data, status } = await userTable
+    const { status, statusText, data } = await userTable
       .update({
         username: name,
         avatarUrl: avatarUrl,
@@ -38,10 +38,8 @@ export const updateUserData = async (
         phone: phone,
       })
       .eq('id', userId);
-
-    if (status === 200) {
-      return data;
-    }
+    if (status === 204) return status;
+    return;
   } catch (error) {
     console.log(error.message);
   }

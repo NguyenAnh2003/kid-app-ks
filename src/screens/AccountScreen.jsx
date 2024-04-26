@@ -19,8 +19,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useDispatch, useSelector } from 'react-redux';
-import { getCurrentUser } from '../libs/supabase/parent.services';
+import { useSelector } from 'react-redux';
 import { updateUserData } from '../libs/supabase/parent.services';
 import { supabase } from '../libs/supabase/supabase';
 import SplashScreen from './SplashScreen';
@@ -49,6 +48,10 @@ const reducer = (state, action) => {
       return { ...state, isFetching: true };
     case 'UPLOAD_IMAGE_SUCCESS':
       return { ...state, avatar: action.payload, isFetching: false };
+    case 'PROCESSING_UPDATE_DATA':
+      return { ...state, isFetching: true };
+    case 'UPDATE_COMPLETED':
+      return { ...state, isFetching: false };
     default:
       return state;
   }
@@ -150,6 +153,7 @@ const AccountScreen = ({ navigation }) => {
      * @param avatarUrl
      */
     try {
+      dispatch({ type: 'PROCESSING_UPDATE_DATA' });
       /** */
       const userId = JSON.parse(currentUserSession.session).user.id;
       /** name */
@@ -170,7 +174,7 @@ const AccountScreen = ({ navigation }) => {
         : parseInt(state.phone);
       const avatar = state.avatar;
       /** update info */
-      const data = await updateUserData(
+      const status = await updateUserData(
         userId,
         name,
         avatar,
@@ -178,7 +182,7 @@ const AccountScreen = ({ navigation }) => {
         country,
         phone
       );
-      if (data) console.log('User acount updated:', data);
+      if (status === 204) dispatch({ type: 'UPDATE_COMPLETED' });
     } catch (error) {
       console.log('Error update user information:', error.message);
     }
@@ -217,7 +221,7 @@ const AccountScreen = ({ navigation }) => {
               onPress={imageHandler}
             />
           </View>
-          <Text style={[styles.accountName]}>Nomnom</Text>
+          <Text style={[styles.accountName]}>{state.username}</Text>
         </View>
         {/** from view */}
         <View style={styles.profileInformation}>
@@ -298,10 +302,11 @@ const styles = StyleSheet.create({
   },
 
   accountName: {
-    fontSize: 28,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#333333',
     marginLeft: 20,
+    marginBottom: 75
   },
   profileInformation: {
     flex: 1,

@@ -46,8 +46,6 @@ const AccountScreen = ({ navigation }) => {
     phone: '',
   });
 
-  const dispatchFetching = useDispatch();
-
   const currentUserSession = useSelector((state) => state.userReducers?.user);
 
   /**
@@ -73,7 +71,6 @@ const AccountScreen = ({ navigation }) => {
         const { id } = userData.user;
         const data = await getCurrentUser(id);
         if (data) {
-          console.log(data[0]);
           dispatch({ type: 'USER_DATA', payload: data[0] });
         }
       }
@@ -83,7 +80,7 @@ const AccountScreen = ({ navigation }) => {
 
     /** remove state */
     return () => {
-      setSelectedImage('');
+      setAvatarUrl('')
     };
   }, [navigation]);
 
@@ -135,7 +132,6 @@ const AccountScreen = ({ navigation }) => {
         console.log('Image picker error: ', response.error);
       } else {
         let imageUri = response.uri || response.assets?.[0]?.uri;
-        setSelectedImage(imageUri);
         console.log('Image uri:', imageUri);
         uploadImage(imageUri);
       }
@@ -151,44 +147,31 @@ const AccountScreen = ({ navigation }) => {
      * @param phone
      * @param avatarUrl
      */
-    // console.log({
-    //   /** name */
-    //   name: nameRef.current.getValue()
-    //     ? nameRef.current.getValue()
-    //     : state.username,
-    //   /** gmail */
-    //   gmail: gmailRef.current.getValue()
-    //     ? gmailRef.current.getValue()
-    //     : state.gmail,
-    //   /** country */
-    //   country: countryRef.current.getValue()
-    //     ? countryRef.current.getValue()
-    //     : state.country,
-    //   /** phone */
-    //   phone: phoneRef.current.getValue()
-    //     ? parseInt(phoneRef.current.getValue())
-    //     : parseInt(state.phone),
-    //   id: JSON.parse(currentUserSession.session).user.id,
-    // });
     try {
+      /** */
       const userId = JSON.parse(currentUserSession.session).user.id;
-      const name = nameRef.current.getValue();
-      const gmail = gmailRef.current.getValue();
-      const country = countryRef.current.getValue();
-      const phone = parseInt(phoneRef.current.getValue());
-      console.log(
-        'Update user information:',
-        userId,
-        name,
-        avatarUrl,
-        gmail,
-        country,
-        phone
-      );
+      /** name */
+      const name = nameRef.current.getValue()
+        ? nameRef.current.getValue()
+        : state.username;
+      /** gmail */
+      const gmail = gmailRef.current.getValue()
+        ? gmailRef.current.getValue()
+        : state.gmail;
+      /** country */
+      const country = countryRef.current.getValue()
+        ? countryRef.current.getValue()
+        : state.country;
+      /** phone */
+      const phone = phoneRef.current.getValue()
+        ? parseInt(phoneRef.current.getValue())
+        : parseInt(state.phone);
+      const avatar = avatarUrl ? avatarUrl : state.avaUrl;
+      /** update info */
       const data = await updateUserData(
         userId,
         name,
-        avatarUrl,
+        avatar,
         gmail,
         country,
         phone
@@ -219,7 +202,7 @@ const AccountScreen = ({ navigation }) => {
               resizeMode="cover"
               /**  */
               source={{
-                uri: selectedImage ? selectedImage : state.avatar,
+                uri: avatarUrl ? avatarUrl : state.avatar,
               }}
             />
           )}

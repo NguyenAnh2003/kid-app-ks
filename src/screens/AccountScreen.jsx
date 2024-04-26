@@ -44,7 +44,8 @@ const reducer = (state, action) => {
         phone: JSON.stringify(action.payload.phone),
         isFetching: false,
       };
-
+    case 'UPLOAD_IMAGE':
+      return { ...state, avatar: action.payload };
     default:
       return state;
   }
@@ -60,7 +61,6 @@ const AccountScreen = ({ navigation }) => {
    */
 
   const currentUserSession = useSelector((state) => state.userReducers?.user);
-  const [avatarUrl, setAvatarUrl] = useState('');
   const [refresh, setRefresh] = useState(false);
   const [state, dispatch] = useReducer(reducer, {
     isFetching: true,
@@ -84,11 +84,6 @@ const AccountScreen = ({ navigation }) => {
     };
 
     fetchDataaa();
-
-    /** remove state */
-    return () => {
-      setAvatarUrl('');
-    };
   }, [navigation]);
 
   const onRefresh = useCallback(() => {
@@ -111,8 +106,8 @@ const AccountScreen = ({ navigation }) => {
           uri: imageUri,
         });
       if (data) {
-        const imageUrl = getImageUrl(data.path);
-        setAvatarUrl(imageUrl);
+        const avatarUrl = getImageUrl(data.path);
+        if (avatarUrl) dispatch({ type: 'UPLOAD_IMAGE', payload: avatarUrl });
       }
       console.log(data);
     } catch (error) {
@@ -171,7 +166,7 @@ const AccountScreen = ({ navigation }) => {
       const phone = phoneRef.current.getValue()
         ? parseInt(phoneRef.current.getValue())
         : parseInt(state.phone);
-      const avatar = avatarUrl ? avatarUrl : state.avaUrl;
+      const avatar = state.avaUrl;
       /** update info */
       const data = await updateUserData(
         userId,
@@ -207,7 +202,7 @@ const AccountScreen = ({ navigation }) => {
                 resizeMode="cover"
                 /**  */
                 source={{
-                  uri: avatarUrl ? avatarUrl : state.avatar,
+                  uri: state.avatar,
                 }}
               />
             )}

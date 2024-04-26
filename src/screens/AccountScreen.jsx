@@ -1,6 +1,7 @@
 import React, {
   useCallback,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -45,7 +46,9 @@ const reducer = (state, action) => {
         isFetching: false,
       };
     case 'UPLOAD_IMAGE':
-      return { ...state, avatar: action.payload };
+      return { ...state, isFetching: true };
+    case 'UPLOAD_IMAGE_SUCCESS':
+      return { ...state, avatar: action.payload, isFetching: false };
     default:
       return state;
   }
@@ -98,18 +101,18 @@ const AccountScreen = ({ navigation }) => {
   }, []);
 
   const uploadImage = async (imageUri) => {
-    let avaUrl = `public/${Date.now()}.jpg`;
     try {
+      dispatch({ type: 'UPLOAD_IMAGE' });
       const { data, error } = await supabase.storage
         .from('avatars')
-        .upload(avaUrl, {
+        .upload(`public/${Date.now()}.jpg`, {
           uri: imageUri,
         });
       if (data) {
         const avatarUrl = getImageUrl(data.path);
-        if (avatarUrl) dispatch({ type: 'UPLOAD_IMAGE', payload: avatarUrl });
+        if (avatarUrl)
+          dispatch({ type: 'UPLOAD_IMAGE_SUCCESS', payload: avatarUrl });
       }
-      console.log(data);
     } catch (error) {
       console.error('Error uploading image:', error);
     }
@@ -166,7 +169,7 @@ const AccountScreen = ({ navigation }) => {
       const phone = phoneRef.current.getValue()
         ? parseInt(phoneRef.current.getValue())
         : parseInt(state.phone);
-      const avatar = state.avaUrl;
+      const avatar = state.avatar;
       /** update info */
       const data = await updateUserData(
         userId,

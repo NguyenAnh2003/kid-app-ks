@@ -135,7 +135,6 @@ const AccountScreen = ({ navigation }) => {
         console.log('Image picker error: ', response.error);
       } else {
         let imageUri = response.uri || response.assets?.[0]?.uri;
-        console.log('Image uri:', imageUri);
         uploadImage(imageUri);
       }
     });

@@ -5,10 +5,9 @@ export const uploadImage = async (imageUri) => {
    * @param file - used for uploading file to bucket
    */
   try {
-    const { data } = await appStorage.upload(
-      `public/${Date.now()}.jpg`,
-      { uri: imageUri }
-    );
+    const { data } = await appStorage.upload(`public/${Date.now()}.jpg`, {
+      uri: imageUri,
+    });
     if (data) return data;
   } catch (error) {
     console.log(error.message);

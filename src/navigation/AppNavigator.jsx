@@ -12,6 +12,7 @@ import {
   HomeScreen,
   LoginScreen,
   RegisterScreen,
+  SingleChildScreen,
 } from '../screens';
 import SplashScreen from '../screens/SplashScreen';
 
@@ -32,11 +33,17 @@ const AppNavigator = () => {
   return (
     <Stack.Navigator>
       {session ? (
-        <Stack.Screen
-          name="Home"
-          component={HomeTabs}
-          options={{ headerShown: false }}
-        ></Stack.Screen>
+        <>
+          <Stack.Screen
+            name="Home"
+            component={HomeTabs}
+            options={{ headerShown: false }}
+          ></Stack.Screen>
+          <Stack.Screen
+            name="SingleChild"
+            component={SingleChildScreen}
+          ></Stack.Screen>
+        </>
       ) : (
         <>
           <Stack.Screen

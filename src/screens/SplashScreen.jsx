@@ -12,7 +12,7 @@ const SplashScreen = () => {
         alignContent: 'center',
       }}
     >
-      <ActivityIndicator size={'large'} color={"#000"}/>
+      <ActivityIndicator size={'large'} color={'#000'} />
       <Text>SplashScreen</Text>
     </View>
   );

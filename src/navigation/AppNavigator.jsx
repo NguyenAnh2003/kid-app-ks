@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import {
   AccountScreen,
   AddChildScreen,
+  EditChildScreen,
   HomeScreen,
   LoginScreen,
   RegisterScreen,
@@ -42,6 +43,14 @@ const AppNavigator = () => {
           <Stack.Screen
             name="SingleChild"
             component={SingleChildScreen}
+          ></Stack.Screen>
+          <Stack.Screen
+            name="AddChild"
+            component={AddChildScreen}
+          ></Stack.Screen>
+          <Stack.Screen
+            name="EditChild"
+            component={EditChildScreen}
           ></Stack.Screen>
         </>
       ) : (

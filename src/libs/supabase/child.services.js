@@ -2,7 +2,14 @@ import { appTables } from './supabase';
 import { supabase } from './supabase';
 const childrenTable = supabase.from(appTables.CHILDREN); // init childrenTable
 
-export const createChild = async (parentId, name, age, phone, avatarUrl) => {
+export const createChild = async (
+  parentId,
+  name,
+  age,
+  phone,
+  phoneType,
+  avatarUrl
+) => {
   /**
    * @param parentId ...
    * @param name: str
@@ -18,10 +25,12 @@ export const createChild = async (parentId, name, age, phone, avatarUrl) => {
       kidName: name,
       age: age,
       phone: phone,
+      phoneType: phoneType,
       avatarUrl: avatarUrl,
     });
 
-    if (status === 200) return data;
+
+    if (status === 201) return status;
   } catch (error) {
     console.log(error.message);
   }

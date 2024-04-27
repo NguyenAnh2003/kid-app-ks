@@ -241,6 +241,11 @@ const SingleChildScreen = ({ route, navigation }) => {
                 name="account-edit-outline"
                 size={24}
                 color={'black'}
+                onPress={() =>
+                  navigation.navigate('EditChild', {
+                    childId: childId,
+                  })
+                }
               />
             </View>
             {/** activities view */}

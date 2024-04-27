@@ -1,58 +1,52 @@
 import React, { useEffect, useRef, useReducer, useState } from 'react';
-import {
-  Button,
-  StyleSheet,
-  Image,
-  Text,
-  View,
-  Pressable,
-  TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, Image, Text, View, TouchableOpacity } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
-import CustomInput, { InputHandle } from '../components/CustomInput';
+import CustomInput from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, TextValidator } from 'react-native-validator-form';
-import { getCurrentUser } from '../libs/supabase/parent.services';
 import { createChild } from '../libs/supabase/child.services';
 import { supabase } from '../libs/supabase/supabase';
+import { getImageUrl } from '../libs';
+import SplashScreen from './SplashScreen';
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'USER_DATA':
-      /** return fetched data from api */
+    case 'PROCESSING_ADDING':
+      return { ...state, isFetching: true };
+    case 'ADD_COMPLETE':
       return {
-        avatar: action.payload.avatarUrl,
-        username: action.payload.username,
-        gmail: action.payload.gmail,
-        country: action.payload.country,
-        phone: JSON.stringify(action.payload.phone),
+        // parentId: action.payload.parentId,
+        // avatar: action.payload.avatarUrl,
+        // username: action.payload.username,
+        // gmail: action.payload.gmail,
+        // country: action.payload.country,
+        // phone: JSON.stringify(action.payload.phone),
         isFetching: false,
       };
-
+    case 'UPLOAD_IMAGE':
+      return { ...state, isFetching: true };
+    case 'UPLOAD_IMAGE_SUCCESS':
+      return { ...state, avatar: action.payload, isFetching: false };
     default:
       return state;
   }
 };
 
 const AddChild = ({ navigation }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [emailInvalid, setEmailInvalid] = useState(false);
-  const [mail, setMail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [phoneInvalid, setPhoneInvalid] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState('');
+  /** current session */
+  const currentUserSession = useSelector((state) => state.userReducers?.user);
+  /** state & dispatch */
   const [state, dispatch] = useReducer(reducer, {
-    isFetching: true,
-    avatar: '',
+    isFetching: false,
+    avatar:
+      'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=cTJO8eTdhaEAb6zAot4&_nc_ht=scontent.fdad4-1.fna&oh=00_AfCRgXUDKFeVvmf0ySWAAXBsxuRyRoGjZzO5UJiRIJgbDQ&oe=66549EF8',
     username: '',
     gmail: '',
     country: '',
     phone: '',
   });
-  const dispatchFetching = useDispatch();
-  const currentUserSession = useSelector((state) => state.userReducers?.user);
 
   /**
    * @field avatar
@@ -66,62 +60,26 @@ const AddChild = ({ navigation }) => {
 
   /** state ; ref */
   const nameRef = useRef();
-  const gmailRef = useRef();
+  const phoneTypeRef = useRef();
   const ageRef = useRef();
   const phoneRef = useRef();
 
-  useEffect(() => {
-    const fetchDataaa = async () => {
-      const userData = JSON.parse(currentUserSession.session);
-      if (userData) {
-        const { id } = userData.user;
-        const data = await getCurrentUser(id);
-        if (data) {
-          console.log(data[0]);
-          dispatch({ type: 'USER_DATA', payload: data[0] });
-        }
-      }
-    };
-
-    fetchDataaa();
-
-    /** remove state */
-    return () => {
-      setSelectedImage('');
-    };
-  }, [navigation]);
-
-  const getImageUrl = (avaUrl) => {
-    try {
-      const { data } = supabase.storage.from('avatars').getPublicUrl(avaUrl);
-      return data;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const uploadImage = async (imageUri) => {
-    let avaUrl = `public/${Date.now()}.jpg`;
+    dispatch({ type: 'UPLOAD_IMAGE' });
     try {
       const { data, error } = await supabase.storage
         .from('avatars')
-        .upload(avaUrl, {
+        .upload(`public/${Date.now()}.jpg`, {
           uri: imageUri,
         });
       if (data) {
-        // avaUrl = getImageUrl(avaUrl);
-        setAvatarUrl(getImageUrl(avaUrl).publicUrl);
+        const avatarUrl = getImageUrl(data.path);
+        dispatch({ type: 'UPLOAD_IMAGE_SUCCESS', payload: avatarUrl });
       }
-      console.log(data);
     } catch (error) {
       console.error('Error uploading image:', error);
     }
   };
-
-  useEffect(() => {
-    console.log('Avatar url:', avatarUrl);
-  }, [avatarUrl]);
-
   const imageHandler = async () => {
     const options = {
       mediaType: 'photo',
@@ -136,8 +94,6 @@ const AddChild = ({ navigation }) => {
         console.log('Image picker error: ', response.error);
       } else {
         let imageUri = response.uri || response.assets?.[0]?.uri;
-        setSelectedImage(imageUri);
-        console.log('Image uri:', imageUri);
         uploadImage(imageUri);
       }
     });
@@ -145,52 +101,33 @@ const AddChild = ({ navigation }) => {
 
   const submitHandler = async () => {
     try {
+      dispatch({ type: 'PROCESSING_ADDING' });
       const parentId = JSON.parse(currentUserSession.session).user.id;
       const kidname = nameRef.current.getValue();
       const age = parseInt(ageRef.current.getValue());
       const phone = parseInt(phoneRef.current.getValue());
-      console.log('Creating child:', parentId, kidname, age, phone, avatarUrl);
-      const data = await createChild(parentId, kidname, age, phone, avatarUrl);
-      console.log('Child created:', data);
+      const phoneType = phoneTypeRef.current.getValue();
+      const avatarUrl = state.avatar;
+      const status = await createChild(
+        parentId,
+        kidname,
+        age,
+        phone,
+        phoneType,
+        avatarUrl
+      );
+      if (status === 201) {
+        dispatch({ type: 'ADD_COMPLETE' });
+        navigation.goBack();
+      }
     } catch (error) {
       console.error('Error creating child:', error);
     }
   };
 
-  const validateEmail = (text) => {
-    setMail(text);
-    console.log(mail);
-    regex =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (regex.test(text)) {
-      console.log('valid email');
-      setEmailInvalid(false);
-    } else {
-      setEmailInvalid(true);
-      console.log('invalid email');
-    }
-  };
-
-  const validatePhone = (text) => {
-    setPhone(text);
-    console.log(phone);
-    regex = /^(\+?84|0)(\d{9,10})$/;
-    if (regex.test(text)) {
-      console.log('valid phone');
-      setPhoneInvalid(false);
-    } else {
-      setPhoneInvalid(true);
-      console.log('invalid phone');
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      setSelectedImage('');
-    };
-  }, []);
-
-  return (
+  return state.isFetching ? (
+    <SplashScreen />
+  ) : (
     <View style={[styles.profileContainer, globalStyle.container]}>
       {/** image view */}
       <View style={[styles.profile]}>
@@ -200,7 +137,7 @@ const AddChild = ({ navigation }) => {
             style={styles.avatarImage}
             resizeMode="cover"
             // source={require('../assets/avatar.png')}
-            source={{ uri: selectedImage ? selectedImage : state.avatar }}
+            source={{ uri: state.avatar }}
           />
           {/** choose image button */}
           <Entypo
@@ -211,33 +148,25 @@ const AddChild = ({ navigation }) => {
             onPress={imageHandler}
           />
         </View>
-        <Text style={[styles.accountName]}>Your child's name</Text>
       </View>
       {/** from view */}
       <View style={styles.profileInformation}>
         <CustomInput
-          style={{}}
           ref={nameRef}
           type="text"
-          placeHolder="Enter your name"
+          placeHolder="Your child's name"
         />
         <CustomInput
-          ref={gmailRef}
-          placeHolder="Enter your email"
-          type="mail"
-          value={mail}
-          onChangeText={validateEmail}
+          ref={phoneTypeRef}
+          placeHolder="Enter phone type"
+          type="text"
         />
-        {emailInvalid && <Text style={{ color: 'red' }}>Invalid input</Text>}
-        <CustomInput ref={ageRef} type="text" placeHolder="Enter your age" />
         <CustomInput
           ref={phoneRef}
           type="phone"
-          placeHolder="Enter your phone"
-          value={phone}
-          onChangeText={validatePhone}
+          placeHolder="Your child's phone"
         />
-        {phoneInvalid && <Text style={{ color: 'red' }}>Invalid input</Text>}
+        <CustomInput ref={ageRef} type="text" placeHolder="Your child's age" />
         {/** save button */}
         <TouchableOpacity
           style={{
@@ -249,7 +178,7 @@ const AddChild = ({ navigation }) => {
           onPress={submitHandler}
         >
           <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>
-            Save
+            Create
           </Text>
         </TouchableOpacity>
       </View>

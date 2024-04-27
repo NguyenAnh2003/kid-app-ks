@@ -32,12 +32,14 @@ const CustomInput = forwardRef<InputHandle, InputProps>(
     useImperativeHandle(ref, () => ({
       getValue: () => value,
     }));
+    
+       
 
     return (
       <TextInput
         onChangeText={setValue}
         placeholderTextColor={'black'}
-        // type={type}
+        type={type}
         secureTextEntry={type === 'password' ? true : false}
         defaultValue={defauleVal}
         style={styles.input}

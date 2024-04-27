@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useReducer, useState } from 'react';
 import {
   Button,
   StyleSheet,
@@ -12,7 +12,29 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { useDispatch, useSelector } from 'react-redux';
 import { Form, TextValidator } from 'react-native-validator-form';
+import { getCurrentUser } from '../libs/supabase/parent.services';
+import { createChild } from '../libs/supabase/child.services';
+import { supabase } from '../libs/supabase/supabase';
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'USER_DATA':
+      /** return fetched data from api */
+      return {
+        avatar: action.payload.avatarUrl,
+        username: action.payload.username,
+        gmail: action.payload.gmail,
+        country: action.payload.country,
+        phone: JSON.stringify(action.payload.phone),
+        isFetching: false,
+      };
+
+    default:
+      return state;
+  }
+};
 
 const AddChild = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -20,11 +42,23 @@ const AddChild = ({ navigation }) => {
   const [mail, setMail] = useState('');
   const [phone, setPhone] = useState('');
   const [phoneInvalid, setPhoneInvalid] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [state, dispatch] = useReducer(reducer, {
+    isFetching: true,
+    avatar: '',
+    username: '',
+    gmail: '',
+    country: '',
+    phone: '',
+  });
+  const dispatchFetching = useDispatch();
+  const currentUserSession = useSelector((state) => state.userReducers?.user);
+
   /**
    * @field avatar
    * @field username
    * @field gmail
-   * @field country
+   * @field age
    * @field phone numer
    */
 
@@ -33,8 +67,60 @@ const AddChild = ({ navigation }) => {
   /** state ; ref */
   const nameRef = useRef();
   const gmailRef = useRef();
-  const countryRef = useRef();
+  const ageRef = useRef();
   const phoneRef = useRef();
+
+  useEffect(() => {
+    const fetchDataaa = async () => {
+      const userData = JSON.parse(currentUserSession.session);
+      if (userData) {
+        const { id } = userData.user;
+        const data = await getCurrentUser(id);
+        if (data) {
+          console.log(data[0]);
+          dispatch({ type: 'USER_DATA', payload: data[0] });
+        }
+      }
+    };
+
+    fetchDataaa();
+
+    /** remove state */
+    return () => {
+      setSelectedImage('');
+    };
+  }, [navigation]);
+
+  const getImageUrl = (avaUrl) => {
+    try {
+      const { data } = supabase.storage.from('avatars').getPublicUrl(avaUrl);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const uploadImage = async (imageUri) => {
+    let avaUrl = `public/${Date.now()}.jpg`;
+    try {
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(avaUrl, {
+          uri: imageUri,
+        });
+      if (data) {
+        // avaUrl = getImageUrl(avaUrl);
+        setAvatarUrl(getImageUrl(avaUrl).publicUrl);
+      }
+      console.log(data);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  };
+
+  useEffect(() => {
+    console.log('Avatar url:', avatarUrl);
+  }, [avatarUrl]);
 
   const imageHandler = async () => {
     const options = {
@@ -51,16 +137,24 @@ const AddChild = ({ navigation }) => {
       } else {
         let imageUri = response.uri || response.assets?.[0]?.uri;
         setSelectedImage(imageUri);
+        console.log('Image uri:', imageUri);
+        uploadImage(imageUri);
       }
     });
   };
 
   const submitHandler = async () => {
-    console.log(
-      nameRef.current.getValue(),
-      gmailRef.current.getValue(),
-      phoneRef.current.getValue()
-    );
+    try {
+      const parentId = JSON.parse(currentUserSession.session).user.id;
+      const kidname = nameRef.current.getValue();
+      const age = parseInt(ageRef.current.getValue());
+      const phone = parseInt(phoneRef.current.getValue());
+      console.log('Creating child:', parentId, kidname, age, phone, avatarUrl);
+      const data = await createChild(parentId, kidname, age, phone, avatarUrl);
+      console.log('Child created:', data);
+    } catch (error) {
+      console.error('Error creating child:', error);
+    }
   };
 
   const validateEmail = (text) => {
@@ -105,7 +199,8 @@ const AddChild = ({ navigation }) => {
           <Image
             style={styles.avatarImage}
             resizeMode="cover"
-            source={require('../assets/avatar.png')}
+            // source={require('../assets/avatar.png')}
+            source={{ uri: selectedImage ? selectedImage : state.avatar }}
           />
           {/** choose image button */}
           <Entypo
@@ -116,7 +211,7 @@ const AddChild = ({ navigation }) => {
             onPress={imageHandler}
           />
         </View>
-        <Text style={[styles.accountName]}>Nomnom</Text>
+        <Text style={[styles.accountName]}>Your child's name</Text>
       </View>
       {/** from view */}
       <View style={styles.profileInformation}>
@@ -134,11 +229,7 @@ const AddChild = ({ navigation }) => {
           onChangeText={validateEmail}
         />
         {emailInvalid && <Text style={{ color: 'red' }}>Invalid input</Text>}
-        <CustomInput
-          ref={countryRef}
-          type="text"
-          placeHolder="Enter your address"
-        />
+        <CustomInput ref={ageRef} type="text" placeHolder="Enter your age" />
         <CustomInput
           ref={phoneRef}
           type="phone"

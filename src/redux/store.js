@@ -1,7 +1,7 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { itemReducders, userReducers } from './reducers';
 import { persistReducer, persistStore } from 'redux-persist';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import storage from '@react-native-async-storage/async-storage';
 
 /**
  * @access https://jscrambler.com/blog/how-to-use-redux-persist-in-react-native-with-asyncstorage
@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const persistConfig = {
   key: 'root',
-  storage: AsyncStorage,
+  storage,
 };
 
 /** persisted reducer */
@@ -19,8 +19,7 @@ const rootReducer = combineReducers({
   /** combine each reducers
    * each one have its own responsibility (offline, online)
    */
-  itemReducers: persistReducer(persistConfig, itemReducders),
-  userReducers: userReducers,
+  userReducers: persistReducer(persistConfig, userReducers),
 });
 
 export const configStore = createStore(rootReducer);

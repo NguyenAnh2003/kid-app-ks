@@ -1,4 +1,11 @@
-import { View, Text, Image, StyleSheet, NativeModules } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  NativeModules,
+  TouchableOpacity,
+} from 'react-native';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import globalStyle from '../styles/globalStyle';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -57,28 +64,42 @@ const packageList = [
     dateUsed: '2024-04-26',
   },
   {
-    id: '3',
+    id: '4',
     name: 'zalo',
     packageName: 'com.zing.zalo',
     timeUsed: 1,
     dateUsed: '2024-04-22',
   },
   {
-    id: '3',
+    id: '5',
     name: 'zalo',
     packageName: 'com.zing.zalo',
     timeUsed: 2,
     dateUsed: '2024-04-24',
   },
+  {
+    id: '6',
+    name: 'zalo',
+    packageName: 'com.zing.zalo',
+    timeUsed: 2,
+    dateUsed: '2024-04-26',
+  },
+  {
+    id: '7',
+    name: 'zalo',
+    packageName: 'com.zing.zalo',
+    timeUsed: 2,
+    dateUsed: '2024-04-25',
+  },
 ];
 
-// đây là số lương ngày và tuần muốn hiển thị, 
+// đây là số lương ngày và tuần muốn hiển thị,
 // ví dụ numDay = 1 thì hiển thị thống kê trong vòng 1 ngày trước,
 // numDay = 2 thì hiển thị thống kê trong vòng 2 ngày trước
-const numDay = 1
-const numWeek = 1
+const numDay = 2;
+const numWeek = 1;
 
-// t nghĩ cái ni nên bỏ cái trượt như caurosel xong cho coi 
+// t nghĩ cái ni nên bỏ cái trượt như caurosel xong cho coi
 // nhiều ngày hay nhiều tuần đó để coi được nhiều hơn
 // mấy cái caurosel với giao diện nớ thì t hơi lỏ :v
 
@@ -100,68 +121,72 @@ const SingleChildScreen = ({ route, navigation }) => {
   const [activities, setActivities] = useState(packageList);
   const [activitiesDay, setActivitiesDay] = useState(packageList);
   const [activitiesWeek, setActivitiesWeek] = useState(packageList);
+  const [option, setOption] = useState('today');
+  const options = ['today', '1 day', '7 days'];
 
   useEffect(() => {
     const today = new Date();
-    
+    console.log(today);
+
     const previousDay = new Date(today);
-    previousDay.setDate(today.getDate() - 1*numDay);
-  
-    console.log("Today: " + today);
-    console.log("Previous Day: " + previousDay);
-  
+    previousDay.setDate(today.getDate() - 1 * numDay);
+
+    console.log('Today: ' + today);
+    console.log('Previous Day: ' + previousDay);
+
     // Filter data for the previous day
-    const previousDayData = packageList.filter(item => {
+    const previousDayData = packageList.filter((item) => {
       const itemDate = new Date(item.dateUsed);
       // Compare timestamps of itemDate and previousDay
-      return itemDate.getTime() >= previousDay.getTime() && 
-             itemDate.getTime() < today.getTime();
+      return (
+        itemDate.getTime() >= previousDay.getTime() &&
+        itemDate.getTime() < today.getTime()
+      );
     });
-  
-    console.log("Previous Day Data: ", previousDayData);
-  
+
+    console.log('Previous Day Data: ', previousDayData);
+
     const fetchData = async () => {
-      const processedPackage = await AppPackaging.preprocessAppPackageInfo(previousDayData);
+      const processedPackage = await AppPackaging.preprocessAppPackageInfo(
+        previousDayData
+      );
       if (processedPackage) {
         setActivitiesDay(processedPackage);
       }
     };
-     
-    fetchData(); 
-  
-  }, []);
-  
 
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const today = new Date();
-    
+
     const previousWeek = new Date(today);
-    previousWeek.setDate(today.getDate() - 7*numWeek); 
-  
-    console.log("Today: " + today);
-    console.log("Previous Week: " + previousWeek);
-  
+    previousWeek.setDate(today.getDate() - 7 * numWeek);
+
+    console.log('Today: ' + today);
+    console.log('Previous Week: ' + previousWeek);
+
     // Filter data for the previous day
-    const previousWeekData = packageList.filter(item => {
+    const previousWeekData = packageList.filter((item) => {
       const itemDate = new Date(item.dateUsed);
       // Compare timestamps of itemDate and previousWeek
-      return itemDate >= previousWeek && 
-             itemDate < today;
+      return itemDate >= previousWeek && itemDate < today;
     });
-  
-    console.log("Previous Week Data: ", previousWeekData);
-  
+
+    console.log('Previous Week Data: ', previousWeekData);
+
     const fetchData = async () => {
-      const processedPackage = await AppPackaging.preprocessAppPackageInfo(previousWeekData);
+      const processedPackage = await AppPackaging.preprocessAppPackageInfo(
+        previousWeekData
+      );
       if (processedPackage) {
         setActivitiesWeek(processedPackage);
       }
     };
-     
+
     fetchData(); // Call fetchData function
-  
-  }, [])
+  }, []);
 
   useEffect(() => {
     const fetchDataa = async () => {
@@ -173,10 +198,9 @@ const SingleChildScreen = ({ route, navigation }) => {
         setActivities(processedPackage);
       }
     };
-     
+
     fetchDataa();
   }, []);
-
 
   useEffect(() => {
     /** setup header when (childId, navigation) change */
@@ -238,6 +262,25 @@ const SingleChildScreen = ({ route, navigation }) => {
             />
           </View>
           {/** activities view */}
+          <View style={{ flexDirection: 'row', gap: 10 }}>
+            {options.map((i, index) => (
+              <TouchableOpacity
+                key={index}
+                style={{ padding: 10, backgroundColor: '#000', minWidth: 80 }}
+              >
+                <Text
+                  style={{
+                    color: '#fff',
+                    fontSize: 15,
+                    fontWeight: 600,
+                    textAlign: 'center',
+                  }}
+                >
+                  {i.toUpperCase()}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
           <Text
             style={{
               color: 'black',

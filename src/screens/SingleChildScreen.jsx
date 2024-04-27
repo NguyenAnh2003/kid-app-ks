@@ -5,8 +5,15 @@ import {
   StyleSheet,
   NativeModules,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
 import globalStyle from '../styles/globalStyle';
 import { ScrollView } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -113,6 +120,13 @@ const SingleChildScreen = ({ route, navigation }) => {
 
   /** state */
   const [activities, setActivities] = useState(packageList);
+  const [refresh, setRefresh] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefresh(true);
+    /** fetch data again */
+    setRefresh(false);
+  }, []);
 
   const dataBasedonTime = useMemo(() => {
     if (option === 'recent') {
@@ -182,122 +196,133 @@ const SingleChildScreen = ({ route, navigation }) => {
     /** fetch child data by childId */
 
     /** remove data */
-    return () => {
-    };
+    return () => {};
   }, [childId, navigation]);
 
   return (
-    <View style={[globalStyle.container, { paddingTop: 20, paddingBottom: 0 }]}>
-      {/** child info container */}
-      <View style={styles.container}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          {/** child view */}
-          <View
-            style={[
-              styles.topBox,
-              {
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignContent: 'center',
-                paddingRight: 10,
-                borderBottomWidth: 1,
-                borderColor: '#f2f2f2',
-              },
-            ]}
-          >
-            <View style={styles.topBox}>
-              <Image source={{ uri: childImage }} style={styles.avatarChild} />
-              {/** */}
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.textHeading}>{childName}</Text>
-                <Text style={{ color: '#a5a5a5' }}>{phoneType}</Text>
+    <ScrollView
+      contentContainerStyle={{ flex: 1 }}
+      refreshControl={
+        <RefreshControl onRefresh={onRefresh} refreshing={refresh} />
+      }
+    >
+      <View
+        style={[globalStyle.container, { paddingTop: 20, paddingBottom: 0 }]}
+      >
+        {/** child info container */}
+        <View style={styles.container}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            {/** child view */}
+            <View
+              style={[
+                styles.topBox,
+                {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignContent: 'center',
+                  paddingRight: 10,
+                  borderBottomWidth: 1,
+                  borderColor: '#f2f2f2',
+                },
+              ]}
+            >
+              <View style={styles.topBox}>
+                <Image
+                  source={{ uri: childImage }}
+                  style={styles.avatarChild}
+                />
+                {/** */}
+                <View style={{ flexDirection: 'column' }}>
+                  <Text style={styles.textHeading}>{childName}</Text>
+                  <Text style={{ color: '#a5a5a5' }}>{phoneType}</Text>
+                </View>
               </View>
+              <MaterialCommunityIcons
+                name="account-edit-outline"
+                size={24}
+                color={'black'}
+              />
             </View>
-            <MaterialCommunityIcons
-              name="account-edit-outline"
-              size={24}
-              color={'black'}
-            />
-          </View>
-          {/** activities view */}
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 10,
-            }}
-          >
-            {options.map((i, index) => (
-              <TouchableOpacity
-                key={index}
-                style={{ padding: 10, backgroundColor: '#000', minWidth: 80 }}
-                onPress={() => setOption(i)}
-              >
-                <Text
+            {/** activities view */}
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: 10,
+              }}
+            >
+              {options.map((i, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={{ padding: 10, backgroundColor: '#000', minWidth: 80 }}
+                  onPress={() => setOption(i)}
+                >
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontSize: 15,
+                      fontWeight: 600,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {i.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text
+              style={{
+                color: 'black',
+                marginTop: 5,
+                marginLeft: 5,
+                fontSize: 20,
+                fontWeight: '700',
+              }}
+            >
+              Activities in {option.toUpperCase()}
+            </Text>
+            {/** block activities today */}
+            <View style={{ maxHeight: 200 }}>
+              <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View
                   style={{
-                    color: '#fff',
-                    fontSize: 15,
-                    fontWeight: 600,
-                    textAlign: 'center',
+                    paddingHorizontal: 15,
+                    paddingVertical: 15,
+                    backgroundColor: '#fff',
+                    flexDirection: 'column',
+                    gap: 12,
                   }}
                 >
-                  {i.toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <Text
-            style={{
-              color: 'black',
-              marginTop: 5,
-              marginLeft: 5,
-              fontSize: 20,
-              fontWeight: '700',
-            }}
-          >
-            Activities in {option.toUpperCase()}
-          </Text>
-          {/** block activities today */}
-          <View style={{ maxHeight: 200 }}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-              <View
-                style={{
-                  paddingHorizontal: 15,
-                  paddingVertical: 15,
-                  backgroundColor: '#fff',
-                  flexDirection: 'column',
-                  gap: 12,
-                }}
-              >
-                {activities &&
-                  Array.isArray(activities) &&
-                  activities?.map((i, index) => (
-                    <ActivityCard
-                      key={index}
-                      packageName={i.name}
-                      packageImage={i.icon}
-                      packageTimeUsed={i.timeUsed}
-                      packageDateUsed={i.dateUsed}
-                    />
-                  ))}
-              </View>
-            </ScrollView>
-          </View>
-          {/** activities last week view */}
-          <Text
-            style={{
-              color: 'black',
-              marginLeft: 5,
-              fontSize: 20,
-              fontWeight: '600',
-            }}
-          >
-            Usage Chart
-          </Text>
-          {/** chart usage - screen time */}
-          {activities && <UsageChart activities={activities} />}
-        </ScrollView>
+                  {activities &&
+                    Array.isArray(activities) &&
+                    activities?.map((i, index) => (
+                      <ActivityCard
+                        key={index}
+                        packageName={i.name}
+                        packageImage={i.icon}
+                        packageTimeUsed={i.timeUsed}
+                        packageDateUsed={i.dateUsed}
+                      />
+                    ))}
+                </View>
+              </ScrollView>
+            </View>
+            {/** activities last week view */}
+            <Text
+              style={{
+                color: 'black',
+                marginLeft: 5,
+                fontSize: 20,
+                fontWeight: '600',
+              }}
+            >
+              Usage Chart
+            </Text>
+            {/** chart usage - screen time */}
+            {activities && <UsageChart activities={activities} />}
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

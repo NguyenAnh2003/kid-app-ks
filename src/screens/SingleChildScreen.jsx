@@ -109,7 +109,7 @@ const SingleChildScreen = ({ route, navigation }) => {
   const { childId, childName, childImage, phoneType } = route.params;
   /** option */
   const [option, setOption] = useState('today');
-  const options = ['today', '7 days', '15 days'];
+  const options = ['today', '7 days'];
 
   /** state */
   const [dataa, setDataa] = useState({});
@@ -168,70 +168,7 @@ const SingleChildScreen = ({ route, navigation }) => {
     fetchData();
   }, [dataBasedonTime, option]);
 
-  useEffect(() => {
-    const today = new Date();
-    console.log(today);
-
-    const previousDay = new Date(today);
-    previousDay.setDate(today.getDate() - 1 * numDay);
-
-    console.log('Today: ' + today);
-    console.log('Previous Day: ' + previousDay);
-
-    // Filter data for the previous day
-    const previousDayData = packageList.filter((item) => {
-      const itemDate = new Date(item.dateUsed);
-      // Compare timestamps of itemDate and previousDay
-      return (
-        itemDate.getTime() >= previousDay.getTime() &&
-        itemDate.getTime() < today.getTime()
-      );
-    });
-
-    console.log('Previous Day Data: ', previousDayData);
-
-    const fetchData = async () => {
-      const processedPackage = await AppPackaging.preprocessAppPackageInfo(
-        previousDayData
-      );
-      if (processedPackage) {
-        setActivitiesDay(processedPackage);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const today = new Date();
-
-    const previousWeek = new Date(today);
-    previousWeek.setDate(today.getDate() - 7 * numWeek);
-
-    console.log('Today: ' + today);
-    console.log('Previous Week: ' + previousWeek);
-
-    // Filter data for the previous day
-    const previousWeekData = packageList.filter((item) => {
-      const itemDate = new Date(item.dateUsed);
-      // Compare timestamps of itemDate and previousWeek
-      return itemDate >= previousWeek && itemDate < today;
-    });
-
-    console.log('Previous Week Data: ', previousWeekData);
-
-    const fetchData = async () => {
-      const processedPackage = await AppPackaging.preprocessAppPackageInfo(
-        previousWeekData
-      );
-      if (processedPackage) {
-        setActivitiesWeek(processedPackage);
-      }
-    };
-
-    fetchData(); // Call fetchData function
-  }, []);
-
+  /** setup header when nav & childId change */
   useEffect(() => {
     /** setup header when (childId, navigation) change */
     navigation.setOptions({
@@ -329,7 +266,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             Activities in {option.toUpperCase()}
           </Text>
           {/** block activities today */}
-          <View style={{ height: 280 }}>
+          <View style={{ maxHeight: 250 }}>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
               <View
                 style={{
@@ -359,6 +296,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             style={{
               color: 'black',
               marginLeft: 5,
+              marginTop: -5,
               fontSize: 20,
               fontWeight: '600',
             }}
@@ -366,30 +304,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             Last Week activities
           </Text>
           {/** chart usage - screen time */}
-          <Text
-            style={{
-              color: 'black',
-              marginTop: 5,
-              marginLeft: 5,
-              fontSize: 20,
-              fontWeight: '600',
-            }}
-          >
-            Screen time last day
-          </Text>
-          {activitiesDay && <UsageChart activities={activitiesDay} />}
-          <Text
-            style={{
-              color: 'black',
-              marginTop: 5,
-              marginLeft: 5,
-              fontSize: 20,
-              fontWeight: '600',
-            }}
-          >
-            Screen time last week
-          </Text>
-          {activitiesWeek && <UsageChart activities={activitiesWeek} />}
+          {activities && <UsageChart activities={activities} />}
         </ScrollView>
       </View>
     </View>

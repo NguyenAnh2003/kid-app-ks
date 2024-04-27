@@ -108,14 +108,14 @@ const SingleChildScreen = ({ route, navigation }) => {
   /** childId -> fetchDataByChildId */
   const { childId, childName, childImage, phoneType } = route.params;
   /** option */
-  const [option, setOption] = useState('today');
-  const options = ['today', '7 days'];
+  const [option, setOption] = useState('recent');
+  const options = ['recent', '7 days'];
 
   /** state */
   const [activities, setActivities] = useState(packageList);
 
   const dataBasedonTime = useMemo(() => {
-    if (option === 'today') {
+    if (option === 'recent') {
       const today = new Date();
       const today2 = new Date(today);
       today2.setDate(today.getDate() - 1 * numDay);
@@ -136,9 +136,6 @@ const SingleChildScreen = ({ route, navigation }) => {
 
       const previousWeek = new Date(today);
       previousWeek.setDate(today.getDate() - 7 * numWeek);
-
-      console.log('Today: ' + today);
-      console.log('Previous Week: ' + previousWeek);
 
       // Filter data for the previous day
       const previousWeekData = packageList.filter((item) => {
@@ -181,8 +178,6 @@ const SingleChildScreen = ({ route, navigation }) => {
         </View>
       ),
     });
-
-    // console.log(activitiesDay[0].dateUsed);
 
     /** fetch child data by childId */
 
@@ -262,7 +257,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             Activities in {option.toUpperCase()}
           </Text>
           {/** block activities today */}
-          <View style={{ maxHeight: 250 }}>
+          <View style={{ maxHeight: 200 }}>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
               <View
                 style={{
@@ -292,12 +287,11 @@ const SingleChildScreen = ({ route, navigation }) => {
             style={{
               color: 'black',
               marginLeft: 5,
-              marginTop: -5,
               fontSize: 20,
               fontWeight: '600',
             }}
           >
-            Last Week activities
+            Usage Chart
           </Text>
           {/** chart usage - screen time */}
           {activities && <UsageChart activities={activities} />}

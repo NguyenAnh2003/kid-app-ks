@@ -112,10 +112,7 @@ const SingleChildScreen = ({ route, navigation }) => {
   const options = ['today', '7 days'];
 
   /** state */
-  const [dataa, setDataa] = useState({});
   const [activities, setActivities] = useState(packageList);
-  const [activitiesDay, setActivitiesDay] = useState(packageList);
-  const [activitiesWeek, setActivitiesWeek] = useState(packageList);
 
   const dataBasedonTime = useMemo(() => {
     if (option === 'today') {
@@ -191,7 +188,6 @@ const SingleChildScreen = ({ route, navigation }) => {
 
     /** remove data */
     return () => {
-      setDataa({});
     };
   }, [childId, navigation]);
 

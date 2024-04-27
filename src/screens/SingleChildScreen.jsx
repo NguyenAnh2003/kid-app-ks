@@ -6,7 +6,7 @@ import {
   NativeModules,
   TouchableOpacity,
 } from 'react-native';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import globalStyle from '../styles/globalStyle';
 import { ScrollView } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -47,7 +47,7 @@ const packageList = [
     name: 'facebook',
     packageName: 'com.facebook.katana',
     timeUsed: 10,
-    dateUsed: '2024-04-26',
+    dateUsed: '2024-04-27',
   },
   {
     id: '2',
@@ -61,7 +61,7 @@ const packageList = [
     name: 'instagram',
     packageName: 'com.instagram.android',
     timeUsed: 1,
-    dateUsed: '2024-04-26',
+    dateUsed: '2024-04-27',
   },
   {
     id: '4',
@@ -93,15 +93,8 @@ const packageList = [
   },
 ];
 
-// đây là số lương ngày và tuần muốn hiển thị,
-// ví dụ numDay = 1 thì hiển thị thống kê trong vòng 1 ngày trước,
-// numDay = 2 thì hiển thị thống kê trong vòng 2 ngày trước
 const numDay = 2;
 const numWeek = 1;
-
-// t nghĩ cái ni nên bỏ cái trượt như caurosel xong cho coi
-// nhiều ngày hay nhiều tuần đó để coi được nhiều hơn
-// mấy cái caurosel với giao diện nớ thì t hơi lỏ :v
 
 const SingleChildScreen = ({ route, navigation }) => {
   /**
@@ -112,17 +105,68 @@ const SingleChildScreen = ({ route, navigation }) => {
    */
   /** native module */
   const { AppPackaging } = NativeModules;
-
   /** childId -> fetchDataByChildId */
   const { childId, childName, childImage, phoneType } = route.params;
+  /** option */
+  const [option, setOption] = useState('today');
+  const options = ['today', '7 days', '15 days'];
 
   /** state */
   const [dataa, setDataa] = useState({});
   const [activities, setActivities] = useState(packageList);
   const [activitiesDay, setActivitiesDay] = useState(packageList);
   const [activitiesWeek, setActivitiesWeek] = useState(packageList);
-  const [option, setOption] = useState('today');
-  const options = ['today', '1 day', '7 days'];
+
+  const dataBasedonTime = useMemo(() => {
+    if (option === 'today') {
+      const today = new Date();
+      const today2 = new Date(today);
+      today2.setDate(today.getDate() - 1 * numDay);
+
+      const todayUsage = packageList.filter((item) => {
+        const itemDate = new Date(item.dateUsed);
+        // Compare timestamps of itemDate and previousDay
+        return (
+          itemDate.getTime() >= today2.getTime() &&
+          itemDate.getTime() < today.getTime()
+        );
+      });
+
+      return todayUsage;
+    }
+    if (option === '7 days') {
+      const today = new Date();
+
+      const previousWeek = new Date(today);
+      previousWeek.setDate(today.getDate() - 7 * numWeek);
+
+      console.log('Today: ' + today);
+      console.log('Previous Week: ' + previousWeek);
+
+      // Filter data for the previous day
+      const previousWeekData = packageList.filter((item) => {
+        const itemDate = new Date(item.dateUsed);
+        // Compare timestamps of itemDate and previousWeek
+        return itemDate >= previousWeek && itemDate < today;
+      });
+
+      return previousWeekData;
+    }
+  }, [option]);
+
+  useEffect(() => {
+    /** */
+    const fetchData = async () => {
+      const processedPackage = await AppPackaging.preprocessAppPackageInfo(
+        dataBasedonTime
+      );
+      if (processedPackage) {
+        setActivities(processedPackage);
+      }
+    };
+
+    fetchData();
+  }, [dataBasedonTime, option]);
 
   useEffect(() => {
     const today = new Date();
@@ -189,20 +233,6 @@ const SingleChildScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    const fetchDataa = async () => {
-      const processedPackage = await AppPackaging.preprocessAppPackageInfo(
-        packageList
-      );
-      if (processedPackage) {
-        // console.log(processedPackage);
-        setActivities(processedPackage);
-      }
-    };
-
-    fetchDataa();
-  }, []);
-
-  useEffect(() => {
     /** setup header when (childId, navigation) change */
     navigation.setOptions({
       headerTitle: () => (
@@ -262,11 +292,17 @@ const SingleChildScreen = ({ route, navigation }) => {
             />
           </View>
           {/** activities view */}
-          <View style={{ flexDirection: 'row', gap: 10 }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 10,
+            }}
+          >
             {options.map((i, index) => (
               <TouchableOpacity
                 key={index}
                 style={{ padding: 10, backgroundColor: '#000', minWidth: 80 }}
+                onPress={() => setOption(i)}
               >
                 <Text
                   style={{
@@ -287,12 +323,12 @@ const SingleChildScreen = ({ route, navigation }) => {
               marginTop: 5,
               marginLeft: 5,
               fontSize: 20,
-              fontWeight: '600',
+              fontWeight: '700',
             }}
           >
-            Recent activities
+            Activities in {option.toUpperCase()}
           </Text>
-          {/** block all activities */}
+          {/** block activities today */}
           <View style={{ height: 280 }}>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
               <View
@@ -318,49 +354,10 @@ const SingleChildScreen = ({ route, navigation }) => {
               </View>
             </ScrollView>
           </View>
-          {/** activities last day view */}
-          <Text
-            style={{
-              color: 'black',
-              marginTop: 5,
-              marginLeft: 5,
-              fontSize: 20,
-              fontWeight: '600',
-            }}
-          >
-            Last day activities
-          </Text>
-          {/** block activities last day */}
-          <View style={{ height: 280 }}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-              <View
-                style={{
-                  paddingHorizontal: 15,
-                  paddingVertical: 15,
-                  backgroundColor: '#fff',
-                  flexDirection: 'column',
-                  gap: 12,
-                }}
-              >
-                {activitiesDay &&
-                  Array.isArray(activitiesDay) &&
-                  activitiesDay?.map((i, index) => (
-                    <ActivityCard
-                      key={index}
-                      packageName={i.name}
-                      packageImage={i.icon}
-                      packageTimeUsed={i.timeUsed}
-                      packageDateUsed={i.dateUsed}
-                    />
-                  ))}
-              </View>
-            </ScrollView>
-          </View>
           {/** activities last week view */}
           <Text
             style={{
               color: 'black',
-              marginTop: 5,
               marginLeft: 5,
               fontSize: 20,
               fontWeight: '600',
@@ -368,32 +365,6 @@ const SingleChildScreen = ({ route, navigation }) => {
           >
             Last Week activities
           </Text>
-          {/** block activities last week */}
-          <View style={{ height: 280 }}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-              <View
-                style={{
-                  paddingHorizontal: 15,
-                  paddingVertical: 15,
-                  backgroundColor: '#fff',
-                  flexDirection: 'column',
-                  gap: 12,
-                }}
-              >
-                {activitiesWeek &&
-                  Array.isArray(activitiesWeek) &&
-                  activitiesWeek?.map((i, index) => (
-                    <ActivityCard
-                      key={index}
-                      packageName={i.name}
-                      packageImage={i.icon}
-                      packageTimeUsed={i.timeUsed}
-                      packageDateUsed={i.dateUsed}
-                    />
-                  ))}
-              </View>
-            </ScrollView>
-          </View>
           {/** chart usage - screen time */}
           <Text
             style={{

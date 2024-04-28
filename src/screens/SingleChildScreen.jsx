@@ -98,6 +98,20 @@ const packageList = [
     timeUsed: 2,
     dateUsed: '2024-04-25',
   },
+  {
+    id: '8',
+    name: 'zalo',
+    packageName: 'com.zing.zalo',
+    timeUsed: 2,
+    dateUsed: '2024-04-27',
+  },
+  {
+    id: '9',
+    name: 'zalo',
+    packageName: 'com.zing.zalo',
+    timeUsed: 2,
+    dateUsed: '2024-04-28',
+  },
 ];
 
 const numDay = 2;
@@ -174,6 +188,10 @@ const SingleChildScreen = ({ route, navigation }) => {
     };
 
     fetchData();
+
+    return () => {
+      setActivities();
+    };
   }, [dataBasedonTime, option]);
 
   /** setup header when nav & childId change */

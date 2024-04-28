@@ -267,6 +267,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     flex: 1,
     backgroundColor: 'white',
+    paddingHorizontal: 20,
   },
   alignCenter: {
     display: 'flex',

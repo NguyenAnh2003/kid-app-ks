@@ -3,24 +3,15 @@ import {
   StyleSheet,
   Text,
   View,
-  Pressable,
-  TextInput,
   Alert,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import globalStyle, {
-  Padding,
-  Border,
-  Color,
-  FontSize,
-  FontFamily,
-} from '../styles/globalStyle';
+import globalStyle from '../styles/globalStyle';
 import { useReducer, useRef, useState } from 'react';
-import { supabase } from '../libs/supabase';
 import CustomInput from '../components/CustomInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogin } from '../redux/actions/actions';
+import { loginEmail } from '../libs/supabase/auth.services';
 
 const styles = StyleSheet.create({});
 
@@ -29,24 +20,26 @@ const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const passwordRef = useRef();
   const emailRef = useRef();
-  const currentSession = useSelector((state) => state.userReducers?.user);
 
   const loginHandler = async () => {
     try {
-      if (emailRef.current.getValue() && passwordRef.current.getValue()) {
-        const {
-          error,
-          data: { session, user },
-        } = await supabase.auth.signInWithPassword({
-          email: emailRef.current?.getValue(),
-          password: passwordRef.current?.getValue(),
-        });
+      if (emailRef.current?.getValue() && passwordRef.current?.getValue()) {
+        /** get response */
+        const response = await loginEmail(
+          emailRef.current?.getValue(),
+          passwordRef.current?.getValue()
+        );
+        /** session & user */
+        const { session, user } = response;
         if (session && user) {
           dispatch(userLogin(JSON.stringify(session)));
+        } else {
+          /** handle error here */
+          console.log('Invalid info');
         }
       }
     } catch (error) {
-      Alert.alert(error.message);
+      Alert.alert();
     }
   };
 

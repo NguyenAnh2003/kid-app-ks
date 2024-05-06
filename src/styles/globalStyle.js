@@ -4,7 +4,6 @@ const globalStyle = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fdf6e2',
-    paddingHorizontal: 20,
     paddingVertical: 20,
   },
   h1: {

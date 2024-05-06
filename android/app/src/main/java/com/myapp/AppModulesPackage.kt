@@ -17,5 +17,5 @@ class AppModulesPackage : ReactPackage {
 
     override fun createNativeModules(reactContext: ReactApplicationContext):
         MutableList<NativeModule> = listOf(UsageStatsModule(reactContext),
-                                            BackgroundModule(reactContext)).toMutableList()
+        AppPackageModule(reactContext)).toMutableList()
 }

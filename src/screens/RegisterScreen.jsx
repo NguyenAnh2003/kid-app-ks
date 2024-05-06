@@ -1,28 +1,30 @@
 import * as React from 'react';
 import { Text, View, Alert, TouchableOpacity } from 'react-native';
 import globalStyle from '../styles/globalStyle';
-import { supabase } from '../libs/supabase';
+import { supabase } from '../libs/supabase/supabase';
 import CustomInput from '../components/CustomInput';
+import { registerEmail } from '../libs/supabase/auth.services';
 
 const RegisterScreen = ({ navigation }) => {
   /** states */
   const emailRef = React.useRef();
+  const nameRef = React.useRef();
+  const countryRef = React.useRef();
+  const phoneRef = React.useRef();
   const passwordRef = React.useRef();
   const confirmPassRef = React.useRef();
 
   const registerHandler = async () => {
     try {
       if (emailRef.current?.getValue() && passwordRef.current?.getValue()) {
-        const {
-          data: { session, user },
-          error,
-        } = await supabase.auth.signUp({
-          email: emailRef.current?.getValue(),
-          password: passwordRef.current?.getValue(),
-          options: {
-            emailRedirectTo: 'https://example.com/welcome',
-          },
-        });
+        const { session, user } = await registerEmail(
+          emailRef.current?.getValue(),
+          passwordRef.current?.getValue()
+        );
+
+        /** checking session and user if not needed to
+         * confirm on mail then move to login
+         */
         if (!session && !user) {
           const alertPedning = async () => {
             Alert.alert(
@@ -61,6 +63,21 @@ const RegisterScreen = ({ navigation }) => {
         {/** input */}
         <View style={{ flexDirection: 'column', gap: 10 }}>
           <View style={{ flexDirection: 'column', gap: 10 }}>
+            <CustomInput
+              ref={nameRef}
+              placeHolder="Enter your name"
+              type="gmail"
+            />
+            <CustomInput
+              ref={countryRef}
+              placeHolder="Your country"
+              type="gmail"
+            />
+            <CustomInput
+              ref={phoneRef}
+              placeHolder="Your phone number"
+              type="gmail"
+            />
             {/** email */}
             <CustomInput
               ref={emailRef}

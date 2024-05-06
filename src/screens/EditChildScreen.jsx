@@ -57,14 +57,13 @@ const reducer = (state, action) => {
   }
 };
 
-const AccountScreen = ({ navigation }) => {
-  /**
-   * @field avatar
-   * @field username
-   * @field gmail
-   * @field country
-   * @field phone numer
-   */
+const EditChildScreen = ({ navigation, route }) => {
+  /** child id */
+  const { childId } = route.params;
+
+  useEffect(() => {
+    console.log('childId', childId);
+  }, [navigation]);
 
   const currentUserSession = useSelector((state) => state.userReducers?.user);
   const [refresh, setRefresh] = useState(false);
@@ -316,4 +315,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AccountScreen;
+export default EditChildScreen;

@@ -1,0 +1,84 @@
+import { appTables } from './supabase';
+import { supabase } from './supabase';
+const childrenTable = supabase.from(appTables.CHILDREN); // init childrenTable
+
+export const createChild = async (
+  parentId,
+  name,
+  age,
+  phone,
+  phoneType,
+  avatarUrl
+) => {
+  /**
+   * @param parentId ...
+   * @param name: str
+   * @param age: int
+   * @param phone - phone number: int
+   * @param phoneType: str
+   * @param avatarUrl: str
+   */
+  try {
+    /** waiting for response */
+    const { data, status } = await childrenTable.insert({
+      parentId: parentId,
+      kidName: name,
+      age: age,
+      phone: phone,
+      phoneType: phoneType,
+      avatarUrl: avatarUrl,
+    });
+
+
+    if (status === 201) return status;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const getChildInfo = async (childId) => {
+  /** @param childId */
+  try {
+    /** select all information with childId */
+    const { data, status } = await childrenTable.select().eq('id', childId);
+    if (status === 200) return data;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const updateChild = async (childId, kidName, age, phone, avatarUrl) => {
+  /**
+   * @param childId -> used for update (putHTTP)
+   * @param name: str
+   * @param age: int
+   * @param phone - phone number: int
+   * @param avatarUrl: str
+   */
+  try {
+    const { data, status, statusText } = await childrenTable
+      .update({
+        kidName: kidName,
+        age: age,
+        phone: phone,
+        avatarUrl: avatarUrl,
+      })
+      .eq('id', childId);
+    if (status === 200) return data;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const deleteChild = async (childId) => {
+  /** @param childId  */
+  try {
+    const { error, status, statusText } = await childrenTable
+      .delete()
+      .eq('id', childId);
+    const responseData = { status, statusText };
+    if (status === 204) return responseData;
+  } catch (error) {
+    console.log(error.message);
+  }
+};

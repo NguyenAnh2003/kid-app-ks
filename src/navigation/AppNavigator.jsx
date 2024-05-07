@@ -14,8 +14,10 @@ import {
   LoginScreen,
   RegisterScreen,
   SingleChildScreen,
+  StateApp,
 } from '../screens';
 import SplashScreen from '../screens/SplashScreen';
+import SetTimeLimitScreen from '../screens/SetTimeLimitScreen';
 
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
@@ -56,8 +58,8 @@ const AppNavigator = () => {
       ) : (
         <>
           <Stack.Screen
-              name="state"
-              component={StateApp}
+              name="SetTimeLimit"
+              component={SetTimeLimitScreen}
               options={{ headerShown: false }}
             ></Stack.Screen>
           <Stack.Screen

@@ -17,6 +17,9 @@ class BackgroundHeadlessTaskService : HeadlessJsTaskService() {
 
     override fun getTaskConfig(intent: Intent): HeadlessJsTaskConfig? {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "demo"
+            createNotificationChannel(channelId)
+
             val notification = NotificationCompat.Builder(applicationContext, "demo")
                 .setContentTitle("Headless Work")
                 .setTicker("runn")
@@ -25,7 +28,7 @@ class BackgroundHeadlessTaskService : HeadlessJsTaskService() {
                 .build()
             startForeground(1, notification)
         }
-        Log.d("TestHeadless", "i am here")
+        Log.d("BGHeadlessTask", "i am here")
         val extras = intent.extras
         if (extras != null) {
             return HeadlessJsTaskConfig(
@@ -36,5 +39,16 @@ class BackgroundHeadlessTaskService : HeadlessJsTaskService() {
             )
         }
         return null
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel(channelId: String) {
+        val channelName = "Demo Channel"
+        val description = "This is a demo notification channel"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(channelId, channelName, importance).apply {
+            this.description = description
+        }
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 }

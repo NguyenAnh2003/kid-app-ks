@@ -36,7 +36,13 @@ const StateApp = () => {
                     Start
                 </Text>
             </Pressable>
-        
+            <Pressable
+                onPress={() => onCancelBtnPress()}
+            >
+                <Text >
+                    Stop
+                </Text>
+            </Pressable>
         </View>
 
     </>)

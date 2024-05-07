@@ -18,6 +18,8 @@ class BackgroundWorker(context: Context, workerParams: WorkerParameters) :
         Log.d("BackgroundWorker", "Worker started executing.")
         val extras = Bundle()
         val service = Intent(applicationContext, BackgroundHeadlessTaskService::class.java)
+        service.putExtra("key", "value"); // Add any extras if needed
+        // Specify the type of the foreground service
         service.putExtras(extras)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -42,23 +44,24 @@ class BackgroundWorker(context: Context, workerParams: WorkerParameters) :
             val channel = NotificationChannel(channelId, channelName, importance)
             channel.description = description
 
-            val notificationManager =
-                applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         } catch (e: Exception) {
             Log.e("BackgroundWorker", "Error creating notification channel: ${e.message}")
         }
     }
+
     private fun showNotification(title: String, message: String) {
         val channelId = "demo" // Change this to your channel ID
         val notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
+            .setSmallIcon(R.drawable.baseline_notifications_24) // Add your small icon here
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
-        val notificationManager =
-            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(1, notificationBuilder.build()) // Notification ID can be any unique integer
     }
+
 
 }

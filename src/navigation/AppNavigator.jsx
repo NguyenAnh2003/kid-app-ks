@@ -12,7 +12,9 @@ import {
   HomeScreen,
   LoginScreen,
   RegisterScreen,
+
 } from '../screens';
+import Monitor from '../screens/Monitor';
 import StateApp from '../screens/StateApp';
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
@@ -38,11 +40,19 @@ const AppNavigator = () => {
         ></Stack.Screen>
       ) : (
         <>
-          <Stack.Screen
-              name="state"
-              component={StateApp}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
+          <Tab.Screen
+            name="Monitor"
+            component={Monitor}
+            options={{
+              tabBarIcon: ({ color, size, focused }) => (
+                <Ionicons
+                  name={focused ? 'home' : 'home-outline'}
+                  size={24}
+                  color={'black'}
+                />
+              ),
+            }}
+          />
           <Stack.Screen
             name="SignIn"
             component={LoginScreen}
@@ -69,6 +79,7 @@ const HomeTabs = (props) => {
         tabBarStyle: { padding: 0, margin: 0 },
       }}
     >
+
       {/** home screen */}
       <Tab.Screen
         name="HomeScreen"

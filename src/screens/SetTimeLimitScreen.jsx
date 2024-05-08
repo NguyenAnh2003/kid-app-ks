@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Button, Text, Modal, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BackgroundTimer from 'react-native-background-timer';
+import PushNotification from 'react-native-push-notification';
 import {
   EventFrequency,
   checkForPermission,
@@ -19,6 +21,9 @@ const SetTimeLimitScreen = () => {
 
   useEffect(() => {
     checkPermissionAndFetchUsage();
+    return () => {
+      BackgroundTimer.stopBackgroundTimer(); // Stop the timer when the component unmounts
+    };
   }, []);
 
   useEffect(() => {
@@ -26,6 +31,43 @@ const SetTimeLimitScreen = () => {
       fetchUsageStats();  // Fetch stats only after usageLimit is updated
     }
   }, [usageLimit]); // Effect triggers on change in usageLimit
+
+  const startCountdown = () => {
+    const timerId = BackgroundTimer.runBackgroundTimer(() => {
+      setRemainingMinutes(prevSeconds => {
+        const nextRemainingSeconds = prevSeconds - 1;
+  
+        if (nextRemainingSeconds < 0) {
+          BackgroundTimer.stopBackgroundTimer(timerId);
+          return 0;  // Prevent state from going negative
+        }
+  
+        const minutes = Math.floor(nextRemainingSeconds / 60);
+        const seconds = nextRemainingSeconds % 60;
+  
+        console.log(`Countdown: ${minutes} minutes and ${seconds} seconds remaining`);
+  
+        if (nextRemainingSeconds < 1) {
+          console.log("Countdown Finished: No remaining time.");
+          PushNotification.localNotification({
+            channelId: "channel-timelimit",  // Make sure to use the correct channel ID
+            title: "Time Limit Reached",
+            message: "You have used up your app usage time for today.",
+            playSound: true,
+            soundName: 'default'
+          });
+          console.log("Scheduling local notification:", {
+            channelId: "channel-timelimit",
+            title: "Time Limit Reached",
+            message: "You have used up your app usage time for today."
+          });          
+          BackgroundTimer.stopBackgroundTimer(timerId);  // Ensure timer is stopped
+        }
+  
+        return nextRemainingSeconds;
+      });
+    }, 1000);
+  };  
 
   const formattedTime = () => `${selectedHour} hours ${selectedMinute} minutes`;
 
@@ -66,6 +108,9 @@ const SetTimeLimitScreen = () => {
     await saveUsageLimit(usageLimitMinutes);
     setUsageLimit(usageLimitMinutes);
     setModalVisible(false);
+    if (usageLimitMinutes !== null) {
+      startCountdown();
+    }
   };
 
   const fetchUsageStats = async () => {
@@ -91,15 +136,17 @@ const SetTimeLimitScreen = () => {
         endMilliseconds
       );
   
-      console.log("Detailed App Usage Stats:");
-      Object.keys(result).forEach(app => {
-        const appUsageSeconds = result[app].totalTimeInForeground / 1000;
-        console.log(`App: ${app}, Usage: ${appUsageSeconds.toFixed(3)} seconds`);
-      });
+      // console.log("Detailed App Usage Stats:");
+      // Object.keys(result).forEach(app => {
+      //   const appUsageSeconds = result[app].totalTimeInForeground / 1000;
+      //   console.log(`App: ${app}, Usage: ${appUsageSeconds.toFixed(3)} seconds`);
+      // });
   
       if (result['com.myapp']) {
         const totalSecondsUsed = result['com.myapp'].totalTimeInForeground / 1000;  // Convert from milliseconds to seconds
+        console.log('Time used: ', totalSecondsUsed, 'seconds');
         const remaining = (usageLimit * 60) - totalSecondsUsed;  // Calculate remaining seconds
+        console.log('Remaining', remaining);
         setRemainingMinutes(Math.max(0, remaining));
   
         const humanReadableRemainingTime = humanReadableMillis(Math.max(0, remaining) * 1000);  // Ensure remaining time cannot be negative in display
@@ -144,9 +191,9 @@ const SetTimeLimitScreen = () => {
                    <Picker.Item key={minute} label={`${minute} minutes`} value={minute} />
                  ))}
               </Picker>
-            </View>
-            <Button title="Set" onPress={handleSetUsageLimit} />
-            <Button title="Cancel" onPress={() => setModalVisible(false)} />
+            </View >
+              <Button title="Set" onPress={handleSetUsageLimit} />
+              <Button title="Cancel" onPress={() => setModalVisible(false)} />
           </View>
         </View>
       </Modal>

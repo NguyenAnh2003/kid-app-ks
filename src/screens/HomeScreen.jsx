@@ -70,7 +70,7 @@ const HomeScreen = ({ user, navigation, route }) => {
   const [data, setData] = useState();
 
   return (
-    <View style={[globalStyle.container, { flex: 1 }]}>
+    <View style={[globalStyle.container, { flex: 1, paddingHorizontal: 10 }]}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{ flexDirection: 'column', gap: 10, width: '100%' }}>
           {/** list of child */}

@@ -17,12 +17,6 @@ const reducer = (state, action) => {
       return { ...state, isFetching: true };
     case 'ADD_COMPLETE':
       return {
-        // parentId: action.payload.parentId,
-        // avatar: action.payload.avatarUrl,
-        // username: action.payload.username,
-        // gmail: action.payload.gmail,
-        // country: action.payload.country,
-        // phone: JSON.stringify(action.payload.phone),
         isFetching: false,
       };
     case 'UPLOAD_IMAGE':
@@ -64,6 +58,7 @@ const AddChild = ({ navigation }) => {
   const ageRef = useRef();
   const phoneRef = useRef();
 
+  /** upload image */
   const uploadImage = async (imageUri) => {
     dispatch({ type: 'UPLOAD_IMAGE' });
     try {
@@ -80,6 +75,8 @@ const AddChild = ({ navigation }) => {
       console.error('Error uploading image:', error);
     }
   };
+
+  /** select image handler */
   const imageHandler = async () => {
     const options = {
       mediaType: 'photo',
@@ -99,26 +96,31 @@ const AddChild = ({ navigation }) => {
     });
   };
 
+  /** add child handler */
   const submitHandler = async () => {
     try {
-      dispatch({ type: 'PROCESSING_ADDING' });
       const parentId = JSON.parse(currentUserSession.session).user.id;
       const kidname = nameRef.current.getValue();
       const age = parseInt(ageRef.current.getValue());
       const phone = parseInt(phoneRef.current.getValue());
       const phoneType = phoneTypeRef.current.getValue();
       const avatarUrl = state.avatar;
-      const status = await createChild(
-        parentId,
-        kidname,
-        age,
-        phone,
-        phoneType,
-        avatarUrl
-      );
-      if (status === 201) {
-        dispatch({ type: 'ADD_COMPLETE' });
-        navigation.goBack();
+      if (parentId && kidname && age && phone && avatarUrl) {
+        dispatch({ type: 'PROCESSING_ADDING' });
+        const status = await createChild(
+          parentId,
+          kidname,
+          age,
+          phone,
+          phoneType,
+          avatarUrl
+        );
+        if (status === 201) {
+          dispatch({ type: 'ADD_COMPLETE' });
+          navigation.goBack();
+        }
+      } else {
+        console.log('something not be filled');
       }
     } catch (error) {
       console.error('Error creating child:', error);
@@ -189,6 +191,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     flex: 1,
     backgroundColor: 'white',
+    paddingHorizontal: 20
   },
   alignCenter: {
     display: 'flex',

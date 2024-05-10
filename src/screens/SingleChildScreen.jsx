@@ -188,6 +188,10 @@ const SingleChildScreen = ({ route, navigation }) => {
     };
 
     fetchData();
+
+    return () => {
+      setActivities();
+    };
   }, [dataBasedonTime, option]);
 
   /** setup header when nav & childId change */
@@ -301,7 +305,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             </Text>
             {/** block activities today */}
             <View style={{ maxHeight: 200 }}>
-              {activities.length !== 0 ? (
+              {activities?.length !== 0 ? (
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                   <View
                     style={{
@@ -339,7 +343,7 @@ const SingleChildScreen = ({ route, navigation }) => {
               )}
             </View>
             {/** activities last week view */}
-            {activities.length !== 0 ? (
+            {activities?.length !== 0 ? (
               <>
                 <Text
                   style={{

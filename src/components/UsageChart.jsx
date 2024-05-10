@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 const UsageChart = React.memo(({ activities }) => {
   const widthAndHeight = 200;
   // const series = [10, 1, 4];
-  const [series, setSeries] = useState([10, 1]);
+  const [series, setSeries] = useState([10]);
   const [usages, setUsages] = useState([]);
 
   const generateSliceColors = useCallback(
@@ -51,19 +51,22 @@ const UsageChart = React.memo(({ activities }) => {
 
   /** process activities */
   useEffect(() => {
-    processedActivities = collapseArray(activities);
+    const processedActivities = collapseArray(activities);
     /** set usage */
+    console.log('cac 2', processedActivities);
     setUsages(processedActivities);
-    arr = []; // define statis array
+    const arr = []; // define statis array
     processedActivities.forEach(({ number }) => {
       /** pushing each number to array */
       arr.push(number);
       return arr;
     });
-    setSeries(arr);
+    if (arr.length !== 0) {
+      setSeries(arr);
+    } else return;
   }, [activities]);
 
-  processedUsage = useMemo(() => {
+  const processedUsage = useMemo(() => {
     if (sliceColor.length === 0) return;
     usages.forEach((item, index) => {
       item.color = sliceColor[index];

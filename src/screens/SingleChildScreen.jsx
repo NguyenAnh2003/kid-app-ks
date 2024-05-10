@@ -54,21 +54,21 @@ const packageList = [
     name: 'facebook',
     packageName: 'com.facebook.katana',
     timeUsed: 10,
-    dateUsed: '2024-04-27',
+    dateUsed: '2024-05-5',
   },
   {
     id: '2',
     name: 'facebook',
     packageName: 'com.facebook.katana',
     timeUsed: 1,
-    dateUsed: '2024-04-23',
+    dateUsed: '2024-05-4',
   },
   {
     id: '3',
     name: 'instagram',
     packageName: 'com.instagram.android',
     timeUsed: 1,
-    dateUsed: '2024-04-27',
+    dateUsed: '2024-05-6',
   },
   {
     id: '4',
@@ -98,6 +98,20 @@ const packageList = [
     timeUsed: 2,
     dateUsed: '2024-04-25',
   },
+  // {
+  //   id: '8',
+  //   name: 'zalo',
+  //   packageName: 'com.zing.zalo',
+  //   timeUsed: 2,
+  //   dateUsed: '2024-05-10',
+  // },
+  // {
+  //   id: '9',
+  //   name: 'facebook',
+  //   packageName: 'com.facebook.katana',
+  //   timeUsed: 8,
+  //   dateUsed: '2024-05-10',
+  // },
 ];
 
 const numDay = 2;
@@ -116,7 +130,7 @@ const SingleChildScreen = ({ route, navigation }) => {
   const { childId, childName, childImage, phoneType } = route.params;
   /** option */
   const [option, setOption] = useState('recent');
-  const options = ['recent', '7 days'];
+  const options = ['recent', '5 days'];
 
   /** state */
   const [activities, setActivities] = useState(packageList);
@@ -145,7 +159,7 @@ const SingleChildScreen = ({ route, navigation }) => {
 
       return todayUsage;
     }
-    if (option === '7 days') {
+    if (option === '5 days') {
       const today = new Date();
 
       const previousWeek = new Date(today);
@@ -277,7 +291,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             <Text
               style={{
                 color: 'black',
-                marginTop: 5,
+                marginTop: 15,
                 marginLeft: 5,
                 fontSize: 20,
                 fontWeight: '700',
@@ -287,19 +301,18 @@ const SingleChildScreen = ({ route, navigation }) => {
             </Text>
             {/** block activities today */}
             <View style={{ maxHeight: 200 }}>
-              <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                <View
-                  style={{
-                    paddingHorizontal: 15,
-                    paddingVertical: 15,
-                    backgroundColor: '#fff',
-                    flexDirection: 'column',
-                    gap: 12,
-                  }}
-                >
-                  {activities &&
-                    Array.isArray(activities) &&
-                    activities?.map((i, index) => (
+              {activities.length !== 0 ? (
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                  <View
+                    style={{
+                      paddingHorizontal: 15,
+                      paddingVertical: 15,
+                      backgroundColor: '#fff',
+                      flexDirection: 'column',
+                      gap: 12,
+                    }}
+                  >
+                    {activities?.map((i, index) => (
                       <ActivityCard
                         key={index}
                         packageName={i.name}
@@ -308,22 +321,41 @@ const SingleChildScreen = ({ route, navigation }) => {
                         packageDateUsed={i.dateUsed}
                       />
                     ))}
-                </View>
-              </ScrollView>
+                  </View>
+                </ScrollView>
+              ) : (
+                <Text
+                  style={{
+                    color: 'red',
+                    marginTop: 95,
+                    marginLeft: 5,
+                    fontSize: 20,
+                    fontWeight: '500',
+                    textAlign: 'center'
+                  }}
+                >
+                  There is no activities in recent
+                </Text>
+              )}
             </View>
             {/** activities last week view */}
-            <Text
-              style={{
-                color: 'black',
-                marginLeft: 5,
-                fontSize: 20,
-                fontWeight: '600',
-              }}
-            >
-              Usage Chart
-            </Text>
-            {/** chart usage - screen time */}
-            {activities && <UsageChart activities={activities} />}
+            {activities.length !== 0 ? (
+              <>
+                <Text
+                  style={{
+                    color: 'black',
+                    marginLeft: 5,
+                    fontSize: 20,
+                    fontWeight: '600',
+                  }}
+                >
+                  Usage Chart
+                </Text>
+                {activities && <UsageChart activities={activities} />}
+              </>
+            ) : (
+              <></>
+            )}
           </ScrollView>
         </View>
       </View>

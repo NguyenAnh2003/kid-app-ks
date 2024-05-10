@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import LocationTracking from './LocationTracking';
 import globalStyle from '../styles/globalStyle';
 
 const ListChildToTrack = (props) => {
   const items = props.items || {}; 
+
+  const [currentChild, setCurrentChild] = useState('');
   const onPressChild = (item) => {
     console.log("Pressed button " + item);
+    setCurrentChild(item)
   };
 
   return (
@@ -22,7 +25,7 @@ const ListChildToTrack = (props) => {
         />
         ))}
       </View>
-      <LocationTracking></LocationTracking>
+      <LocationTracking childId={currentChild}></LocationTracking>
     </View>
   );
 };

@@ -7,6 +7,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CreateSthScreen from '../screens/CreateSthScreen';
 import ListChildToTrack from '../screens/ListChildToTrack';
+import ChildTest from '../screens/ChildTest';
 
 const Tab = createBottomTabNavigator();
 
@@ -76,7 +77,20 @@ const NavBar = (props) => {
           ),
         }}
       />
-      
+      {/** test screen */}
+      <Tab.Screen
+        name="ChildTest"
+        component={ChildTest}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'home' : 'home-outline'}
+              size={24}
+              color={'black'}
+            />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };

@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 const childList = [
   /** childId, childName, ChildAvatar */
   {
-    childId: '1',
+    childId: '7ce14780-1a03-438a-9596-973d81725fa7',
     childName: 'Nguyen Anh',
     childPNumber: '0358423237',
     avatarUrl:
@@ -43,7 +43,7 @@ const childList = [
     phoneType: 'Sam Sung',
   },
   {
-    childId: '2',
+    childId: '7ce14780-1a03-438a-9596-973d81725fk7',
     childName: 'Bin Bin',
     childPNumber: '0358423237',
     avatarUrl:
@@ -51,7 +51,7 @@ const childList = [
     phoneType: 'Sam Sung',
   },
   {
-    childId: '3',
+    childId: '7ce14780-1a03-438a-9596-973d81725fa0',
     childName: 'Bin Bin',
     childPNumber: '0358423237',
     avatarUrl:

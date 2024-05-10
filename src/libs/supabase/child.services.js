@@ -29,7 +29,6 @@ export const createChild = async (
       avatarUrl: avatarUrl,
     });
 
-
     if (status === 201) return status;
   } catch (error) {
     console.log(error.message);
@@ -40,14 +39,21 @@ export const getChildInfo = async (childId) => {
   /** @param childId */
   try {
     /** select all information with childId */
-    const { data, status } = await childrenTable.select().eq('id', childId);
+    const { data, status } = await childrenTable.select('*').eq('id', childId);
     if (status === 200) return data;
   } catch (error) {
     console.log(error.message);
   }
 };
 
-export const updateChild = async (childId, kidName, age, phone, avatarUrl) => {
+export const updateChild = async (
+  childId,
+  kidName,
+  age,
+  phone,
+  phonetype,
+  avatarUrl
+) => {
   /**
    * @param childId -> used for update (putHTTP)
    * @param name: str
@@ -62,9 +68,10 @@ export const updateChild = async (childId, kidName, age, phone, avatarUrl) => {
         age: age,
         phone: phone,
         avatarUrl: avatarUrl,
+        phonetype: phonetype
       })
       .eq('id', childId);
-    if (status === 200) return data;
+    if (status === 204) return status;
   } catch (error) {
     console.log(error.message);
   }

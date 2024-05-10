@@ -20,11 +20,10 @@ import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
-import { updateUserData } from '../libs/supabase/parent.services';
 import { supabase } from '../libs/supabase/supabase';
 import SplashScreen from './SplashScreen';
-import { getImageUrl } from '../libs';
-import getCurrentuserInfo from '../libs/getCurrentUser';
+import { getChildInfo, getImageUrl, updateChild } from '../libs';
+import { useFormik } from 'formik';
 
 /** reducer
  * @param username
@@ -37,11 +36,12 @@ const reducer = (state, action) => {
     case 'USER_DATA':
       /** return fetched data from api */
       return {
-        avatar: action.payload.avatarUrl,
-        username: action.payload.username,
-        gmail: action.payload.gmail,
-        country: action.payload.country,
-        phone: JSON.stringify(action.payload.phone),
+        parentId: action.payload.parentId,
+        avatar: action.payload.avatarUrl, // ava url
+        name: action.payload.kidName, // kidname
+        phonetype: action.payload.phoneType, // phonetype
+        phone: JSON.stringify(action.payload.phone), // phone
+        age: JSON.stringify(action.payload.age), // age
         isFetching: false,
       };
     case 'UPLOAD_IMAGE':
@@ -67,24 +67,57 @@ const EditChildScreen = ({ navigation, route }) => {
 
   const currentUserSession = useSelector((state) => state.userReducers?.user);
   const [refresh, setRefresh] = useState(false);
+
   const [state, dispatch] = useReducer(reducer, {
     isFetching: true,
     avatar: '',
-    username: '',
-    gmail: '',
-    country: '',
+    name: '',
+    phonetype: '',
     phone: '',
+    age: '',
+    parentId: '',
   });
 
-  /** state ; ref */
-  const nameRef = useRef();
-  const gmailRef = useRef();
-  const countryRef = useRef();
-  const phoneRef = useRef();
+  const formik = useFormik({
+    initialValues: {
+      name: state.name,
+      phonetype: state.phonetype,
+      phone: state.phone,
+      age: state.age,
+    },
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      /**
+       * @param userId
+       * @param name
+       * @param gmail
+       * @param country
+       * @param phone
+       * @param avatarUrl
+       */
+      dispatch({ type: 'PROCESSING_UPDATE_DATA' });
+      const formData = {
+        name: values.name,
+        age: parseInt(values.age),
+        phonetype: values.phonetype,
+        phone: parseInt(values.phone),
+        avatar: state.avatar,
+      };
+      const status = await updateChild(
+        childId, // childId
+        name, // name
+        formData.avatar, // avatar
+        formData.phonetype, // phonetype
+        formData.phone, // phone
+        formData.age // age
+      );
+      if (status === 204) dispatch({ type: 'UPDATE_COMPLETED' });
+    },
+  });
 
   useEffect(() => {
     const fetchDataaa = async () => {
-      const data = await getCurrentuserInfo(currentUserSession);
+      const data = await getChildInfo(childId);
       if (data) dispatch({ type: 'USER_DATA', payload: data[0] });
     };
 
@@ -94,7 +127,7 @@ const EditChildScreen = ({ navigation, route }) => {
   const onRefresh = useCallback(() => {
     setRefresh(true);
     const fetchDataaa = async () => {
-      const data = await getCurrentuserInfo(currentUserSession);
+      const data = await getChildInfo(childId);
       if (data) dispatch({ type: 'USER_DATA', payload: data[0] });
     };
 
@@ -142,51 +175,6 @@ const EditChildScreen = ({ navigation, route }) => {
     });
   };
 
-  const submitHandler = async () => {
-    /**
-     * @param userId
-     * @param name
-     * @param gmail
-     * @param country
-     * @param phone
-     * @param avatarUrl
-     */
-    try {
-      dispatch({ type: 'PROCESSING_UPDATE_DATA' });
-      /** */
-      const userId = JSON.parse(currentUserSession.session).user.id;
-      /** name */
-      const name = nameRef.current.getValue()
-        ? nameRef.current.getValue()
-        : state.username;
-      /** gmail */
-      const gmail = gmailRef.current.getValue()
-        ? gmailRef.current.getValue()
-        : state.gmail;
-      /** country */
-      const country = countryRef.current.getValue()
-        ? countryRef.current.getValue()
-        : state.country;
-      /** phone */
-      const phone = phoneRef.current.getValue()
-        ? parseInt(phoneRef.current.getValue())
-        : parseInt(state.phone);
-      const avatar = state.avatar;
-      /** update info */
-      const status = await updateUserData(
-        userId,
-        name,
-        avatar,
-        gmail,
-        country,
-        phone
-      );
-      if (status === 204) dispatch({ type: 'UPDATE_COMPLETED' });
-    } catch (error) {
-      console.log('Error update user information:', error.message);
-    }
-  };
-
   return state.isFetching ? (
     <SplashScreen />
   ) : (
@@ -220,30 +208,38 @@ const EditChildScreen = ({ navigation, route }) => {
               onPress={imageHandler}
             />
           </View>
-          <Text style={[styles.accountName]}>{state.username}</Text>
+          {state && <Text style={[styles.accountName]}>{state.name}</Text>}
         </View>
         {/** from view */}
         <View style={styles.profileInformation}>
-          <CustomInput
-            ref={nameRef}
-            defauleVal={state && state.username}
-            type="text"
-          />
-          <CustomInput
-            ref={gmailRef}
-            defauleVal={state && state.gmail}
-            type="gmail"
-          />
-          <CustomInput
-            ref={countryRef}
-            defauleVal={state && state.country}
-            type="text"
-          />
-          <CustomInput
-            ref={phoneRef}
-            defauleVal={state && state.phone}
-            type="text"
-          />
+          {state && (
+            <>
+              <CustomInput
+                defauleVal={formik.initialValues.name}
+                type="text"
+                values={formik.values.name}
+                onChangeText={formik.handleChange('name')}
+              />
+              <CustomInput
+                defauleVal={formik.initialValues.phonetype}
+                type="text"
+                values={formik.values.phonetype}
+                onChangeText={formik.handleChange('phonetype')}
+              />
+              <CustomInput
+                defauleVal={formik.initialValues.phone}
+                type="text"
+                values={formik.values.phone}
+                onChangeText={formik.handleChange('phone')}
+              />
+              <CustomInput
+                defauleVal={formik.initialValues.age}
+                type="text"
+                values={formik.values.age}
+                onChangeText={formik.handleChange('age')}
+              />
+            </>
+          )}
           {/** save button */}
           <TouchableOpacity
             style={{
@@ -252,7 +248,7 @@ const EditChildScreen = ({ navigation, route }) => {
               alignSelf: 'flex-end',
               borderRadius: 5,
             }}
-            onPress={submitHandler}
+            onPress={formik.handleSubmit}
           >
             <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>
               Save

@@ -5,11 +5,12 @@ import globalStyle from '../styles/globalStyle';
 import CustomInput from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useDispatch, useSelector } from 'react-redux';
-import { Form, TextValidator } from 'react-native-validator-form';
 import { createChild } from '../libs/supabase/child.services';
 import { supabase } from '../libs/supabase/supabase';
 import { getImageUrl } from '../libs';
 import SplashScreen from './SplashScreen';
+import { useFormik } from 'formik';
+import { TextInput } from 'react-native-gesture-handler';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -28,35 +29,85 @@ const reducer = (state, action) => {
   }
 };
 
+const tempUrl =
+  'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=cTJO8eTdhaEAb6zAot4&_nc_ht=scontent.fdad4-1.fna&oh=00_AfCRgXUDKFeVvmf0ySWAAXBsxuRyRoGjZzO5UJiRIJgbDQ&oe=66549EF8';
+
+const validate = (values) => {
+  const erros = {};
+
+  if (!values.name) {
+    erros.name = 'Required';
+  }
+  if (!values.phonetype) {
+    erros.phonetype = 'Required';
+  }
+  if (!values.phone) {
+    erros.phone = 'Required';
+  }
+  if (!values.age) {
+    erros.age = 'Required';
+  }
+  return erros;
+};
+
 const AddChild = ({ navigation }) => {
   /** current session */
   const currentUserSession = useSelector((state) => state.userReducers?.user);
   /** state & dispatch */
   const [state, dispatch] = useReducer(reducer, {
     isFetching: false,
-    avatar:
-      'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=cTJO8eTdhaEAb6zAot4&_nc_ht=scontent.fdad4-1.fna&oh=00_AfCRgXUDKFeVvmf0ySWAAXBsxuRyRoGjZzO5UJiRIJgbDQ&oe=66549EF8',
-    username: '',
-    gmail: '',
-    country: '',
-    phone: '',
+    avatar: tempUrl,
   });
 
-  /**
-   * @field avatar
-   * @field username
-   * @field gmail
-   * @field age
-   * @field phone numer
-   */
-
-  const { navigate } = navigation;
-
-  /** state ; ref */
-  const nameRef = useRef();
-  const phoneTypeRef = useRef();
-  const ageRef = useRef();
-  const phoneRef = useRef();
+  /** formik */
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      phonetype: '',
+      phone: '',
+      age: '',
+    },
+    validate: validate,
+    onSubmit: async (values) => {
+      /**
+       * @field avatar
+       * @field username
+       * @field gmail
+       * @field age
+       * @field phone numer
+       */
+      try {
+        const parentId = JSON.parse(currentUserSession.session).user.id; // parentId
+        /** form data */
+        const formData = {
+          name: values.name,
+          age: parseInt(values.age),
+          phonetype: values.phonetype,
+          phone: parseInt(values.phone),
+        };
+        const avatarUrl = state.avatar; // ava
+        if (parentId && formData && avatarUrl) {
+          dispatch({ type: 'PROCESSING_ADDING' });
+          const status = await createChild(
+            parentId,
+            formData.name, // name
+            formData.age, // age
+            formData.phone, // phone
+            formData.phonetype, // phone type
+            avatarUrl // ava url
+          );
+          if (status === 201) {
+            dispatch({ type: 'ADD_COMPLETE' });
+            navigation.goBack();
+          }
+        } else {
+          console.log('something not be filled');
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    },
+  });
 
   /** upload image */
   const uploadImage = async (imageUri) => {
@@ -96,37 +147,6 @@ const AddChild = ({ navigation }) => {
     });
   };
 
-  /** add child handler */
-  const submitHandler = async () => {
-    try {
-      const parentId = JSON.parse(currentUserSession.session).user.id;
-      const kidname = nameRef.current.getValue();
-      const age = parseInt(ageRef.current.getValue());
-      const phone = parseInt(phoneRef.current.getValue());
-      const phoneType = phoneTypeRef.current.getValue();
-      const avatarUrl = state.avatar;
-      if (parentId && kidname && age && phone && avatarUrl) {
-        dispatch({ type: 'PROCESSING_ADDING' });
-        const status = await createChild(
-          parentId,
-          kidname,
-          age,
-          phone,
-          phoneType,
-          avatarUrl
-        );
-        if (status === 201) {
-          dispatch({ type: 'ADD_COMPLETE' });
-          navigation.goBack();
-        }
-      } else {
-        console.log('something not be filled');
-      }
-    } catch (error) {
-      console.error('Error creating child:', error);
-    }
-  };
-
   return state.isFetching ? (
     <SplashScreen />
   ) : (
@@ -139,7 +159,7 @@ const AddChild = ({ navigation }) => {
             style={styles.avatarImage}
             resizeMode="cover"
             // source={require('../assets/avatar.png')}
-            source={{ uri: state.avatar }}
+            source={{ uri: state.avatar ? state.avatar : tempUrl }}
           />
           {/** choose image button */}
           <Entypo
@@ -154,21 +174,53 @@ const AddChild = ({ navigation }) => {
       {/** from view */}
       <View style={styles.profileInformation}>
         <CustomInput
-          ref={nameRef}
+          values={formik.values.name}
+          onChangeText={formik.handleChange('name')}
           type="text"
           placeHolder="Your child's name"
         />
+        {/** validate name */}
+        {formik.touched.name && formik.errors.name ? (
+          <Text style={{ color: 'red' }}>{formik.errors.name}</Text>
+        ) : (
+          <></>
+        )}
         <CustomInput
-          ref={phoneTypeRef}
+          values={formik.values.phonetype}
+          onChangeText={formik.handleChange('phonetype')}
           placeHolder="Enter phone type"
           type="text"
         />
+        {/** validate phonetype */}
+        {formik.touched.phonetype && formik.errors.phonetype ? (
+          <Text style={{ color: 'red' }}>{formik.errors.phonetype}</Text>
+        ) : (
+          <></>
+        )}
         <CustomInput
-          ref={phoneRef}
+          values={formik.values.phone}
+          onChangeText={formik.handleChange('phone')}
           type="phone"
           placeHolder="Your child's phone"
         />
-        <CustomInput ref={ageRef} type="text" placeHolder="Your child's age" />
+        {/** validate phone */}
+        {formik.touched.phone && formik.errors.phone ? (
+          <Text style={{ color: 'red' }}>{formik.errors.phone}</Text>
+        ) : (
+          <></>
+        )}
+        <CustomInput
+          values={formik.values.age}
+          onChangeText={formik.handleChange('age')}
+          type="text"
+          placeHolder="Your child's age"
+        />
+        {/** validate age */}
+        {formik.touched.age && formik.errors.age ? (
+          <Text style={{ color: 'red' }}>{formik.errors.age}</Text>
+        ) : (
+          <></>
+        )}
         {/** save button */}
         <TouchableOpacity
           style={{
@@ -177,7 +229,7 @@ const AddChild = ({ navigation }) => {
             alignSelf: 'flex-end',
             borderRadius: 5,
           }}
-          onPress={submitHandler}
+          onPress={formik.handleSubmit}
         >
           <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>
             Create
@@ -191,7 +243,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     flex: 1,
     backgroundColor: 'white',
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   alignCenter: {
     display: 'flex',

@@ -4,27 +4,67 @@ import globalStyle from '../styles/globalStyle';
 import { supabase } from '../libs/supabase/supabase';
 import CustomInput from '../components/CustomInput';
 import { registerEmail } from '../libs/supabase/auth.services';
+import { useFormik } from 'formik';
+
+const validate = (values) => {
+  const erros = {};
+  if (!values.name) {
+    erros.name = 'Required';
+  }
+  if (!values.country) {
+    erros.country = 'Required';
+  }
+  if (!values.phone) {
+    erros.phone = 'Required';
+  }
+  if (!/^\d+$/.test(values.phone)) {
+    erros.phone = 'Must contains number';
+  }
+  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.gmail)) {
+    erros.gmail = 'Invalid gmail';
+  }
+  if (!values.gmail) {
+    erros.gmail = 'Required';
+  }
+  if (!values.password) {
+    erros.password = 'Required';
+  }
+  if (values.password !== values.confirmpassword) {
+    erros.confirmpassword = 'Not matching';
+  }
+  return erros;
+};
 
 const RegisterScreen = ({ navigation }) => {
-  /** states */
-  const emailRef = React.useRef();
-  const nameRef = React.useRef();
-  const countryRef = React.useRef();
-  const phoneRef = React.useRef();
-  const passwordRef = React.useRef();
-  const confirmPassRef = React.useRef();
 
-  const registerHandler = async () => {
-    try {
-      if (emailRef.current?.getValue() && passwordRef.current?.getValue()) {
+  const formik = useFormik({
+    initialValues: {
+      gmail: '',
+      name: '',
+      country: '',
+      phone: '',
+      password: '',
+      confirmpassword: '',
+    },
+    enableReinitialize: true,
+    validate: validate,
+    onSubmit: async (values) => {
+      try {
+        // formData
+        const formData = {
+          name: values.name,
+          country: values.country,
+          gmail: values.gmail,
+          phone: parseInt(values.phone),
+          password: values.password,
+        };
+
+        /** call api */
         const { session, user } = await registerEmail(
-          emailRef.current?.getValue(),
-          passwordRef.current?.getValue()
+          formData.gmail,
+          formData.password
         );
-
-        /** checking session and user if not needed to
-         * confirm on mail then move to login
-         */
+        /** ccc */
         if (!session && !user) {
           const alertPedning = async () => {
             Alert.alert(
@@ -42,14 +82,20 @@ const RegisterScreen = ({ navigation }) => {
           };
           await alertPedning();
         }
+      } catch (error) {
+        console.log(error.message);
       }
-    } catch (error) {
-      Alert.alert(error.message);
-    }
-  };
+    },
+  });
+
   return (
     <>
-      <View style={[globalStyle.container, { paddingTop: 130 }]}>
+      <View
+        style={[
+          globalStyle.container,
+          { paddingTop: 130, paddingHorizontal: 20 },
+        ]}
+      >
         <Text
           style={{
             color: 'black',
@@ -64,42 +110,79 @@ const RegisterScreen = ({ navigation }) => {
         <View style={{ flexDirection: 'column', gap: 10 }}>
           <View style={{ flexDirection: 'column', gap: 10 }}>
             <CustomInput
-              ref={nameRef}
               placeHolder="Enter your name"
-              type="gmail"
+              type="text"
+              values={formik.values.name}
+              onChangeText={formik.handleChange('name')}
             />
+            {formik.touched.name && formik.errors.name ? (
+              <Text style={{ color: 'red' }}>{formik.errors.name}</Text>
+            ) : (
+              <></>
+            )}
             <CustomInput
-              ref={countryRef}
               placeHolder="Your country"
-              type="gmail"
+              type="text"
+              values={formik.values.country}
+              onChangeText={formik.handleChange('country')}
             />
+            {formik.touched.country && formik.errors.country ? (
+              <Text style={{ color: 'red' }}>{formik.errors.country}</Text>
+            ) : (
+              <></>
+            )}
             <CustomInput
-              ref={phoneRef}
               placeHolder="Your phone number"
-              type="gmail"
+              type="text"
+              values={formik.values.phone}
             />
+            {formik.touched.phone && formik.errors.phone ? (
+              <Text style={{ color: 'red' }}>{formik.errors.phone}</Text>
+            ) : (
+              <></>
+            )}
             {/** email */}
             <CustomInput
-              ref={emailRef}
-              placeHolder="Enter your email"
+              placeHolder="Enter your gmail"
               type="gmail"
+              values={formik.values.gmail}
+              onChangeText={formik.handleChange('gmail')}
             />
+            {formik.touched.gmail && formik.errors.gmail ? (
+              <Text style={{ color: 'red' }}>{formik.errors.gmail}</Text>
+            ) : (
+              <></>
+            )}
             {/** password */}
             <CustomInput
-              ref={passwordRef}
               placeHolder="Your password"
               type="password"
+              values={formik.values.password}
+              onChangeText={formik.handleChange('password')}
             />
+            {formik.touched.password && formik.errors.password ? (
+              <Text style={{ color: 'red' }}>{formik.errors.password}</Text>
+            ) : (
+              <></>
+            )}
             {/** password */}
             <CustomInput
-              ref={confirmPassRef}
               placeHolder="Confirm ur password"
               type="password"
+              values={formik.values.confirmpassword}
+              onChangeText={formik.handleChange('confirmpassword')}
             />
+            {formik.touched.confirmpassword && formik.errors.confirmpassword ? (
+              <Text style={{ color: 'red' }}>
+                {formik.errors.confirmpassword}
+              </Text>
+            ) : (
+              <></>
+            )}
           </View>
           {/** submit handler */}
           <TouchableOpacity
-            onPress={registerHandler}
+            onPress={formik.handleSubmit}
             style={{
               backgroundColor: 'black',
               padding: 10,

@@ -57,6 +57,30 @@ const reducer = (state, action) => {
   }
 };
 
+const validate = (values) => {
+  const erros = {};
+
+  if (!values.name) {
+    erros.name = 'Required';
+  }
+  if (!values.phonetype) {
+    erros.phonetype = 'Required';
+  }
+  if (!/^\d+$/.test(values.phone)) {
+    erros.phone = 'Phone must contain number';
+  }
+  if (!values.phone) {
+    erros.phone = 'Required';
+  }
+  if (!/^\d+$/.test(values.age)) {
+    erros.age = 'Age must contain number';
+  }
+  if (!values.age) {
+    erros.age = 'Required';
+  }
+  return erros;
+};
+
 const EditChildScreen = ({ navigation, route }) => {
   /** child id */
   const { childId } = route.params;
@@ -86,15 +110,8 @@ const EditChildScreen = ({ navigation, route }) => {
       age: state.age,
     },
     enableReinitialize: true,
+    validate: validate,
     onSubmit: async (values) => {
-      /**
-       * @param userId
-       * @param name
-       * @param gmail
-       * @param country
-       * @param phone
-       * @param avatarUrl
-       */
       dispatch({ type: 'PROCESSING_UPDATE_DATA' });
       const formData = {
         name: values.name,
@@ -105,7 +122,7 @@ const EditChildScreen = ({ navigation, route }) => {
       };
       const status = await updateChild(
         childId, // childId
-        name, // name
+        formData.name, // name
         formData.avatar, // avatar
         formData.phonetype, // phonetype
         formData.phone, // phone
@@ -220,24 +237,44 @@ const EditChildScreen = ({ navigation, route }) => {
                 values={formik.values.name}
                 onChangeText={formik.handleChange('name')}
               />
+              {formik.touched.name && formik.errors.name ? (
+                <Text style={{ color: 'red' }}>{formik.errors.name}</Text>
+              ) : (
+                <></>
+              )}
               <CustomInput
                 defauleVal={formik.initialValues.phonetype}
                 type="text"
                 values={formik.values.phonetype}
                 onChangeText={formik.handleChange('phonetype')}
               />
+              {formik.touched.phonetype && formik.errors.phonetype ? (
+                <Text style={{ color: 'red' }}>{formik.errors.phonetype}</Text>
+              ) : (
+                <></>
+              )}
               <CustomInput
                 defauleVal={formik.initialValues.phone}
                 type="text"
                 values={formik.values.phone}
                 onChangeText={formik.handleChange('phone')}
               />
+              {formik.touched.phone && formik.errors.phone ? (
+                <Text style={{ color: 'red' }}>{formik.errors.phone}</Text>
+              ) : (
+                <></>
+              )}
               <CustomInput
                 defauleVal={formik.initialValues.age}
                 type="text"
                 values={formik.values.age}
                 onChangeText={formik.handleChange('age')}
               />
+              {formik.touched.age && formik.errors.age ? (
+                <Text style={{ color: 'red' }}>{formik.errors.age}</Text>
+              ) : (
+                <></>
+              )}
             </>
           )}
           {/** save button */}

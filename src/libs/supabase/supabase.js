@@ -20,6 +20,7 @@ export const appTables = {
   CHILDREN: 'children',
   ACTIVITIES: 'activities',
   NOTIFICATIONS: 'notifications',
+  TIME: 'usagelimitation'
 };
 
 export const appStorage = supabase.storage.from('avatars'); //

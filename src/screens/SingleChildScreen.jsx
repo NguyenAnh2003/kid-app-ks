@@ -7,18 +7,14 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from 'react-native';
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import globalStyle from '../styles/globalStyle';
 import { ScrollView } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
+import StickyButton from '../components/buttons/StickyButton';
+import TimeLimitModal from '../components/modals/TimeLimitModal';
 
 const styles = StyleSheet.create({
   /** container */
@@ -98,20 +94,62 @@ const packageList = [
     timeUsed: 2,
     dateUsed: '2024-04-25',
   },
-  // {
-  //   id: '8',
-  //   name: 'zalo',
-  //   packageName: 'com.zing.zalo',
-  //   timeUsed: 2,
-  //   dateUsed: '2024-05-10',
-  // },
-  // {
-  //   id: '9',
-  //   name: 'facebook',
-  //   packageName: 'com.facebook.katana',
-  //   timeUsed: 8,
-  //   dateUsed: '2024-05-10',
-  // },
+  {
+    id: '8',
+    name: 'zalo',
+    packageName: 'com.zing.zalo',
+    timeUsed: 2,
+    dateUsed: '2024-05-10',
+  },
+  {
+    id: '9',
+    name: 'facebook',
+    packageName: 'com.facebook.katana',
+    timeUsed: 8,
+    dateUsed: '2024-05-10',
+  },
+  {
+    id: '8',
+    name: 'zalo',
+    packageName: 'com.zing.zalo',
+    timeUsed: 2,
+    dateUsed: '2024-05-10',
+  },
+  {
+    id: '9',
+    name: 'facebook',
+    packageName: 'com.facebook.katana',
+    timeUsed: 8,
+    dateUsed: '2024-05-10',
+  },
+  {
+    id: '8',
+    name: 'zalo',
+    packageName: 'com.zing.zalo',
+    timeUsed: 2,
+    dateUsed: '2024-05-10',
+  },
+  {
+    id: '9',
+    name: 'facebook',
+    packageName: 'com.facebook.katana',
+    timeUsed: 8,
+    dateUsed: '2024-05-10',
+  },
+  {
+    id: '8',
+    name: 'app',
+    packageName: 'com.myapp',
+    timeUsed: 2,
+    dateUsed: '2024-05-10',
+  },
+  {
+    id: '9',
+    name: 'setting',
+    packageName: 'com.android.settings',
+    timeUsed: 8,
+    dateUsed: '2024-05-10',
+  },
 ];
 
 const numDay = 2;
@@ -124,6 +162,8 @@ const SingleChildScreen = ({ route, navigation }) => {
    * @param childImage (avatar)
    * @param activities ? (com.package.name, timeUsed, date)
    */
+  /** modal */
+  const [modalVisible, setModalVisible] = useState(false);
   /** native module */
   const { AppPackaging } = NativeModules;
   /** childId -> fetchDataByChildId */
@@ -135,6 +175,10 @@ const SingleChildScreen = ({ route, navigation }) => {
   /** state */
   const [activities, setActivities] = useState(packageList);
   const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    console.log(modalVisible);
+  }, [modalVisible]);
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
@@ -335,7 +379,7 @@ const SingleChildScreen = ({ route, navigation }) => {
                     marginLeft: 5,
                     fontSize: 20,
                     fontWeight: '500',
-                    textAlign: 'center'
+                    textAlign: 'center',
                   }}
                 >
                   There is no activities in recent
@@ -363,6 +407,17 @@ const SingleChildScreen = ({ route, navigation }) => {
           </ScrollView>
         </View>
       </View>
+      <StickyButton onPress={() => setModalVisible(!modalVisible)} />
+      {/** modal */}
+      {modalVisible ? (
+        <TimeLimitModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          childId={childId}
+        />
+      ) : (
+        <></>
+      )}
     </ScrollView>
   );
 };

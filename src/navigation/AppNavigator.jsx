@@ -17,12 +17,11 @@ import {
   StateApp,
 } from '../screens';
 import SplashScreen from '../screens/SplashScreen';
-import SetTimeLimitScreen from '../screens/SetTimeLimitScreen';
-
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
 
 const AppNavigator = () => {
+
   // const [isAuth, setIsAuth] = React.useState(false);
   /** currentSession - accessToken ... */
   const currentUser = useSelector((state) => state.userReducers?.user);
@@ -101,19 +100,6 @@ const HomeTabs = (props) => {
       <Tab.Screen
         name="Account"
         component={AccountScreen}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? 'account' : 'account-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="SetTimeLimit"
-        component={SetTimeLimitScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons

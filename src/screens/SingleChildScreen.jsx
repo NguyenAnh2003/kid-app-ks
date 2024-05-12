@@ -13,8 +13,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
-import StickyButton from '../components/buttons/StickyButton';
-import TimeLimitModal from '../components/modals/TimeLimitModal';
 
 const styles = StyleSheet.create({
   /** container */
@@ -407,17 +405,6 @@ const SingleChildScreen = ({ route, navigation }) => {
           </ScrollView>
         </View>
       </View>
-      <StickyButton onPress={() => setModalVisible(!modalVisible)} />
-      {/** modal */}
-      {modalVisible ? (
-        <TimeLimitModal
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-          childId={childId}
-        />
-      ) : (
-        <></>
-      )}
     </ScrollView>
   );
 };

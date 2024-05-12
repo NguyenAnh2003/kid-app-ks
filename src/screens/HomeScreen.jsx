@@ -12,6 +12,8 @@ import {
 import globalStyle from '../styles/globalStyle';
 import ChildCard from '../components/cards/ChildCard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { getAllChildren } from '../libs';
+import { useSelector } from 'react-redux';
 
 const styles = StyleSheet.create({
   button: {
@@ -66,8 +68,22 @@ const HomeScreen = ({ user, navigation, route }) => {
    * create child -> button to create child
    * list of child - get child -> return list of child
    */
+  const currentUserSession = useSelector((state) => state.userReducers?.user);
 
   const [data, setData] = useState();
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const userId = JSON.parse(currentUserSession.session).user.id; // userId
+        const data = await getAllChildren(userId);
+        console.log('children', data);
+      };
+      /** */
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   return (
     <View style={[globalStyle.container, { flex: 1, paddingHorizontal: 10 }]}>

@@ -35,6 +35,18 @@ export const createChild = async (
   }
 };
 
+export const getAllChildren = async (parentId) => {
+  try {
+    const { data, status, error } = await childrenTable
+      .select('*')
+      .eq('parentId', parentId);
+    if (status === 200) return data;
+    else return error;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getChildInfo = async (childId) => {
   /** @param childId */
   try {
@@ -68,7 +80,7 @@ export const updateChild = async (
         age: age,
         phone: phone,
         avatarUrl: avatarUrl,
-        phonetype: phonetype
+        phonetype: phonetype,
       })
       .eq('id', childId);
     if (status === 204) return status;

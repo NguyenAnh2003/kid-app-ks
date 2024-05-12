@@ -1,4 +1,4 @@
-import { View, Text, Button, Modal } from 'react-native';
+import { View, Text, Button, Modal, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import { createTimeLim } from '../../libs';
@@ -37,7 +37,7 @@ const TimeLimitModal = ({ childId, modalVisible, setModalVisible }) => {
           <View
             style={{
               width: '80%',
-              backgroundColor: '#333',
+              backgroundColor: '#000',
               padding: 20,
               borderRadius: 10,
               alignItems: 'center',
@@ -48,7 +48,8 @@ const TimeLimitModal = ({ childId, modalVisible, setModalVisible }) => {
                 textAlign: 'center',
                 fontSize: 20,
                 marginBottom: 10,
-                color: 'black',
+                color: '#fff',
+                fontWeight: 600,
               }}
             >
               Set Time Limit
@@ -81,8 +82,41 @@ const TimeLimitModal = ({ childId, modalVisible, setModalVisible }) => {
                 ))}
               </Picker>
             </View>
-            <Button title="Set" onPress={submitHandler} />
-            <Button title="Cancel" onPress={() => setModalVisible(false)} />
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              <TouchableOpacity
+                onPress={submitHandler}
+                style={{
+                  backgroundColor: '#fff',
+                  width: 50,
+                  padding: 5,
+                }}
+              >
+                <Text
+                  style={{
+                    color: '#000',
+                    textAlign: 'center',
+                    fontWeight: 600,
+                  }}
+                >
+                  Set
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ backgroundColor: '#fff', width: 60, padding: 5 }}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text
+                  style={{
+                    fontWeight: 600,
+                    color: '#000',
+                    width: 50,
+                    textAlign: 'center',
+                  }}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>

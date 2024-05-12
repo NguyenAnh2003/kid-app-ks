@@ -58,11 +58,6 @@ const AppNavigator = () => {
       ) : (
         <>
           <Stack.Screen
-              name="SetTimeLimit"
-              component={SetTimeLimitScreen}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
-          <Stack.Screen
             name="SignIn"
             component={LoginScreen}
             options={{ headerShown: false }}
@@ -106,6 +101,19 @@ const HomeTabs = (props) => {
       <Tab.Screen
         name="Account"
         component={AccountScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialCommunityIcons
+              name={focused ? 'account' : 'account-outline'}
+              size={24}
+              color={'black'}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="SetTimeLimit"
+        component={SetTimeLimitScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons

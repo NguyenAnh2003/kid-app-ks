@@ -13,6 +13,10 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Text } from 'react-native';
 import AppNavigator from './src/navigation/AppNavigator';
 import PushNotification from 'react-native-push-notification';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Warning: ...']);
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 // Configure Push Notifications
 PushNotification.configure({

@@ -19,14 +19,11 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
 import CustomInput, { InputHandle } from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateUserData } from '../libs/supabase/parent.services';
+import { useSelector } from 'react-redux';
 import { supabase } from '../libs/supabase/supabase';
 import SplashScreen from './SplashScreen';
-import { getImageUrl } from '../libs';
-import getCurrentuserInfo from '../libs/getCurrentUser';
+import { getChildInfo, getImageUrl, updateChild } from '../libs';
 import { useFormik } from 'formik';
-import { userLogout } from '../redux/actions/actions';
 
 /** reducer
  * @param username
@@ -39,11 +36,12 @@ const reducer = (state, action) => {
     case 'USER_DATA':
       /** return fetched data from api */
       return {
-        avatar: action.payload.avatarUrl,
-        username: action.payload.username,
-        gmail: action.payload.gmail,
-        country: action.payload.country,
-        phone: JSON.stringify(action.payload.phone),
+        parentId: action.payload.parentId,
+        avatar: action.payload.avatarUrl, // ava url
+        name: action.payload.kidName, // kidname
+        phonetype: action.payload.phoneType, // phonetype
+        phone: JSON.stringify(action.payload.phone), // phone
+        age: JSON.stringify(action.payload.age), // age
         isFetching: false,
       };
     case 'UPLOAD_IMAGE':
@@ -65,11 +63,8 @@ const validate = (values) => {
   if (!values.name) {
     erros.name = 'Required';
   }
-  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.gmail)) {
-    erros.gmail = 'Invalid gmail';
-  }
-  if (!values.gmail) {
-    erros.gmail = 'Required';
+  if (!values.phonetype) {
+    erros.phonetype = 'Required';
   }
   if (!/^\d+$/.test(values.phone)) {
     erros.phone = 'Phone must contain number';
@@ -77,57 +72,61 @@ const validate = (values) => {
   if (!values.phone) {
     erros.phone = 'Required';
   }
+  if (!/^\d+$/.test(values.age)) {
+    erros.age = 'Age must contain number';
+  }
+  if (!values.age) {
+    erros.age = 'Required';
+  }
   return erros;
 };
 
-const AccountScreen = ({ navigation }) => {
-  /**
-   * @field avatar
-   * @field username
-   * @field gmail
-   * @field country
-   * @field phone numer
-   */
+const EditChildScreen = ({ navigation, route }) => {
+  /** child id */
+  const { childId } = route.params;
+
+  useEffect(() => {
+    console.log('childId', childId);
+  }, [navigation]);
 
   const currentUserSession = useSelector((state) => state.userReducers?.user);
   const [refresh, setRefresh] = useState(false);
-  const logoutHandler = useDispatch();
+
   const [state, dispatch] = useReducer(reducer, {
     isFetching: true,
     avatar: '',
-    username: '',
-    gmail: '',
-    country: '',
+    name: '',
+    phonetype: '',
     phone: '',
+    age: '',
+    parentId: '',
   });
 
   const formik = useFormik({
     initialValues: {
-      name: state.username,
-      gmail: state.gmail,
-      country: state.country,
+      name: state.name,
+      phonetype: state.phonetype,
       phone: state.phone,
+      age: state.age,
     },
     enableReinitialize: true,
     validate: validate,
     onSubmit: async (values) => {
       dispatch({ type: 'PROCESSING_UPDATE_DATA' });
-      const userId = JSON.parse(currentUserSession.session).user.id; // userId
       const formData = {
-        // formData
         name: values.name,
-        country: values.country,
-        gmail: values.gmail,
+        age: parseInt(values.age),
+        phonetype: values.phonetype,
         phone: parseInt(values.phone),
         avatar: state.avatar,
       };
-      const status = await updateUserData(
-        userId,
+      const status = await updateChild(
+        childId, // childId
         formData.name, // name
         formData.avatar, // avatar
-        formData.gmail, // gmail
-        formData.country, // country
-        formData.phone // phone
+        formData.phonetype, // phonetype
+        formData.phone, // phone
+        formData.age // age
       );
       if (status === 204) dispatch({ type: 'UPDATE_COMPLETED' });
     },
@@ -135,7 +134,7 @@ const AccountScreen = ({ navigation }) => {
 
   useEffect(() => {
     const fetchDataaa = async () => {
-      const data = await getCurrentuserInfo(currentUserSession);
+      const data = await getChildInfo(childId);
       if (data) dispatch({ type: 'USER_DATA', payload: data[0] });
     };
 
@@ -145,7 +144,7 @@ const AccountScreen = ({ navigation }) => {
   const onRefresh = useCallback(() => {
     setRefresh(true);
     const fetchDataaa = async () => {
-      const data = await getCurrentuserInfo(currentUserSession);
+      const data = await getChildInfo(childId);
       if (data) dispatch({ type: 'USER_DATA', payload: data[0] });
     };
 
@@ -226,57 +225,57 @@ const AccountScreen = ({ navigation }) => {
               onPress={imageHandler}
             />
           </View>
-          <Text style={[styles.accountName]}>{state.username}</Text>
+          {state && <Text style={[styles.accountName]}>{state.name}</Text>}
         </View>
         {/** from view */}
         <View style={styles.profileInformation}>
-          {/** name */}
-          <CustomInput
-            defauleVal={formik.initialValues.name}
-            type="text"
-            values={formik.values.name}
-            onChangeText={formik.handleChange('name')}
-          />
-          {formik.touched.name && formik.errors.name ? (
-            <Text style={{ color: 'red' }}>{formik.errors.name}</Text>
-          ) : (
-            <></>
-          )}
-          {/** gmail */}
-          <CustomInput
-            defauleVal={formik.initialValues.gmail}
-            values={formik.values.gmail}
-            onChangeText={formik.handleChange('gmail')}
-            type="gmail"
-          />
-          {formik.touched.gmail && formik.errors.gmail ? (
-            <Text style={{ color: 'red' }}>{formik.errors.gmail}</Text>
-          ) : (
-            <></>
-          )}
-          {/** country */}
-          <CustomInput
-            defauleVal={formik.initialValues.country}
-            values={formik.values.country}
-            onChangeText={formik.handleChange('country')}
-            type="text"
-          />
-          {formik.touched.country && formik.errors.country ? (
-            <Text style={{ color: 'red' }}>{formik.errors.country}</Text>
-          ) : (
-            <></>
-          )}
-          {/** phone */}
-          <CustomInput
-            defauleVal={formik.initialValues.phone}
-            values={formik.values.phone}
-            onChangeText={formik.handleChange('phone')}
-            type="text"
-          />
-          {formik.touched.phone && formik.errors.phone ? (
-            <Text style={{ color: 'red' }}>{formik.errors.phone}</Text>
-          ) : (
-            <></>
+          {state && (
+            <>
+              <CustomInput
+                defauleVal={formik.initialValues.name}
+                type="text"
+                values={formik.values.name}
+                onChangeText={formik.handleChange('name')}
+              />
+              {formik.touched.name && formik.errors.name ? (
+                <Text style={{ color: 'red' }}>{formik.errors.name}</Text>
+              ) : (
+                <></>
+              )}
+              <CustomInput
+                defauleVal={formik.initialValues.phonetype}
+                type="text"
+                values={formik.values.phonetype}
+                onChangeText={formik.handleChange('phonetype')}
+              />
+              {formik.touched.phonetype && formik.errors.phonetype ? (
+                <Text style={{ color: 'red' }}>{formik.errors.phonetype}</Text>
+              ) : (
+                <></>
+              )}
+              <CustomInput
+                defauleVal={formik.initialValues.phone}
+                type="text"
+                values={formik.values.phone}
+                onChangeText={formik.handleChange('phone')}
+              />
+              {formik.touched.phone && formik.errors.phone ? (
+                <Text style={{ color: 'red' }}>{formik.errors.phone}</Text>
+              ) : (
+                <></>
+              )}
+              <CustomInput
+                defauleVal={formik.initialValues.age}
+                type="text"
+                values={formik.values.age}
+                onChangeText={formik.handleChange('age')}
+              />
+              {formik.touched.age && formik.errors.age ? (
+                <Text style={{ color: 'red' }}>{formik.errors.age}</Text>
+              ) : (
+                <></>
+              )}
+            </>
           )}
           {/** save button */}
           <TouchableOpacity
@@ -290,17 +289,6 @@ const AccountScreen = ({ navigation }) => {
           >
             <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>
               Save
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <TouchableOpacity
-            onPress={() => {
-              logoutHandler(userLogout());
-            }}
-          >
-            <Text style={{ color: 'black', fontWeight: 700, fontSize: 20 }}>
-              Logout
             </Text>
           </TouchableOpacity>
         </View>
@@ -360,4 +348,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AccountScreen;
+export default EditChildScreen;

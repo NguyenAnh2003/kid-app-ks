@@ -3,55 +3,69 @@ import {
   StyleSheet,
   Text,
   View,
-  Pressable,
-  TextInput,
   Alert,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import globalStyle, {
-  Padding,
-  Border,
-  Color,
-  FontSize,
-  FontFamily,
-} from '../styles/globalStyle';
+import globalStyle from '../styles/globalStyle';
 import { useReducer, useRef, useState } from 'react';
-import { supabase } from '../libs/supabase';
 import CustomInput from '../components/CustomInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogin } from '../redux/actions/actions';
+import { loginEmail } from '../libs/supabase/auth.services';
+import { useFormik } from 'formik';
 
 const styles = StyleSheet.create({});
+
+const validate = (values) => {
+  const erros = {};
+
+  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.gmail)) {
+    erros.gmail = 'Invalid gmail';
+  }
+  if (!values.gmail) {
+    erros.gmail = 'Required';
+  }
+  if (!values.password) {
+    erros.password = 'Required';
+  }
+  return erros;
+};
 
 const LoginScreen = ({ navigation }) => {
   /** */
   const dispatch = useDispatch();
-  const passwordRef = useRef();
-  const emailRef = useRef();
-  const currentSession = useSelector((state) => state.userReducers?.user);
 
-  const loginHandler = async () => {
-    try {
-      if (emailRef.current.getValue() && passwordRef.current.getValue()) {
-        const {
-          error,
-          data: { session, user },
-        } = await supabase.auth.signInWithPassword({
-          email: emailRef.current?.getValue(),
-          password: passwordRef.current?.getValue(),
-        });
-        if (session && user) {
-          dispatch(userLogin(JSON.stringify(session)));
-        }
+  const formik = useFormik({
+    initialValues: {
+      gmail: '',
+      password: '',
+    },
+    enableReinitialize: true,
+    validate: validate,
+    onSubmit: async (values) => {
+      const formData = {
+        gmail: values.gmail,
+        password: values.password,
+      };
+      const response = await loginEmail(formData.gmail, formData.password);
+      /** session & user */
+      const { session, user } = response;
+      if (session && user) {
+        dispatch(userLogin(JSON.stringify(session)));
+      } else {
+        /** handle error here */
+        console.log('Invalid info');
       }
-    } catch (error) {
-      Alert.alert(error.message);
-    }
-  };
+    },
+  });
 
   return (
-    <View style={[globalStyle.container, { paddingTop: 130 }]}>
+    <View
+      style={[
+        globalStyle.container,
+        { paddingTop: 130, paddingHorizontal: 20 },
+      ]}
+    >
       <Text
         style={{
           color: 'black',
@@ -67,16 +81,28 @@ const LoginScreen = ({ navigation }) => {
         <View style={{ flexDirection: 'column', gap: 10 }}>
           {/** email */}
           <CustomInput
-            ref={emailRef}
             placeHolder="Enter your email"
             type="gmail"
+            onChangeText={formik.handleChange('gmail')}
+            values={formik.values.gmail}
           />
+          {formik.touched.gmail && formik.errors.gmail ? (
+            <Text style={{ color: 'red' }}>{formik.errors.gmail}</Text>
+          ) : (
+            <></>
+          )}
           {/** password */}
           <CustomInput
-            ref={passwordRef}
             placeHolder="Your password"
             type="password"
+            onChangeText={formik.handleChange('password')}
+            values={formik.values.password}
           />
+          {formik.touched.password && formik.errors.password ? (
+            <Text style={{ color: 'red' }}>{formik.errors.password}</Text>
+          ) : (
+            <></>
+          )}
         </View>
         {/** forgot password */}
         <TouchableOpacity
@@ -88,7 +114,7 @@ const LoginScreen = ({ navigation }) => {
         </TouchableOpacity>
         {/** submit handler */}
         <TouchableOpacity
-          onPress={loginHandler}
+          onPress={formik.handleSubmit}
           style={{
             backgroundColor: 'black',
             padding: 10,

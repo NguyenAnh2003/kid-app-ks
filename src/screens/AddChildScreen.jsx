@@ -1,41 +1,133 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  Button,
-  StyleSheet,
-  Image,
-  Text,
-  View,
-  Pressable,
-  TouchableOpacity,
-} from 'react-native';
+import React, { useEffect, useRef, useReducer, useState } from 'react';
+import { StyleSheet, Image, Text, View, TouchableOpacity } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import globalStyle from '../styles/globalStyle';
-import CustomInput, { InputHandle } from '../components/CustomInput';
+import CustomInput from '../components/CustomInput';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { Form, TextValidator } from 'react-native-validator-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { createChild } from '../libs/supabase/child.services';
+import { supabase } from '../libs/supabase/supabase';
+import { getImageUrl } from '../libs';
+import SplashScreen from './SplashScreen';
+import { useFormik } from 'formik';
+import { TextInput } from 'react-native-gesture-handler';
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'PROCESSING_ADDING':
+      return { ...state, isFetching: true };
+    case 'ADD_COMPLETE':
+      return {
+        isFetching: false,
+      };
+    case 'UPLOAD_IMAGE':
+      return { ...state, isFetching: true };
+    case 'UPLOAD_IMAGE_SUCCESS':
+      return { ...state, avatar: action.payload, isFetching: false };
+    default:
+      return state;
+  }
+};
+
+const tempUrl =
+  'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=cTJO8eTdhaEAb6zAot4&_nc_ht=scontent.fdad4-1.fna&oh=00_AfCRgXUDKFeVvmf0ySWAAXBsxuRyRoGjZzO5UJiRIJgbDQ&oe=66549EF8';
+
+const validate = (values) => {
+  const erros = {};
+
+  if (!values.name) {
+    erros.name = 'Required';
+  }
+  if (!values.phonetype) {
+    erros.phonetype = 'Required';
+  }
+  if (!values.phone) {
+    erros.phone = 'Required';
+  }
+  if (!values.age) {
+    erros.age = 'Required';
+  }
+  return erros;
+};
 
 const AddChild = ({ navigation }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [emailInvalid, setEmailInvalid] = useState(false);
-  const [mail, setMail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [phoneInvalid, setPhoneInvalid] = useState(false);
-  /**
-   * @field avatar
-   * @field username
-   * @field gmail
-   * @field country
-   * @field phone numer
-   */
+  /** current session */
+  const currentUserSession = useSelector((state) => state.userReducers?.user);
+  /** state & dispatch */
+  const [state, dispatch] = useReducer(reducer, {
+    isFetching: false,
+    avatar: tempUrl,
+  });
 
-  const { navigate } = navigation;
+  /** formik */
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      phonetype: '',
+      phone: '',
+      age: '',
+    },
+    validate: validate,
+    onSubmit: async (values) => {
+      /**
+       * @field avatar
+       * @field username
+       * @field gmail
+       * @field age
+       * @field phone numer
+       */
+      try {
+        const parentId = JSON.parse(currentUserSession.session).user.id; // parentId
+        /** form data */
+        const formData = {
+          name: values.name,
+          age: parseInt(values.age),
+          phonetype: values.phonetype,
+          phone: parseInt(values.phone),
+        };
+        const avatarUrl = state.avatar; // ava
+        if (parentId && formData && avatarUrl) {
+          dispatch({ type: 'PROCESSING_ADDING' });
+          const status = await createChild(
+            parentId,
+            formData.name, // name
+            formData.age, // age
+            formData.phone, // phone
+            formData.phonetype, // phone type
+            avatarUrl // ava url
+          );
+          if (status === 201) {
+            dispatch({ type: 'ADD_COMPLETE' });
+            navigation.goBack();
+          }
+        } else {
+          console.log('something not be filled');
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    },
+  });
 
-  /** state ; ref */
-  const nameRef = useRef();
-  const gmailRef = useRef();
-  const countryRef = useRef();
-  const phoneRef = useRef();
+  /** upload image */
+  const uploadImage = async (imageUri) => {
+    dispatch({ type: 'UPLOAD_IMAGE' });
+    try {
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(`public/${Date.now()}.jpg`, {
+          uri: imageUri,
+        });
+      if (data) {
+        const avatarUrl = getImageUrl(data.path);
+        dispatch({ type: 'UPLOAD_IMAGE_SUCCESS', payload: avatarUrl });
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  };
 
+  /** select image handler */
   const imageHandler = async () => {
     const options = {
       mediaType: 'photo',
@@ -50,53 +142,14 @@ const AddChild = ({ navigation }) => {
         console.log('Image picker error: ', response.error);
       } else {
         let imageUri = response.uri || response.assets?.[0]?.uri;
-        setSelectedImage(imageUri);
+        uploadImage(imageUri);
       }
     });
   };
 
-  const submitHandler = async () => {
-    console.log(
-      nameRef.current.getValue(),
-      gmailRef.current.getValue(),
-      phoneRef.current.getValue()
-    );
-  };
-
-  const validateEmail = (text) => {
-    setMail(text);
-    console.log(mail);
-    regex =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (regex.test(text)) {
-      console.log('valid email');
-      setEmailInvalid(false);
-    } else {
-      setEmailInvalid(true);
-      console.log('invalid email');
-    }
-  };
-
-  const validatePhone = (text) => {
-    setPhone(text);
-    console.log(phone);
-    regex = /^(\+?84|0)(\d{9,10})$/;
-    if (regex.test(text)) {
-      console.log('valid phone');
-      setPhoneInvalid(false);
-    } else {
-      setPhoneInvalid(true);
-      console.log('invalid phone');
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      setSelectedImage('');
-    };
-  }, []);
-
-  return (
+  return state.isFetching ? (
+    <SplashScreen />
+  ) : (
     <View style={[styles.profileContainer, globalStyle.container]}>
       {/** image view */}
       <View style={[styles.profile]}>
@@ -105,7 +158,8 @@ const AddChild = ({ navigation }) => {
           <Image
             style={styles.avatarImage}
             resizeMode="cover"
-            source={require('../assets/avatar.png')}
+            // source={require('../assets/avatar.png')}
+            source={{ uri: state.avatar ? state.avatar : tempUrl }}
           />
           {/** choose image button */}
           <Entypo
@@ -116,37 +170,57 @@ const AddChild = ({ navigation }) => {
             onPress={imageHandler}
           />
         </View>
-        <Text style={[styles.accountName]}>Nomnom</Text>
       </View>
       {/** from view */}
       <View style={styles.profileInformation}>
         <CustomInput
-          style={{}}
-          ref={nameRef}
+          values={formik.values.name}
+          onChangeText={formik.handleChange('name')}
           type="text"
-          placeHolder="Enter your name"
+          placeHolder="Your child's name"
         />
+        {/** validate name */}
+        {formik.touched.name && formik.errors.name ? (
+          <Text style={{ color: 'red' }}>{formik.errors.name}</Text>
+        ) : (
+          <></>
+        )}
         <CustomInput
-          ref={gmailRef}
-          placeHolder="Enter your email"
-          type="mail"
-          value={mail}
-          onChangeText={validateEmail}
-        />
-        {emailInvalid && <Text style={{ color: 'red' }}>Invalid input</Text>}
-        <CustomInput
-          ref={countryRef}
+          values={formik.values.phonetype}
+          onChangeText={formik.handleChange('phonetype')}
+          placeHolder="Enter phone type"
           type="text"
-          placeHolder="Enter your address"
         />
+        {/** validate phonetype */}
+        {formik.touched.phonetype && formik.errors.phonetype ? (
+          <Text style={{ color: 'red' }}>{formik.errors.phonetype}</Text>
+        ) : (
+          <></>
+        )}
         <CustomInput
-          ref={phoneRef}
+          values={formik.values.phone}
+          onChangeText={formik.handleChange('phone')}
           type="phone"
-          placeHolder="Enter your phone"
-          value={phone}
-          onChangeText={validatePhone}
+          placeHolder="Your child's phone"
         />
-        {phoneInvalid && <Text style={{ color: 'red' }}>Invalid input</Text>}
+        {/** validate phone */}
+        {formik.touched.phone && formik.errors.phone ? (
+          <Text style={{ color: 'red' }}>{formik.errors.phone}</Text>
+        ) : (
+          <></>
+        )}
+        <CustomInput
+          values={formik.values.age}
+          onChangeText={formik.handleChange('age')}
+          type="text"
+          placeHolder="Your child's age"
+        />
+        {/** validate age */}
+        {formik.touched.age && formik.errors.age ? (
+          <Text style={{ color: 'red' }}>{formik.errors.age}</Text>
+        ) : (
+          <></>
+        )}
         {/** save button */}
         <TouchableOpacity
           style={{
@@ -155,10 +229,10 @@ const AddChild = ({ navigation }) => {
             alignSelf: 'flex-end',
             borderRadius: 5,
           }}
-          onPress={submitHandler}
+          onPress={formik.handleSubmit}
         >
           <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>
-            Save
+            Create
           </Text>
         </TouchableOpacity>
       </View>
@@ -169,6 +243,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     flex: 1,
     backgroundColor: 'white',
+    paddingHorizontal: 20,
   },
   alignCenter: {
     display: 'flex',

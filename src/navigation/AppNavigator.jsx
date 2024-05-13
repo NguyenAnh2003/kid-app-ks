@@ -9,13 +9,16 @@ import { useSelector } from 'react-redux';
 import {
   AccountScreen,
   AddChildScreen,
+  EditChildScreen,
   HomeScreen,
   LoginScreen,
   RegisterScreen,
 
+  SingleChildScreen,
 } from '../screens';
 import Monitor from '../screens/Monitor';
-import StateApp from '../screens/StateApp';
+import StateApp from '../screens/StateApp';import SplashScreen from '../screens/SplashScreen';
+
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
 
@@ -33,11 +36,25 @@ const AppNavigator = () => {
   return (
     <Stack.Navigator>
       {session ? (
-        <Stack.Screen
-          name="Home"
-          component={HomeTabs}
-          options={{ headerShown: false }}
-        ></Stack.Screen>
+        <>
+          <Stack.Screen
+            name="Home"
+            component={HomeTabs}
+            options={{ headerShown: false }}
+          ></Stack.Screen>
+          <Stack.Screen
+            name="SingleChild"
+            component={SingleChildScreen}
+          ></Stack.Screen>
+          <Stack.Screen
+            name="AddChild"
+            component={AddChildScreen}
+          ></Stack.Screen>
+          <Stack.Screen
+            name="EditChild"
+            component={EditChildScreen}
+          ></Stack.Screen>
+        </>
       ) : (
         <>
           <Tab.Screen

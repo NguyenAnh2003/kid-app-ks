@@ -1,15 +1,5 @@
 import { StyleSheet, TextInput } from 'react-native';
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
-
-export type InputHandle = {
-  getValue: () => string;
-};
-
-type InputProps = {
-  placeHolder: string;
-  type: string;
-  defauleVal: string;
-};
+import React from 'react';
 
 const styles = StyleSheet.create({
   input: {
@@ -24,29 +14,25 @@ const styles = StyleSheet.create({
   },
 });
 
-const CustomInput = forwardRef<InputHandle, InputProps>(
-  ({ placeHolder, type, defauleVal }, ref) => {
-    /** guide: https://www.youtube.com/watch?v=NT6FlJv8VoI */
-    const [value, setValue] = useState('');
-
-    useImperativeHandle(ref, () => ({
-      getValue: () => value,
-    }));
-    
-       
-
-    return (
-      <TextInput
-        onChangeText={setValue}
-        placeholderTextColor={'black'}
-        type={type}
-        secureTextEntry={type === 'password' ? true : false}
-        defaultValue={defauleVal}
-        style={styles.input}
-        placeholder={placeHolder}
-      />
-    );
-  }
-);
+const CustomInput = ({
+  placeHolder,
+  type,
+  defauleVal,
+  values,
+  onChangeText,
+}) => {
+  return (
+    <TextInput
+      onChangeText={onChangeText}
+      placeholderTextColor={'black'}
+      type={type}
+      secureTextEntry={type === 'password' ? true : false}
+      defaultValue={defauleVal}
+      value={values}
+      style={styles.input}
+      placeholder={placeHolder}
+    />
+  );
+};
 
 export default CustomInput;

@@ -74,15 +74,16 @@ export const updateChild = async (
    * @param avatarUrl: str
    */
   try {
-    const { data, status, statusText } = await childrenTable
+    const { data, status, statusText, error } = await childrenTable
       .update({
         kidName: kidName,
         age: age,
         phone: phone,
         avatarUrl: avatarUrl,
-        phonetype: phonetype,
+        phoneType: phonetype,
       })
       .eq('id', childId);
+    console.log({status, statusText, error});
     if (status === 204) return status;
   } catch (error) {
     console.log(error.message);

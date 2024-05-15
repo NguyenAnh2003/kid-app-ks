@@ -112,7 +112,7 @@ const EditChildScreen = ({ navigation, route }) => {
     enableReinitialize: true,
     validate: validate,
     onSubmit: async (values) => {
-      dispatch({ type: 'PROCESSING_UPDATE_DATA' });
+      // dispatch({ type: 'PROCESSING_UPDATE_DATA' });
       const formData = {
         name: values.name,
         age: parseInt(values.age),

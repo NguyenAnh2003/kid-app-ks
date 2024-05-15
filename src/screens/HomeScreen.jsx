@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import {
   Button,
   NativeModules,
@@ -14,6 +14,7 @@ import ChildCard from '../components/cards/ChildCard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { getAllChildren } from '../libs';
 import { useSelector } from 'react-redux';
+import SplashScreen from './SplashScreen';
 
 const styles = StyleSheet.create({
   button: {
@@ -62,21 +63,41 @@ const childList = [
   },
 ];
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'CHILD_LIST':
+      /** return fetched data from api */
+      console.log(action.payload);
+      return {
+        children: action.payload,
+        isFetching: false,
+      };
+    default:
+      return state;
+  }
+};
+
 const HomeScreen = ({ user, navigation, route }) => {
   /** @author @NguyenAnh2003
    * can be seen as FamilyScreen
    * create child -> button to create child
    * list of child - get child -> return list of child
    */
+  const [state, dispatch] = useReducer(reducer, {
+    children: [],
+    isFetching: true,
+  });
+
   const currentUserSession = useSelector((state) => state.userReducers?.user);
 
-  const [data, setData] = useState();
   useEffect(() => {
     try {
       const fetchData = async () => {
         const userId = JSON.parse(currentUserSession.session).user.id; // userId
         const data = await getAllChildren(userId);
-        console.log('children', data);
+        if (data) {
+          dispatch({ type: 'CHILD_LIST', payload: data });
+        }
       };
       /** */
       fetchData();
@@ -85,32 +106,35 @@ const HomeScreen = ({ user, navigation, route }) => {
     }
   }, []);
 
-  return (
+  return state.isFetching ? (
+    <SplashScreen />
+  ) : (
     <View style={[globalStyle.container, { flex: 1, paddingHorizontal: 10 }]}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{ flexDirection: 'column', gap: 10, width: '100%' }}>
           {/** list of child */}
-          {childList.map((i, index) => (
-            <TouchableOpacity
-              key={i.childId}
-              onPress={() =>
-                navigation.navigate('SingleChild', {
-                  childId: i.childId,
-                  childName: i.childName,
-                  childImage: i.avatarUrl,
-                  phoneType: i.phoneType,
-                })
-              }
-            >
-              <ChildCard
+          {state &&
+            state.children.map((i, index) => (
+              <TouchableOpacity
                 key={i.childId}
-                childName={i.childName}
-                childPhoneNumber={i.childPNumber}
-                childAvatar={i.avatarUrl}
-                phoneType={i.phoneType}
-              />
-            </TouchableOpacity>
-          ))}
+                onPress={() =>
+                  navigation.navigate('SingleChild', {
+                    childId: i.id,
+                    childName: i.kidName,
+                    childImage: i.avatarUrl,
+                    phoneType: i.phoneType,
+                  })
+                }
+              >
+                <ChildCard
+                  key={i.id}
+                  childName={i.kidName}
+                  childPhoneNumber={i.phone}
+                  childAvatar={i.avatarUrl}
+                  phoneType={i.phoneType}
+                />
+              </TouchableOpacity>
+            ))}
         </View>
         {/** create child button */}
         <TouchableOpacity

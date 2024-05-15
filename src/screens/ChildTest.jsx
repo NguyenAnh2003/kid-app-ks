@@ -12,6 +12,10 @@ const socket = io.connect('http://192.168.1.13:3001/');
 // phải mount file này trước khi chọn map, kh là sẽ kh chạy được
 // hiện tại mới chỉ foreground, để cho file này chạy background t bị lỗi mãi k làm đc
 
+function getChildIdFromDtb(){
+  return "7ce14780-1a03-438a-9596-973d81725fa7";
+}
+
 const ChildTest = () => {
   const [region, setRegion] = useState(null);
   const [childIdState, setChildId] = useState(null);
@@ -77,21 +81,30 @@ const ChildTest = () => {
           // lưu ý đoạn này, bây giờ đang fix cứng là id bằng 1 hoặc bằng 2
           // sau này sẽ xóa cái else if kia đi
           // và ở điều kiện cái if, tha cái "id1" = id hiện tại của thằng child
-          if(childId=="id1"){
+          if(childId==getChildIdFromDtb()){
             socket.emit('locationChild',region,childId)
           }
-          // đoạn else này sau sẽ xóa đi vì đang fix cứng
-          else if(childId=="id2"){
+          else if(childId=="1baf7534-f582-403f-a5ef-f09464b5733e"){
             const testregion={
               latitude:10, 
               longitude:10,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             };
-            socket.emit('locationChild',testregion,childId)
-            setCheckUpdate(true)
-            setChildId(childId)
+            socket.emit('locationChild',testregion,"1baf7534-f582-403f-a5ef-f09464b5733e")
+            
           }
+          else if(childId=="7ce14780-1a03-438a-9596-973d81725fa0"){
+            const testregion={
+              latitude:40, 
+              longitude:20,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            };
+            socket.emit('locationChild',testregion,"7ce14780-1a03-438a-9596-973d81725fa0")
+          }
+          setCheckUpdate(true)
+          setChildId(childId)
         });
       }
     }, [region])

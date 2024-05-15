@@ -7,7 +7,9 @@ import { check, request } from 'react-native-permissions';
 import io from 'socket.io-client';
 const socket = io.connect('http://192.168.1.13:3001/');
 
-const LocationTracking = (props) => {
+const LocationTracking = ({navigation, route}) => {
+  const { childId } = route.params;
+  console.log(childId);
   const [region, setRegion] = useState(null);
 
   // useEffect(() => {
@@ -62,19 +64,19 @@ const LocationTracking = (props) => {
 
   // set location when change child id
   useEffect(()=>{
-    console.log('Child ID:', props.childId);
+    console.log('Child ID:', route.params.childId);
     // tại đây code 1 hàm để lấy vị trí của đứa con khi đã có id
     // socket.on('location',(test)=>{
 
     // })
-    socket.emit('requestLocation', props.childId);
+    socket.emit('requestLocation', route.params.childId);
 
     var a=10;
     var b=12
-    // if(props.childId=="id1"){
+    // if(route.params.childId=="id1"){
     //   a=10
     // }
-    // if(props.childId=="id2"){
+    // if(route.params.childId=="id2"){
     //   a=15
     // }
     socket.on('locationUpdateToClient',(locationChild)=>{
@@ -89,7 +91,7 @@ const LocationTracking = (props) => {
     //   latitudeDelta: 0.0922,
     //   longitudeDelta: 0.0421,
     // });
-  }, [props.childId])
+  }, [route.params.childId])
 
 
   return (

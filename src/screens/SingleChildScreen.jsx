@@ -13,6 +13,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
+import StickyButton from '../components/buttons/StickyButton';
 
 const styles = StyleSheet.create({
   /** container */
@@ -298,6 +299,16 @@ const SingleChildScreen = ({ route, navigation }) => {
                 </View>
               </View>
               <MaterialCommunityIcons
+                name="map-marker-outline"
+                size={24}
+                color={'black'}
+                onPress={() =>
+                  navigation.navigate('LocationTracking', {
+                    childId: childId,
+                  })
+                }
+              />
+              <MaterialCommunityIcons
                 name="account-edit-outline"
                 size={24}
                 color={'black'}
@@ -404,6 +415,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             )}
           </ScrollView>
         </View>
+        <StickyButton></StickyButton>
       </View>
     </ScrollView>
   );

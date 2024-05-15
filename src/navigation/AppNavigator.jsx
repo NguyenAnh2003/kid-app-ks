@@ -4,8 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
-import ListChildToTrack from '../screens/ListChildToTrack';
-import ChildTest from '../screens/ChildTest';
 /** import screens folder */
 import {
   AccountScreen,
@@ -18,6 +16,8 @@ import {
   StateApp,
 } from '../screens';
 import SplashScreen from '../screens/SplashScreen';
+import LocationTracking from '../screens/LocationTracking';
+import ChildTest from '../screens/ChildTest';
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
 
@@ -53,6 +53,10 @@ const AppNavigator = () => {
           <Stack.Screen
             name="EditChild"
             component={EditChildScreen}
+          ></Stack.Screen>
+          <Stack.Screen
+            name="LocationTracking"
+            component={LocationTracking}
           ></Stack.Screen>
         </>
       ) : (
@@ -112,7 +116,7 @@ const HomeTabs = (props) => {
         }}
       />
       {/** location screen */}
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Location tracking"
 
 
@@ -130,7 +134,7 @@ const HomeTabs = (props) => {
             />
           ),
         }}
-      />
+      /> */}
        {/** test screen */}
        <Tab.Screen
         name="ChildTest"

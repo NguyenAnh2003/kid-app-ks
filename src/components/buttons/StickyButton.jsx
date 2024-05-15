@@ -2,7 +2,7 @@ import { View, Text, Button } from 'react-native';
 import React from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-const StickyButton = ({onPress}) => {
+const StickyButton = ({onPress, icon}) => {
   return (
     <TouchableOpacity
       style={{
@@ -19,12 +19,7 @@ const StickyButton = ({onPress}) => {
       }}
       onPress={onPress}
     >
-      <MaterialCommunityIcons
-        name="plus"
-        size={24}
-        color={'red'}
-        
-      />
+      {icon}
     </TouchableOpacity>
   );
 };

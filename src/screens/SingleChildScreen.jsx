@@ -299,16 +299,6 @@ const SingleChildScreen = ({ route, navigation }) => {
                 </View>
               </View>
               <MaterialCommunityIcons
-                name="map-marker-outline"
-                size={24}
-                color={'black'}
-                onPress={() =>
-                  navigation.navigate('LocationTracking', {
-                    childId: childId,
-                  })
-                }
-              />
-              <MaterialCommunityIcons
                 name="account-edit-outline"
                 size={24}
                 color={'black'}
@@ -415,7 +405,20 @@ const SingleChildScreen = ({ route, navigation }) => {
             )}
           </ScrollView>
         </View>
-        <StickyButton></StickyButton>
+        <StickyButton
+          onPress={() =>
+            navigation.navigate('LocationTracking', {
+              childId: childId,
+            })
+          }
+          icon={
+            <MaterialCommunityIcons
+              name="map-marker-outline"
+              size={24}
+              color={'black'}
+            />
+          }
+        />
       </View>
     </ScrollView>
   );

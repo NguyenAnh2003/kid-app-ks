@@ -34,6 +34,7 @@ import { useFormik } from 'formik';
 const reducer = (state, action) => {
   switch (action.type) {
     case 'USER_DATA':
+      console.log(action.payload.phone);
       /** return fetched data from api */
       return {
         parentId: action.payload.parentId,
@@ -112,7 +113,7 @@ const EditChildScreen = ({ navigation, route }) => {
     enableReinitialize: true,
     validate: validate,
     onSubmit: async (values) => {
-      // dispatch({ type: 'PROCESSING_UPDATE_DATA' });
+      dispatch({ type: 'PROCESSING_UPDATE_DATA' });
       const formData = {
         name: values.name,
         age: parseInt(values.age),
@@ -123,10 +124,10 @@ const EditChildScreen = ({ navigation, route }) => {
       const status = await updateChild(
         childId, // childId
         formData.name, // name
-        formData.avatar, // avatar
-        formData.phonetype, // phonetype
+        formData.age, // age
         formData.phone, // phone
-        formData.age // age
+        formData.phonetype, // phonetype
+        formData.avatar // avatar
       );
       if (status === 204) dispatch({ type: 'UPDATE_COMPLETED' });
     },

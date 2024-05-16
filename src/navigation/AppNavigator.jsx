@@ -13,17 +13,13 @@ import {
   LoginScreen,
   RegisterScreen,
   SingleChildScreen,
-  StateApp,
 } from '../screens';
-import SplashScreen from '../screens/SplashScreen';
 import LocationTracking from '../screens/LocationTracking';
-import ChildTest from '../screens/ChildTest';
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
 
 const AppNavigator = () => {
 
-  // const [isAuth, setIsAuth] = React.useState(false);
   /** currentSession - accessToken ... */
   const currentUser = useSelector((state) => state.userReducers?.user);
 
@@ -135,20 +131,6 @@ const HomeTabs = (props) => {
           ),
         }}
       /> */}
-       {/** test screen */}
-       <Tab.Screen
-        name="ChildTest"
-        component={ChildTest}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'home' : 'home-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
     </Tab.Navigator>
   );
 };

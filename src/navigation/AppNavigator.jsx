@@ -17,11 +17,50 @@ import {
   SingleChildScreen,
   StateApp,
 } from '../screens';
-import SplashScreen from '../screens/SplashScreen';
+import ReactNativeForegroundService from '@supersami/rn-foreground-service';
+import CheckScreenStatus from '../screens/CheckScreenStatus';
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
 
+/** lib foreground */
+ReactNativeForegroundService.register();
+
 const AppNavigator = () => {
+  let i = 0;
+
+  React.useEffect(() => {
+    ReactNativeForegroundService.add_task(
+      () => {
+        console.log(i);
+        i++;
+      },
+      {
+        delay: 1000,
+        onLoop: true,
+        taskId: 'taskid',
+        onError: (e) => console.log(`Error logging:`, e),
+      }
+    );
+
+    ReactNativeForegroundService.start({
+      id: 1244,
+      title: 'Foreground Service',
+      message: 'We are live World',
+      icon: 'ic_launcher',
+      button: true,
+      button2: true,
+      buttonText: 'Button',
+      button2Text: 'Anther Button',
+      buttonOnPress: 'cray',
+      setOnlyAlertOnce: true,
+      color: '#000000',
+      progress: {
+        max: 100,
+        curr: 50,
+      },
+    });
+  }, []);
+
 
   // const [isAuth, setIsAuth] = React.useState(false);
   /** currentSession - accessToken ... */
@@ -57,6 +96,11 @@ const AppNavigator = () => {
         </>
       ) : (
         <>
+          <Stack.Screen
+            name="ScreenStatus"
+            component={CheckScreenStatus}
+            options={{ headerShown: false }}
+          ></Stack.Screen>
           <Stack.Screen
             name="SignIn"
             component={LoginScreen}
@@ -114,13 +158,11 @@ const HomeTabs = (props) => {
       {/** location screen */}
       <Tab.Screen
         name="Location tracking"
-
-
         // lưu ý
         // truyền list id lấy từ database ở đây, t đang truyền 2 cái id1 và id2 đấy
         // đoạn này bị warning, kh rõ truyền cái list id ở đây ổn không
 
-        component={() => <ListChildToTrack items={["id1","id2"]}/>}
+        component={() => <ListChildToTrack items={['id1', 'id2']} />}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons
@@ -131,8 +173,8 @@ const HomeTabs = (props) => {
           ),
         }}
       />
-       {/** test screen */}
-       <Tab.Screen
+      {/** test screen */}
+      <Tab.Screen
         name="ChildTest"
         component={ChildTest}
         options={{

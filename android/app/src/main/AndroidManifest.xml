@@ -19,6 +19,21 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
+  <meta-data
+    android:name="com.supersami.foregroundservice.notification_channel_name"
+    android:value="Sticky Title"
+  />
+  <meta-data
+    android:name="com.supersami.foregroundservice.notification_channel_description"
+    android:value="Sticky Description."
+  />
+  <meta-data
+    android:name="com.supersami.foregroundservice.notification_color"
+    android:resource="@color/blue"
+  />
+  <service android:name="com.supersami.foregroundservice.ForegroundService"></service>
+  <service android:name="com.supersami.foregroundservice.ForegroundServiceTask"></service>
+
       <service android:name=".BackgroundHeadlessTaskService" />
       <meta-data
         android:name="com.google.android.geo.API_KEY"

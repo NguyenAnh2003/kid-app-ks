@@ -6,6 +6,7 @@ import {
   NativeModules,
   TouchableOpacity,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import globalStyle from '../styles/globalStyle';
@@ -323,11 +324,27 @@ const SingleChildScreen = ({ route, navigation }) => {
 
               <MaterialCommunityIcons
                 name="delete"
-                color={'red'}
+                color={'black'}
                 size={24}
                 onPress={() => {
-                  deleteChild(childId);
-                  navigation.goBack();
+                  Alert.alert(
+                    'Confirm',
+                    'Do you really want to delete this child?',
+                    [
+                      {
+                        text: 'Cancel',
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'OK',
+                        onPress: () => {
+                          deleteChild(childId);
+                          navigation.goBack();
+                        },
+                      },
+                    ],
+                    { cancelable: true }
+                  );
                 }}
               />
             </View>

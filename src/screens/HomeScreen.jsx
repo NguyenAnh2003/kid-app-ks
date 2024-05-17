@@ -52,7 +52,7 @@ const reducer = (state, action) => {
         isFetching: false,
       };
     default:
-      return state;
+      return { ...state };
   }
 };
 
@@ -71,31 +71,25 @@ const HomeScreen = ({ user, navigation, route }) => {
 
   const currentUserSession = useSelector((state) => state.userReducers?.user);
 
-  useEffect(() => {
+  const fetchChildren = async () => {
     try {
-      const fetchData = async () => {
-        const userId = JSON.parse(currentUserSession.session).user.id; // userId
-        const data = await getAllChildren(userId);
-        if (data) {
-          dispatch({ type: 'CHILD_LIST', payload: data });
-        }
-      };
-      /** */
-      fetchData();
+      const userId = JSON.parse(currentUserSession.session).user.id; // userId
+      const data = await getAllChildren(userId);
+      if (data) {
+        dispatch({ type: 'CHILD_LIST', payload: data });
+      }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  useEffect(() => {
+    fetchChildren();
   }, []);
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
-    const fetchDataaa = async () => {
-      const data = await getChildInfo(childId);
-      if (data) dispatch({ type: 'CHILD_LIST', payload: data });
-    };
-
-    fetchDataaa();
-    setRefresh(false);
+    fetchChildren().finally(() => setRefresh(false));
   }, []);
 
   return state.isFetching ? (

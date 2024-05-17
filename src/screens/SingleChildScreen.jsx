@@ -242,14 +242,35 @@ const SingleChildScreen = ({ route, navigation }) => {
     /** setup header when (childId, navigation) change */
     navigation.setOptions({
       headerTitle: () => (
-        <View style={{ flexDirection: 'row', alignContent: 'center', gap: 10 }}>
-          <Image
-            source={{ uri: childImage, width: 30, height: 30 }}
-            style={{ marginLeft: -20, borderRadius: 10 }}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignContent: 'center',
+            width: '100%'
+          }}
+        >
+          <View
+            style={{ flexDirection: 'row', alignContent: 'center', gap: 10 }}
+          >
+            <Image
+              source={{ uri: childImage, width: 30, height: 30 }}
+              style={{ marginLeft: -20, borderRadius: 10 }}
+            />
+            <Text style={{ color: '#333', fontSize: 15, fontWeight: '600' }}>
+              {childName}
+            </Text>
+          </View>
+          <MaterialCommunityIcons
+            name="account-edit-outline"
+            size={24}
+            color={'black'}
+            onPress={() =>
+              navigation.navigate('EditChild', {
+                childId: childId,
+              })
+            }
           />
-          <Text style={{ color: '#333', fontSize: 15, fontWeight: '600' }}>
-            {childName}
-          </Text>
         </View>
       ),
     });
@@ -298,16 +319,8 @@ const SingleChildScreen = ({ route, navigation }) => {
                   <Text style={{ color: '#a5a5a5' }}>{phoneType}</Text>
                 </View>
               </View>
-              <MaterialCommunityIcons
-                name="account-edit-outline"
-                size={24}
-                color={'black'}
-                onPress={() =>
-                  navigation.navigate('EditChild', {
-                    childId: childId,
-                  })
-                }
-              />
+
+              <MaterialCommunityIcons name="delete" color={'black'} size={24} />
             </View>
             {/** activities view */}
             <View

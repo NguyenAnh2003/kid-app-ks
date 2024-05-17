@@ -1714,6 +1714,11 @@
   resolved "https://registry.npmjs.org/@react-native-community/netinfo/-/netinfo-11.3.1.tgz"
   integrity sha512-UBnJxyV0b7i9Moa97Av+HKho1ByzX0DtbJXzUQS5E3xhQs6P2D/Os0iw3ouy7joY1TVd6uIhplPbr7l1SJNaNQ==
 
+"@react-native-picker/picker@^2.7.5":
+  version "2.7.5"
+  resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.7.5.tgz"
+  integrity sha512-vhMaOLkXSUb+YKVbukMJToU4g+89VMhBG2U9+cLYF8X8HtFRidrHjohGqT8/OyesDuKIXeLIP+UFYI9Q9CRA9Q==
+
 "@react-native/assets-registry@0.73.1":
   version "0.73.1"
   resolved "https://registry.npmjs.org/@react-native/assets-registry/-/assets-registry-0.73.1.tgz"
@@ -2100,7 +2105,7 @@
 
 "@supersami/rn-foreground-service@^2.1.1":
   version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@supersami/rn-foreground-service/-/rn-foreground-service-2.1.1.tgz#6a2622818d56bcf9a0f0f1f375603d2fad0df4a5"
+  resolved "https://registry.npmjs.org/@supersami/rn-foreground-service/-/rn-foreground-service-2.1.1.tgz"
   integrity sha512-CyeArkV2OUvgSjhYbmm//h/s5zKHOCyG97g4lODxEpmkxHF5WwMOFdFuMWEHhG7KUAfJg5gOYxr1erq2EhlvLQ==
 
 "@types/babel__core@^7.1.14":

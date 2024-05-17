@@ -18,7 +18,11 @@ import {
   StateApp,
 } from '../screens';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
-import CheckScreenStatus from '../screens/CheckScreenStatus';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SetOnScreenTimeLimit from '../screens/SetOnScreenTimeLimit';
+import { NativeModules } from 'react-native';
+const { PowerManager } = NativeModules;
+
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
 
@@ -26,32 +30,36 @@ const Stack = createStackNavigator(); // stack navigator
 ReactNativeForegroundService.register();
 
 const AppNavigator = () => {
-  let i = 0;
-
   React.useEffect(() => {
     ReactNativeForegroundService.add_task(
-      () => {
-        console.log(i);
-        i++;
+      async () => {
+        PowerManager.isScreenOn(async (isScreenOn) => {
+          if (isScreenOn) {
+            let elapsedTime = parseInt(await AsyncStorage.getItem('elapsedTime')) || 0;
+            elapsedTime += 1;
+            await AsyncStorage.setItem('elapsedTime', elapsedTime.toString());
+            console.log('Elapsed Time:', elapsedTime);
+          }
+        });
       },
       {
         delay: 1000,
         onLoop: true,
-        taskId: 'taskid',
-        onError: (e) => console.log(`Error logging:`, e),
+        taskId: 'elapsedTimeTask',
+        onError: (e) => console.log('Error logging:', e),
       }
     );
 
     ReactNativeForegroundService.start({
       id: 1244,
       title: 'Foreground Service',
-      message: 'We are live World',
+      message: 'Tracking screen time',
       icon: 'ic_launcher',
       button: true,
       button2: true,
-      buttonText: 'Button',
-      button2Text: 'Anther Button',
-      buttonOnPress: 'cray',
+      buttonText: 'Stop',
+      button2Text: 'Cancel',
+      buttonOnPress: 'stopService',
       setOnlyAlertOnce: true,
       color: '#000000',
       progress: {
@@ -59,8 +67,11 @@ const AppNavigator = () => {
         curr: 50,
       },
     });
+    // return () => {
+    //   ReactNativeForegroundService.stop();
+    //   ReactNativeForegroundService.remove_task('elapsedTimeTask');
+    // };
   }, []);
-
 
   // const [isAuth, setIsAuth] = React.useState(false);
   /** currentSession - accessToken ... */
@@ -98,7 +109,7 @@ const AppNavigator = () => {
         <>
           <Stack.Screen
             name="ScreenStatus"
-            component={CheckScreenStatus}
+            component={SetOnScreenTimeLimit}
             options={{ headerShown: false }}
           ></Stack.Screen>
           <Stack.Screen

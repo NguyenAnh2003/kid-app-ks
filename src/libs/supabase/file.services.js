@@ -1,6 +1,6 @@
 import { appStorage } from './supabase';
 
-export const uploadImage = async (imageUri) => {
+export const uploadImage = async (imageUri) => { ///
   /**
    * @param file - used for uploading file to bucket
    */

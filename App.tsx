@@ -14,42 +14,70 @@ import { Text } from 'react-native';
 import AppNavigator from './src/navigation/AppNavigator';
 import PushNotification from 'react-native-push-notification';
 import { LogBox } from 'react-native';
+import ReactNativeForegroundService from '@supersami/rn-foreground-service';
+
+ReactNativeForegroundService.register();
 
 LogBox.ignoreLogs(['Warning: ...']);
-LogBox.ignoreAllLogs();//Ignore all log notifications
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 // Configure Push Notifications
 PushNotification.configure({
-  onRegister: function(token) {
-    console.log("TOKEN:", token);
+  onRegister: function (token) {
+    console.log('TOKEN:', token);
   },
-  onNotification: function(notification) {
-    console.log("NOTIFICATION:", notification);
+  onNotification: function (notification) {
+    console.log('NOTIFICATION:', notification);
   },
   permissions: {
     alert: true,
     badge: true,
-    sound: true
+    sound: true,
   },
-  popInitialNotification: true
+  popInitialNotification: true,
 });
-
 
 PushNotification.createChannel(
   {
-    channelId: "channel-timelimit", // ensure this ID is unique for each channel
-    channelName: "Time Limit Channel", // the human-readable name of the channel
-    channelDescription: "A default channel for time limit notifications", // optional description
-    soundName: "default", // if you have a custom sound, specify its name
+    channelId: 'channel-timelimit', // ensure this ID is unique for each channel
+    channelName: 'Time Limit Channel', // the human-readable name of the channel
+    channelDescription: 'A default channel for time limit notifications', // optional description
+    soundName: 'default', // if you have a custom sound, specify its name
     importance: 4, // specify the importance level
     vibrate: true, // whether to vibrate
   },
-  (created) => console.log(`CreateChannel returned '${created}'`), // callback returns whether the channel was created or not
+  (created) => console.log(`CreateChannel returned '${created}'`) // callback returns whether the channel was created or not
 );
 
-
-
 function App(): React.JSX.Element {
+  const log = () => console.log(Date.now());
+
+  useEffect(() => {
+    ReactNativeForegroundService.add_task(() => log(), {
+      delay: 1000,
+      onLoop: true,
+      taskId: 'taskid',
+      onError: (e) => console.log(`Error logging:`, e),
+    });
+
+    ReactNativeForegroundService.start({
+      id: 1244,
+      title: 'Foreground Service',
+      message: 'We are live World',
+      icon: 'ic_launcher',
+      button: true,
+      button2: true,
+      buttonText: 'Button',
+      button2Text: 'Anther Button',
+      buttonOnPress: 'cray',
+      setOnlyAlertOnce: true,
+      color: '#000000',
+      progress: {
+        max: 100,
+        curr: 50,
+      },
+    });
+  }, []);
 
   return (
     <Provider store={configStore}>

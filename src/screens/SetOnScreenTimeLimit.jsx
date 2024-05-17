@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Button, Text, Modal, Alert } from 'react-native';
+import { View, Button, Text, Modal, Alert, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import PushNotification from 'react-native-push-notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -87,22 +87,22 @@ const SetOnScreenTimeLimit = () => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={styles.container}>
       <Button title="Set limit" onPress={() => setModalVisible(true)} />
-      <Text style={{ margin: 10 }}>Time Limit Set: {formattedTime()}</Text>
-      <Text style={{ margin: 10 }}>Remaining Time: {remainingTime !== null ? humanReadableTime(remainingTime) : 'Not set'}</Text>
+      <Text style={styles.margin}>Time Limit Set: {formattedTime()}</Text>
+      <Text style={styles.margin}>Remaining Time: {remainingTime !== null ? humanReadableTime(remainingTime) : 'Not set'}</Text>
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <View style={{ width: '80%', backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' }}>
-            <Text style={{ textAlign: 'center', fontSize: 20, marginBottom: 10 }}>Set Time Limit</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Set Time Limit</Text>
+            <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={selectedHour}
-                style={{ width: 150, height: 180 }}
+                style={styles.picker}
                 onValueChange={(itemValue) => setSelectedHour(itemValue)}>
                 {[...Array(24).keys()].map(hour => (
                   <Picker.Item key={hour} label={`${hour} hours`} value={hour} />
@@ -110,7 +110,7 @@ const SetOnScreenTimeLimit = () => {
               </Picker>
               <Picker
                 selectedValue={selectedMinute}
-                style={{ width: 160, height: 180 }}
+                style={styles.picker}
                 onValueChange={(itemValue) => setSelectedMinute(itemValue)}>
                 {[...Array(60).keys()].map(minute => (
                   <Picker.Item key={minute} label={`${minute} minutes`} value={minute} />
@@ -126,4 +126,40 @@ const SetOnScreenTimeLimit = () => {
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  margin: {
+    margin: 10,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    textAlign: 'center',
+    fontSize: 20,
+    marginBottom: 10,
+  },
+  pickerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  picker: {
+    width: 150,
+    height: 180,
+  },
+});
 export default SetOnScreenTimeLimit;

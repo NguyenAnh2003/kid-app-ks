@@ -108,11 +108,6 @@ const AppNavigator = () => {
       ) : (
         <>
           <Stack.Screen
-            name="ScreenStatus"
-            component={SetOnScreenTimeLimit}
-            options={{ headerShown: false }}
-          ></Stack.Screen>
-          <Stack.Screen
             name="SignIn"
             component={LoginScreen}
             options={{ headerShown: false }}
@@ -188,6 +183,19 @@ const HomeTabs = (props) => {
       <Tab.Screen
         name="ChildTest"
         component={ChildTest}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'home' : 'home-outline'}
+              size={24}
+              color={'black'}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="TimeLimitTest"
+        component={SetOnScreenTimeLimit}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons

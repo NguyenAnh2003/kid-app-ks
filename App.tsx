@@ -14,9 +14,6 @@ import { Text } from 'react-native';
 import AppNavigator from './src/navigation/AppNavigator';
 import PushNotification from 'react-native-push-notification';
 import { LogBox } from 'react-native';
-import ReactNativeForegroundService from '@supersami/rn-foreground-service';
-
-ReactNativeForegroundService.register();
 
 LogBox.ignoreLogs(['Warning: ...']);
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -50,35 +47,6 @@ PushNotification.createChannel(
 );
 
 function App(): React.JSX.Element {
-  const log = () => console.log(Date.now());
-
-  useEffect(() => {
-    ReactNativeForegroundService.add_task(() => log(), {
-      delay: 1000,
-      onLoop: true,
-      taskId: 'taskid',
-      onError: (e) => console.log(`Error logging:`, e),
-    });
-
-    ReactNativeForegroundService.start({
-      id: 1244,
-      title: 'Foreground Service',
-      message: 'We are live World',
-      icon: 'ic_launcher',
-      button: true,
-      button2: true,
-      buttonText: 'Button',
-      button2Text: 'Anther Button',
-      buttonOnPress: 'cray',
-      setOnlyAlertOnce: true,
-      color: '#000000',
-      progress: {
-        max: 100,
-        curr: 50,
-      },
-    });
-  }, []);
-
   return (
     <Provider store={configStore}>
       <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>

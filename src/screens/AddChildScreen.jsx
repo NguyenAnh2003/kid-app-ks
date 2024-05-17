@@ -41,11 +41,20 @@ const validate = (values) => {
   if (!values.phonetype) {
     erros.phonetype = 'Required';
   }
+  if (/^\d+$/.test(values.phonetype)) {
+    erros.phonetype = 'Phone type cannot contain number';
+  }
   if (!values.phone) {
     erros.phone = 'Required';
   }
+  if (!/^\d+$/.test(values.phone)) {
+    erros.phone = 'Phone must contain number';
+  }
   if (!values.age) {
     erros.age = 'Required';
+  }
+  if (!/^\d+$/.test(values.age)) {
+    erros.age = 'Age must contain number';
   }
   return erros;
 };

@@ -14,6 +14,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
 import StickyButton from '../components/buttons/StickyButton';
+import { deleteChild } from '../libs';
 
 const styles = StyleSheet.create({
   /** container */
@@ -247,7 +248,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignContent: 'center',
-            width: '100%'
+            width: '100%',
           }}
         >
           <View
@@ -320,7 +321,15 @@ const SingleChildScreen = ({ route, navigation }) => {
                 </View>
               </View>
 
-              <MaterialCommunityIcons name="delete" color={'black'} size={24} />
+              <MaterialCommunityIcons
+                name="delete"
+                color={'red'}
+                size={24}
+                onPress={() => {
+                  deleteChild(childId);
+                  navigation.goBack();
+                }}
+              />
             </View>
             {/** activities view */}
             <View

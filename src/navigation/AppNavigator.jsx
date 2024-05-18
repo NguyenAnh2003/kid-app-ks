@@ -10,6 +10,7 @@ import ChildTest from '../screens/ChildTest';
 import {
   AccountScreen,
   AddChildScreen,
+  ChildSelectionScreen,
   EditChildScreen,
   HomeScreen,
   LoginScreen,
@@ -18,59 +19,22 @@ import {
   StateApp,
 } from '../screens';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SetOnScreenTimeLimit from '../screens/SetOnScreenTimeLimit';
+import { NativeModules } from 'react-native';
+const { PowerManager } = NativeModules;
+import { createNotification } from '../libs/supabase/notfication.services';
 
-const Tab = createBottomTabNavigator(); // tab bar
-const Stack = createStackNavigator(); // stack navigator
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+/** lib foreground */
+ReactNativeForegroundService.register();
 
 /** lib foreground */
 ReactNativeForegroundService.register();
 
 const AppNavigator = () => {
-  // let i = 0;
-  // //
-  // const limit = 120;
-  // const f = async (i) => {
-  //   if (i === limit) {
-  //     setTimeout(() => {
-  //       console.log('Reached');
-  //     }, 1000);
-  //   }
-  // };
-
-  // React.useEffect(() => {
-  //   ReactNativeForegroundService.add_task(
-  //     async () => {
-  //       console.log(i);
-  //       await f(i);
-  //       // if()
-  //       i++;
-  //     },
-  //     {
-  //       delay: 1000,
-  //       onLoop: true,
-  //       taskId: 'taskid',
-  //       onError: (e) => console.log(`Error logging:`, e),
-  //     }
-  //   );
-
-  //   ReactNativeForegroundService.start({
-  //     id: 1244,
-  //     title: 'Foreground Service',
-  //     message: 'We are live World',
-  //     icon: 'ic_launcher',
-  //     button: true,
-  //     button2: true,
-  //     buttonText: 'Button',
-  //     button2Text: 'Anther Button',
-  //     buttonOnPress: 'cray',
-  //     setOnlyAlertOnce: true,
-  //     color: '#000000',
-  //     progress: {
-  //       max: 100,
-  //       curr: 50,
-  //     },
-  //   });
-  // }, []);
 
   // const [isAuth, setIsAuth] = React.useState(false);
   /** currentSession - accessToken ... */
@@ -82,26 +46,26 @@ const AppNavigator = () => {
     return session;
   }, [currentUser]);
 
+  // session -> childId -> HomeTabs
+
   return (
     <Stack.Navigator>
       {session ? (
         <>
-          <Stack.Screen
+          {/**
+           * <Stack.Screen
             name="Home"
             component={HomeTabs}
             options={{ headerShown: false }}
           ></Stack.Screen>
+           */}
+          {/** selection child to assign screen */}
+          <Stack.Screen
+            name="ChildSelection"
+            component={ChildSelectionScreen}></Stack.Screen>
           <Stack.Screen
             name="SingleChild"
             component={SingleChildScreen}
-          ></Stack.Screen>
-          <Stack.Screen
-            name="AddChild"
-            component={AddChildScreen}
-          ></Stack.Screen>
-          <Stack.Screen
-            name="EditChild"
-            component={EditChildScreen}
           ></Stack.Screen>
         </>
       ) : (
@@ -123,8 +87,90 @@ const AppNavigator = () => {
 };
 
 const HomeTabs = (props) => {
+  // React.useEffect(() => {
+  //   const handleScreenStateChange = async (isScreenOn) => {
+  //     const lastScreenState = await AsyncStorage.getItem('lastScreenState');
+  //     if (lastScreenState === null || JSON.parse(lastScreenState) !== isScreenOn) {
+  //       console.log(`Screen is ${isScreenOn ? 'ON' : 'OFF'}`);
+  //       await AsyncStorage.setItem('lastScreenState', JSON.stringify(isScreenOn));
+  //     }
+  //   };
+
+  //   ReactNativeForegroundService.add_task(
+  //     async () => {
+  //       PowerManager.isScreenOn(async (isScreenOn) => {
+
+  //         handleScreenStateChange(isScreenOn);
+
+  //         if (isScreenOn) {
+  //           // Daily counting logic
+  //           const today = new Date().toISOString().split('T')[0];
+  //           let lastRecordedDate = await AsyncStorage.getItem('lastRecordedDate');
+  //           if (lastRecordedDate !== today) {
+  //             await AsyncStorage.setItem('elapsedTime', '0');
+  //             await AsyncStorage.setItem('lastRecordedDate', today);
+  //             lastRecordedDate = today;
+  //           }
+
+  //           let elapsedTime = parseInt(await AsyncStorage.getItem('elapsedTime')) || 0;
+  //           elapsedTime += 1;
+  //           console.log(elapsedTime);
+  //           await AsyncStorage.setItem('elapsedTime', elapsedTime.toString());
+
+  //           const timeLimit = parseInt(await AsyncStorage.getItem('timeLimit')) || 0;
+  //           const notificationSent = JSON.parse(await AsyncStorage.getItem('notificationSent'));
+
+  //           // Check timeLimit and Insert Supabase
+  //           if (elapsedTime >= timeLimit && timeLimit > 0 && !notificationSent) {
+  //             const parentId = '1baf7534-f582-403f-a5ef-f09464b5733e';
+  //             const childId = 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae6';
+  //             const description = 'Time limit reached';
+  //             const now = new Date();
+  //             const date = now.toLocaleString(); // Convert to local date and time string
+
+  //             console.log('Creating notification with:', { parentId, childId, description, date });
+  //             try {
+  //               const notificationStatus = await createNotification(parentId, childId, description, date);
+  //               await AsyncStorage.setItem('notificationSent', JSON.stringify(true));
+  //             } catch (error) {
+  //               console.error('Error in notification process:', error);
+  //             }
+  //           }
+  //         }
+  //       });
+  //     },
+  //     {
+  //       delay: 1000,
+  //       onLoop: true,
+  //       taskId: 'elapsedTimeTask',
+  //       onError: (e) => console.log('Error logging:', e),
+  //     }
+  //   );
+
+  //   ReactNativeForegroundService.start({
+  //     id: 1244,
+  //     title: 'Foreground Service',
+  //     message: 'Tracking screen time',
+  //     icon: 'ic_launcher',
+  //     button: true,
+  //     button2: true,
+  //     buttonText: 'Stop',
+  //     button2Text: 'Cancel',
+  //     buttonOnPress: 'stopService',
+  //     setOnlyAlertOnce: true,
+  //     color: '#000000',
+  //     progress: {
+  //       max: 100,
+  //       curr: 50,
+  //     },
+  //   });
+  //   // return () => {
+  //   //   ReactNativeForegroundService.stop();
+  //   //   ReactNativeForegroundService.remove_task('elapsedTimeTask');
+  //   // };
+  // }, []);
   return (
-    <Tab.Navigator
+    <Stack.Navigator
       initialRouteName="HomeTabs"
       screenOptions={{
         tabBarLabel: '',
@@ -132,8 +178,8 @@ const HomeTabs = (props) => {
         tabBarStyle: { padding: 0, margin: 0 },
       }}
     >
-      {/** home screen */}
-      <Tab.Screen
+      {/** home screen -> usage screen */}
+      <Stack.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{
@@ -146,54 +192,7 @@ const HomeTabs = (props) => {
           ),
         }}
       />
-      {/** account screen */}
-      <Tab.Screen
-        name="Account"
-        component={AccountScreen}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? 'account' : 'account-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
-      {/** location screen */}
-      {/**
-      <Tab.Screen
-        name="Location tracking"
-        // lưu ý
-        // truyền list id lấy từ database ở đây, t đang truyền 2 cái id1 và id2 đấy
-        // đoạn này bị warning, kh rõ truyền cái list id ở đây ổn không
-
-        component={() => <ListChildToTrack items={['id1', 'id2']} />}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? 'map' : 'map-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="ChildTest"
-        component={ChildTest}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'home' : 'home-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
-     */}
-    </Tab.Navigator>
+    </Stack.Navigator>
   );
 };
 

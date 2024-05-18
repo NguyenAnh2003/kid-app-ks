@@ -12,6 +12,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import globalStyle from '../styles/globalStyle';
 import { ScrollView } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
 import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
 import StickyButton from '../components/buttons/StickyButton';
@@ -56,8 +58,10 @@ const SingleChildScreen = ({ route, navigation }) => {
    * @param childImage (avatar)
    * @param activities ? (com.package.name, timeUsed, date)
    */
-  /** modal */
-  const [modalVisible, setModalVisible] = useState(false);
+
+  /** expand */
+  const [expand, setExpand] = useState(false);
+
   /** native module */
   const { AppPackaging } = NativeModules;
   /** childId -> fetchDataByChildId */
@@ -69,10 +73,6 @@ const SingleChildScreen = ({ route, navigation }) => {
   /** state */
   const [activities, setActivities] = useState(packageList);
   const [refresh, setRefresh] = useState(false);
-
-  useEffect(() => {
-    console.log(modalVisible);
-  }, [modalVisible]);
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
@@ -338,19 +338,73 @@ const SingleChildScreen = ({ route, navigation }) => {
           </ScrollView>
         </View>
         <StickyButton
-          onPress={() =>
-            navigation.navigate('LocationTracking', {
-              childId: childId,
-            })
-          }
-          icon={
-            <MaterialCommunityIcons
-              name="map-marker-outline"
-              size={24}
-              color={'black'}
-            />
-          }
+          onPress={() => setExpand(true)}
+          icon={<Feather name="info" size={24} color={'black'} />}
         />
+        {expand && (
+          <>
+            {/** collapsing panel */}
+            <StickyButton
+              onPress={() => setExpand(false)}
+              icon={<Entypo name="cross" size={24} color={'black'} />}
+            />
+            <View>
+              {/** Map button */}
+              <TouchableOpacity
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 50,
+                  backgroundColor: '#fdf6e2',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  position: 'absolute',
+                  bottom: 35,
+                  right: 90,
+                  alignSelf: 'flex-end',
+                }}
+                onPress={() =>
+                  navigation.navigate('LocationTracking', {
+                    childId: childId,
+                  })
+                }
+              >
+                <MaterialCommunityIcons
+                  name="google-maps"
+                  size={24}
+                  color={'black'}
+                />
+              </TouchableOpacity>
+              {/** Time limit button */}
+              {/** Map button */}
+              <TouchableOpacity
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 50,
+                  backgroundColor: '#fdf6e2',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  position: 'absolute',
+                  bottom: 35,
+                  right: 160,
+                  alignSelf: 'flex-end',
+                }}
+                onPress={() =>
+                  navigation.navigate('LocationTracking', {
+                    childId: childId,
+                  })
+                }
+              >
+                <MaterialCommunityIcons
+                  name="clock-time-seven"
+                  size={24}
+                  color={'black'}
+                />
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
       </View>
     </ScrollView>
   );

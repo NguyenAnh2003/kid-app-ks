@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import globalStyle from '../styles/globalStyle';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
-import { View, StyleSheet, Text, PermissionsAndroid, Alert } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  PermissionsAndroid,
+  Alert,
+} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import { check, request } from 'react-native-permissions';
 import io from 'socket.io-client';
 const socket = io.connect('http://192.168.1.13:3001/');
 
-const LocationTracking = ({navigation, route}) => {
+const LocationTracking = ({ navigation, route }) => {
   const { childId } = route.params;
   console.log(childId);
   const [region, setRegion] = useState(null);
@@ -33,7 +39,7 @@ const LocationTracking = ({navigation, route}) => {
   //             const { latitude, longitude } = position.coords;
   //             console.log(position.coords);
   //             setRegion({
-  //               latitude:1, 
+  //               latitude:1,
   //               longitude:2,
   //               latitudeDelta: 0.0922,
   //               longitudeDelta: 0.0421,
@@ -61,9 +67,8 @@ const LocationTracking = ({navigation, route}) => {
   //   };
   // }, []);
 
-
   // set location when change child id
-  useEffect(()=>{
+  useEffect(() => {
     console.log('Child ID:', route.params.childId);
     // tại đây code 1 hàm để lấy vị trí của đứa con khi đã có id
     // socket.on('location',(test)=>{
@@ -71,28 +76,38 @@ const LocationTracking = ({navigation, route}) => {
     // })
     socket.emit('requestLocation', route.params.childId);
 
-    var a=10;
-    var b=12
+    var a = 10;
+    var b = 12;
     // if(route.params.childId=="id1"){
     //   a=10
     // }
     // if(route.params.childId=="id2"){
     //   a=15
     // }
-    socket.on('locationUpdateToClient',(locationChild)=>{
+    socket.on('locationUpdateToClient', (locationChild) => {
       console.log('Location client received:', locationChild);
-      a=locationChild.latitude
-      b=locationChild.longitude
-      setRegion(locationChild)
-    })
+      a = locationChild.latitude;
+      b = locationChild.longitude;
+      setRegion(locationChild);
+    });
+
+    navigation.setOptions({
+      headerTitle: () => (
+        <>
+          <Text style={{ color: '#000', fontSize: 17, fontWeight: 600, marginLeft: -22 }}>
+            Location
+          </Text>
+        </>
+      ),
+    });
+
     // setRegion({
-    //   latitude:a, 
+    //   latitude:a,
     //   longitude:12,
     //   latitudeDelta: 0.0922,
     //   longitudeDelta: 0.0421,
     // });
-  }, [route.params.childId])
-
+  }, [route.params.childId]);
 
   return (
     <View style={globalStyle.container}>

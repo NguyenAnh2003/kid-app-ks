@@ -376,7 +376,6 @@ const SingleChildScreen = ({ route, navigation }) => {
                 />
               </TouchableOpacity>
               {/** Time limit button */}
-              {/** Map button */}
               <TouchableOpacity
                 style={{
                   width: 60,
@@ -390,11 +389,6 @@ const SingleChildScreen = ({ route, navigation }) => {
                   right: 160,
                   alignSelf: 'flex-end',
                 }}
-                onPress={() =>
-                  navigation.navigate('LocationTracking', {
-                    childId: childId,
-                  })
-                }
               >
                 <MaterialCommunityIcons
                   name="clock-time-seven"

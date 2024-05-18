@@ -33,9 +33,14 @@ export const getAllNotfications = async (parentId) => {
   /** get notification */
   try {
     /** @param parentId - get all notifications with parentId*/
-    const { data, status } = await notifyTable
-      .select()
+    const { data, status, error } = await notifyTable
+      .select(
+        `
+        *, children:childId (*)
+      `
+      )
       .eq('parentId', parentId);
+    console.log({ error });
     if (status === 200) return data;
   } catch (error) {
     console.log(error.message);

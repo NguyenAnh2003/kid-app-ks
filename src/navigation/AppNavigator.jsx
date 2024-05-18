@@ -98,14 +98,14 @@ const HomeTabs = (props) => {
           ),
         }}
       />
-      {/** account screen */}
+      {/** notification screen */}
       <Tab.Screen
-        name="Account"
-        component={AccountScreen}
+        name="Notification"
+        component={NotificationScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? 'account' : 'account-outline'}
+            <MaterialIcons
+              name={focused ? 'notifications' : 'notifications-none'}
               size={24}
               color={'black'}
             />
@@ -114,12 +114,12 @@ const HomeTabs = (props) => {
       />
       {/** account screen */}
       <Tab.Screen
-        name="Notification"
-        component={NotificationScreen}
+        name="Account"
+        component={AccountScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <MaterialIcons
-              name={focused ? 'notifications' : 'notifications-none'}
+            <MaterialCommunityIcons
+              name={focused ? 'account' : 'account-outline'}
               size={24}
               color={'black'}
             />

@@ -1,8 +1,13 @@
-import { View, Text } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import { View, Text, Image } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { convertTimestamp } from '../../utils/utils';
 
 const NotificationCard = ({ id, childData, date, description }) => {
+  const formatedDate = useMemo(() => {
+    const rs = convertTimestamp(date);
+    return rs;
+  }, [id, childData, date, description]);
+
   return (
     <View
       style={{
@@ -11,9 +16,13 @@ const NotificationCard = ({ id, childData, date, description }) => {
         paddingVertical: 13,
         flexDirection: 'row',
         alignContent: 'center',
+        gap: 10,
       }}
     >
-      <AntDesign name="bells" color={'#000'} size={45} />
+      <Image
+        source={{ uri: childData.avatarUrl }}
+        style={{ width: 50, height: 50, borderRadius: 50 }}
+      />
       <View
         style={{
           flexDirection: 'column',
@@ -27,11 +36,13 @@ const NotificationCard = ({ id, childData, date, description }) => {
             fontSize: 15,
           }}
         >
-          Name
+          {childData.kidName}
         </Text>
         <View style={{ flexDirection: 'column' }}>
           <Text style={{ color: '#000', fontSize: 12 }}>{description}</Text>
-          <Text style={{ color: '#000', fontSize: 12 }}>{date.toString()}</Text>
+          <Text style={{ color: '#000', fontSize: 12 }}>
+            {formatedDate.toString()}
+          </Text>
         </View>
       </View>
     </View>

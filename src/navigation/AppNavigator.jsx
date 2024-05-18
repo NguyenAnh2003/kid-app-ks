@@ -10,11 +10,11 @@ import {
   AddChildScreen,
   EditChildScreen,
   HomeScreen,
+  LocationTrackingScreen,
   LoginScreen,
   RegisterScreen,
   SingleChildScreen,
 } from '../screens';
-import LocationTracking from '../screens/LocationTracking';
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
 
@@ -52,7 +52,7 @@ const AppNavigator = () => {
           ></Stack.Screen>
           <Stack.Screen
             name="LocationTracking"
-            component={LocationTracking}
+            component={LocationTrackingScreen}
           ></Stack.Screen>
         </>
       ) : (

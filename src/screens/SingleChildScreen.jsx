@@ -16,6 +16,7 @@ import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
 import StickyButton from '../components/buttons/StickyButton';
 import { deleteChild } from '../libs';
+import { packageList } from '../mock/activities';
 
 const styles = StyleSheet.create({
   /** container */
@@ -45,115 +46,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const packageList = [
-  {
-    id: '1',
-    name: 'facebook',
-    packageName: 'com.facebook.katana',
-    timeUsed: 10,
-    dateUsed: '2024-05-5',
-  },
-  {
-    id: '2',
-    name: 'facebook',
-    packageName: 'com.facebook.katana',
-    timeUsed: 1,
-    dateUsed: '2024-05-4',
-  },
-  {
-    id: '3',
-    name: 'instagram',
-    packageName: 'com.instagram.android',
-    timeUsed: 1,
-    dateUsed: '2024-05-6',
-  },
-  {
-    id: '4',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
-    timeUsed: 1,
-    dateUsed: '2024-04-22',
-  },
-  {
-    id: '5',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
-    timeUsed: 2,
-    dateUsed: '2024-04-24',
-  },
-  {
-    id: '6',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
-    timeUsed: 2,
-    dateUsed: '2024-04-26',
-  },
-  {
-    id: '7',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
-    timeUsed: 2,
-    dateUsed: '2024-04-25',
-  },
-  {
-    id: '8',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
-    timeUsed: 2,
-    dateUsed: '2024-05-10',
-  },
-  {
-    id: '9',
-    name: 'facebook',
-    packageName: 'com.facebook.katana',
-    timeUsed: 8,
-    dateUsed: '2024-05-10',
-  },
-  {
-    id: '8',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
-    timeUsed: 2,
-    dateUsed: '2024-05-10',
-  },
-  {
-    id: '9',
-    name: 'facebook',
-    packageName: 'com.facebook.katana',
-    timeUsed: 8,
-    dateUsed: '2024-05-10',
-  },
-  {
-    id: '8',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
-    timeUsed: 2,
-    dateUsed: '2024-05-10',
-  },
-  {
-    id: '9',
-    name: 'facebook',
-    packageName: 'com.facebook.katana',
-    timeUsed: 8,
-    dateUsed: '2024-05-10',
-  },
-  {
-    id: '8',
-    name: 'app',
-    packageName: 'com.myapp',
-    timeUsed: 2,
-    dateUsed: '2024-05-10',
-  },
-  {
-    id: '9',
-    name: 'setting',
-    packageName: 'com.android.settings',
-    timeUsed: 8,
-    dateUsed: '2024-05-10',
-  },
-];
-
-const numDay = 2;
+const numDay = 1;
 const numWeek = 1;
 
 const SingleChildScreen = ({ route, navigation }) => {
@@ -191,7 +84,7 @@ const SingleChildScreen = ({ route, navigation }) => {
     if (option === 'recent') {
       const today = new Date();
       const today2 = new Date(today);
-      today2.setDate(today.getDate() - 1 * numDay);
+      today2.setDate(today.getDate() - 1);
 
       const todayUsage = packageList.filter((item) => {
         const itemDate = new Date(item.dateUsed);

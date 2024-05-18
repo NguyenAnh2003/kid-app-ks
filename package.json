@@ -20,7 +20,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@react-navigation/stack": "^6.3.29",
-    "@supabase/supabase-js": "^2.42.5",
+    "@supabase/supabase-js": "^2.43.2",
     "@supersami/rn-foreground-service": "^2.1.1",
     "@types/react-native-push-notification": "^8.1.4",
     "@vonage/server-sdk": "^3.13.1",

@@ -17,40 +17,41 @@ const SetOnScreenTimeLimit = () => {
     const initializeTimes = async () => {
       const storedLimit = await AsyncStorage.getItem('timeLimit');
       const storedElapsed = await AsyncStorage.getItem('elapsedTime');
-      if (storedLimit) {
-        setTimeLimit(parseInt(storedLimit));
-      }
-      if (storedElapsed) {
-        setElapsedTime(parseInt(storedElapsed));
-      }
+      const notificationSent = await AsyncStorage.getItem('notificationSent');
+
+      if (storedLimit) setTimeLimit(parseInt(storedLimit));
+      if (storedElapsed) setElapsedTime(parseInt(storedElapsed));
+      if (notificationSent) notificationSentRef.current = JSON.parse(notificationSent);
     };
 
     initializeTimes();
 
     const interval = setInterval(async () => {
       const storedElapsed = await AsyncStorage.getItem('elapsedTime');
-      setElapsedTime(parseInt(storedElapsed) || 0);
+      const elapsed = parseInt(storedElapsed) || 0;
+      setElapsedTime(elapsed);
 
-      if (timeLimit !== null && elapsedTime >= timeLimit && !notificationSentRef.current) {
+      if (timeLimit !== null && elapsed >= timeLimit && !notificationSentRef.current) {
         notifyTimeLimitReached();
         notificationSentRef.current = true;
+        await AsyncStorage.setItem('notificationSent', JSON.stringify(true));
       }
 
       if (timeLimit !== null) {
-        setRemainingTime(Math.max(0, timeLimit - elapsedTime));
+        setRemainingTime(Math.max(0, timeLimit - elapsed));
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timeLimit, elapsedTime]);
+  }, [timeLimit]);
 
   const handleSetUsageLimit = async () => {
     const limitInSeconds = selectedHour * 3600 + selectedMinute * 60;
     setTimeLimit(limitInSeconds);
     setRemainingTime(limitInSeconds);
     await AsyncStorage.setItem('timeLimit', limitInSeconds.toString());
-    console.log('Time Limit Set:', limitInSeconds, 'seconds');
-    console.log('Elapsed Time:', elapsedTime, 'seconds');
+    await AsyncStorage.setItem('notificationSent', JSON.stringify(false));
+    console.log('Time Limit Set:', limitInSeconds, 'seconds'); 
     notificationSentRef.current = false;
     setModalVisible(false);
   };
@@ -62,12 +63,6 @@ const SetOnScreenTimeLimit = () => {
       message: 'You have used up your app usage time for today.',
       playSound: true,
       soundName: 'default',
-    });
-
-    console.log('Scheduling local notification:', {
-      channelId: 'channel-timelimit',
-      title: 'Time Limit Reached',
-      message: 'You have used up your app usage time for today.',
     });
   };
 
@@ -162,4 +157,5 @@ const styles = StyleSheet.create({
     height: 180,
   },
 });
+
 export default SetOnScreenTimeLimit;

@@ -3,13 +3,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from 'react-native';
+import { createTimeLim } from '../../libs';
 
-const TimeLimitModal = ({ modalVisible, setModalVisible }) => {
+const TimeLimitModal = ({ modalVisible, setModalVisible, childId }) => {
   const [selectedHour, setSelectedHour] = useState(0);
   const [selectedMinute, setSelectedMinute] = useState(0);
 
   const handleSetUsageLimit = async () => {
-    console.log({ selectedHour, selectedMinute });
+    console.log({ selectedHour, selectedMinute, childId });
+    try {
+      const status = await createTimeLim(childId, selectedHour, selectedMinute);
+      console.log({ status });
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -51,13 +58,21 @@ const TimeLimitModal = ({ modalVisible, setModalVisible }) => {
               onPress={handleSetUsageLimit}
               style={{ padding: 10, backgroundColor: '#fdf6e2', width: 80 }}
             >
-              <Text style={{ color: '#000', textAlign: 'center' }}>Set</Text>
+              <Text
+                style={{ color: '#000', textAlign: 'center', fontWeight: 600 }}
+              >
+                Set
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setModalVisible(false)}
               style={{ padding: 10, backgroundColor: '#fdf6e2', width: 80 }}
             >
-              <Text style={{ color: '#000', textAlign: 'center' }}>Cancel</Text>
+              <Text
+                style={{ color: '#000', textAlign: 'center', fontWeight: 600 }}
+              >
+                Cancel
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

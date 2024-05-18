@@ -409,6 +409,7 @@ const SingleChildScreen = ({ route, navigation }) => {
           <TimeLimitModal
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
+            childId={childId}
           />
         )}
       </View>

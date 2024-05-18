@@ -10,6 +10,7 @@ import ChildTest from '../screens/ChildTest';
 import {
   AccountScreen,
   AddChildScreen,
+  ChildSelectionScreen,
   EditChildScreen,
   HomeScreen,
   LoginScreen,
@@ -34,7 +35,7 @@ ReactNativeForegroundService.register();
 ReactNativeForegroundService.register();
 
 const AppNavigator = () => {
-  
+
   // const [isAuth, setIsAuth] = React.useState(false);
   /** currentSession - accessToken ... */
   const currentUser = useSelector((state) => state.userReducers?.user);
@@ -51,22 +52,20 @@ const AppNavigator = () => {
     <Stack.Navigator>
       {session ? (
         <>
-          <Stack.Screen
+          {/**
+           * <Stack.Screen
             name="Home"
             component={HomeTabs}
             options={{ headerShown: false }}
           ></Stack.Screen>
+           */}
+          {/** selection child to assign screen */}
+          <Stack.Screen
+            name="ChildSelection"
+            component={ChildSelectionScreen}></Stack.Screen>
           <Stack.Screen
             name="SingleChild"
             component={SingleChildScreen}
-          ></Stack.Screen>
-          <Stack.Screen
-            name="AddChild"
-            component={AddChildScreen}
-          ></Stack.Screen>
-          <Stack.Screen
-            name="EditChild"
-            component={EditChildScreen}
           ></Stack.Screen>
         </>
       ) : (
@@ -88,88 +87,88 @@ const AppNavigator = () => {
 };
 
 const HomeTabs = (props) => {
-  React.useEffect(() => {
-    const handleScreenStateChange = async (isScreenOn) => {
-      const lastScreenState = await AsyncStorage.getItem('lastScreenState');
-      if (lastScreenState === null || JSON.parse(lastScreenState) !== isScreenOn) {
-        console.log(`Screen is ${isScreenOn ? 'ON' : 'OFF'}`);
-        await AsyncStorage.setItem('lastScreenState', JSON.stringify(isScreenOn));
-      }
-    };
+  // React.useEffect(() => {
+  //   const handleScreenStateChange = async (isScreenOn) => {
+  //     const lastScreenState = await AsyncStorage.getItem('lastScreenState');
+  //     if (lastScreenState === null || JSON.parse(lastScreenState) !== isScreenOn) {
+  //       console.log(`Screen is ${isScreenOn ? 'ON' : 'OFF'}`);
+  //       await AsyncStorage.setItem('lastScreenState', JSON.stringify(isScreenOn));
+  //     }
+  //   };
 
-    ReactNativeForegroundService.add_task(
-      async () => {
-        PowerManager.isScreenOn(async (isScreenOn) => {
+  //   ReactNativeForegroundService.add_task(
+  //     async () => {
+  //       PowerManager.isScreenOn(async (isScreenOn) => {
 
-          handleScreenStateChange(isScreenOn);
+  //         handleScreenStateChange(isScreenOn);
 
-          if (isScreenOn) {
-            // Daily counting logic
-            const today = new Date().toISOString().split('T')[0];
-            let lastRecordedDate = await AsyncStorage.getItem('lastRecordedDate');
-            if (lastRecordedDate !== today) {
-              await AsyncStorage.setItem('elapsedTime', '0');
-              await AsyncStorage.setItem('lastRecordedDate', today);
-              lastRecordedDate = today;
-            }
+  //         if (isScreenOn) {
+  //           // Daily counting logic
+  //           const today = new Date().toISOString().split('T')[0];
+  //           let lastRecordedDate = await AsyncStorage.getItem('lastRecordedDate');
+  //           if (lastRecordedDate !== today) {
+  //             await AsyncStorage.setItem('elapsedTime', '0');
+  //             await AsyncStorage.setItem('lastRecordedDate', today);
+  //             lastRecordedDate = today;
+  //           }
 
-            let elapsedTime = parseInt(await AsyncStorage.getItem('elapsedTime')) || 0;
-            elapsedTime += 1;
-            console.log(elapsedTime);
-            await AsyncStorage.setItem('elapsedTime', elapsedTime.toString());
+  //           let elapsedTime = parseInt(await AsyncStorage.getItem('elapsedTime')) || 0;
+  //           elapsedTime += 1;
+  //           console.log(elapsedTime);
+  //           await AsyncStorage.setItem('elapsedTime', elapsedTime.toString());
 
-            const timeLimit = parseInt(await AsyncStorage.getItem('timeLimit')) || 0;
-            const notificationSent = JSON.parse(await AsyncStorage.getItem('notificationSent'));
+  //           const timeLimit = parseInt(await AsyncStorage.getItem('timeLimit')) || 0;
+  //           const notificationSent = JSON.parse(await AsyncStorage.getItem('notificationSent'));
 
-            // Check timeLimit and Insert Supabase
-            if (elapsedTime >= timeLimit && timeLimit > 0 && !notificationSent) {
-              const parentId = '1baf7534-f582-403f-a5ef-f09464b5733e';
-              const childId = 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae6';
-              const description = 'Time limit reached';
-              const now = new Date();
-              const date = now.toLocaleString(); // Convert to local date and time string
-              
-              console.log('Creating notification with:', { parentId, childId, description, date });
-              try {
-                const notificationStatus = await createNotification(parentId, childId, description, date);
-                await AsyncStorage.setItem('notificationSent', JSON.stringify(true));
-              } catch (error) {
-                console.error('Error in notification process:', error);
-              }
-            }
-          }
-        });
-      },
-      {
-        delay: 1000,
-        onLoop: true,
-        taskId: 'elapsedTimeTask',
-        onError: (e) => console.log('Error logging:', e),
-      }
-    );
+  //           // Check timeLimit and Insert Supabase
+  //           if (elapsedTime >= timeLimit && timeLimit > 0 && !notificationSent) {
+  //             const parentId = '1baf7534-f582-403f-a5ef-f09464b5733e';
+  //             const childId = 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae6';
+  //             const description = 'Time limit reached';
+  //             const now = new Date();
+  //             const date = now.toLocaleString(); // Convert to local date and time string
 
-    ReactNativeForegroundService.start({
-      id: 1244,
-      title: 'Foreground Service',
-      message: 'Tracking screen time',
-      icon: 'ic_launcher',
-      button: true,
-      button2: true,
-      buttonText: 'Stop',
-      button2Text: 'Cancel',
-      buttonOnPress: 'stopService',
-      setOnlyAlertOnce: true,
-      color: '#000000',
-      progress: {
-        max: 100,
-        curr: 50,
-      },
-    });
-    // return () => {
-    //   ReactNativeForegroundService.stop();
-    //   ReactNativeForegroundService.remove_task('elapsedTimeTask');
-    // };
-  }, []);
+  //             console.log('Creating notification with:', { parentId, childId, description, date });
+  //             try {
+  //               const notificationStatus = await createNotification(parentId, childId, description, date);
+  //               await AsyncStorage.setItem('notificationSent', JSON.stringify(true));
+  //             } catch (error) {
+  //               console.error('Error in notification process:', error);
+  //             }
+  //           }
+  //         }
+  //       });
+  //     },
+  //     {
+  //       delay: 1000,
+  //       onLoop: true,
+  //       taskId: 'elapsedTimeTask',
+  //       onError: (e) => console.log('Error logging:', e),
+  //     }
+  //   );
+
+  //   ReactNativeForegroundService.start({
+  //     id: 1244,
+  //     title: 'Foreground Service',
+  //     message: 'Tracking screen time',
+  //     icon: 'ic_launcher',
+  //     button: true,
+  //     button2: true,
+  //     buttonText: 'Stop',
+  //     button2Text: 'Cancel',
+  //     buttonOnPress: 'stopService',
+  //     setOnlyAlertOnce: true,
+  //     color: '#000000',
+  //     progress: {
+  //       max: 100,
+  //       curr: 50,
+  //     },
+  //   });
+  //   // return () => {
+  //   //   ReactNativeForegroundService.stop();
+  //   //   ReactNativeForegroundService.remove_task('elapsedTimeTask');
+  //   // };
+  // }, []);
   return (
     <Stack.Navigator
       initialRouteName="HomeTabs"
@@ -179,7 +178,7 @@ const HomeTabs = (props) => {
         tabBarStyle: { padding: 0, margin: 0 },
       }}
     >
-      {/** home screen */}
+      {/** home screen -> usage screen */}
       <Stack.Screen
         name="HomeScreen"
         component={HomeScreen}

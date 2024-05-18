@@ -31,9 +31,6 @@ const Stack = createStackNavigator();
 /** lib foreground */
 ReactNativeForegroundService.register();
 
-/** lib foreground */
-ReactNativeForegroundService.register();
-
 const AppNavigator = () => {
 
   // const [isAuth, setIsAuth] = React.useState(false);

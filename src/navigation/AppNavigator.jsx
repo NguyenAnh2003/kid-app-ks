@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useSelector } from 'react-redux';
 /** import screens folder */
 import {
@@ -12,6 +13,7 @@ import {
   HomeScreen,
   LocationTrackingScreen,
   LoginScreen,
+  NotificationScreen,
   RegisterScreen,
   SingleChildScreen,
 } from '../screens';
@@ -19,7 +21,6 @@ const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
 
 const AppNavigator = () => {
-
   /** currentSession - accessToken ... */
   const currentUser = useSelector((state) => state.userReducers?.user);
 
@@ -111,26 +112,20 @@ const HomeTabs = (props) => {
           ),
         }}
       />
-      {/** location screen */}
-      {/* <Tab.Screen
-        name="Location tracking"
-
-
-        // lưu ý
-        // truyền list id lấy từ database ở đây, t đang truyền 2 cái id1 và id2 đấy
-        // đoạn này bị warning, kh rõ truyền cái list id ở đây ổn không
-
-        component={() => <ListChildToTrack items={["id1","id2"]}/>}
+      {/** account screen */}
+      <Tab.Screen
+        name="Notification"
+        component={NotificationScreen}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? 'map' : 'map-outline'}
+            <MaterialIcons
+              name={focused ? 'notifications' : 'notifications-none'}
               size={24}
               color={'black'}
             />
           ),
         }}
-      /> */}
+      />
     </Tab.Navigator>
   );
 };

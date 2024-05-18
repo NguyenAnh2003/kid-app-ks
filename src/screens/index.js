@@ -6,3 +6,4 @@ export { default as AddChildScreen } from './AddChildScreen';
 export { default as SingleChildScreen } from './SingleChildScreen';
 export { default as EditChildScreen } from './EditChildScreen';
 export { default as LocationTrackingScreen } from './LocationTrackingScreen';
+export { default as NotificationScreen } from './NotificationScreen';

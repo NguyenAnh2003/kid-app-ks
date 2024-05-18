@@ -19,6 +19,7 @@ import UsageChart from '../components/UsageChart';
 import StickyButton from '../components/buttons/StickyButton';
 import { deleteChild } from '../libs';
 import { packageList } from '../mock/activities';
+import TimeLimitModal from '../components/modal/TimeLimitModal';
 
 const styles = StyleSheet.create({
   /** container */
@@ -61,6 +62,9 @@ const SingleChildScreen = ({ route, navigation }) => {
 
   /** expand */
   const [expand, setExpand] = useState(false);
+
+  /** modal */
+  const [modalVisible, setModalVisible] = useState(false);
 
   /** native module */
   const { AppPackaging } = NativeModules;
@@ -389,6 +393,7 @@ const SingleChildScreen = ({ route, navigation }) => {
                   right: 160,
                   alignSelf: 'flex-end',
                 }}
+                onPress={() => setModalVisible(true)}
               >
                 <MaterialCommunityIcons
                   name="clock-time-seven"
@@ -398,6 +403,13 @@ const SingleChildScreen = ({ route, navigation }) => {
               </TouchableOpacity>
             </View>
           </>
+        )}
+        {/** modal */}
+        {modalVisible && (
+          <TimeLimitModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+          />
         )}
       </View>
     </ScrollView>

@@ -26,51 +26,51 @@ const Stack = createStackNavigator(); // stack navigator
 ReactNativeForegroundService.register();
 
 const AppNavigator = () => {
-  let i = 0;
-  //
-  const limit = 120;
-  const f = async (i) => {
-    if (i === limit) {
-      setTimeout(() => {
-        console.log('Reached');
-      }, 1000);
-    }
-  };
+  // let i = 0;
+  // //
+  // const limit = 120;
+  // const f = async (i) => {
+  //   if (i === limit) {
+  //     setTimeout(() => {
+  //       console.log('Reached');
+  //     }, 1000);
+  //   }
+  // };
 
-  React.useEffect(() => {
-    ReactNativeForegroundService.add_task(
-      async () => {
-        console.log(i);
-        await f(i);
-        // if()
-        i++;
-      },
-      {
-        delay: 1000,
-        onLoop: true,
-        taskId: 'taskid',
-        onError: (e) => console.log(`Error logging:`, e),
-      }
-    );
+  // React.useEffect(() => {
+  //   ReactNativeForegroundService.add_task(
+  //     async () => {
+  //       console.log(i);
+  //       await f(i);
+  //       // if()
+  //       i++;
+  //     },
+  //     {
+  //       delay: 1000,
+  //       onLoop: true,
+  //       taskId: 'taskid',
+  //       onError: (e) => console.log(`Error logging:`, e),
+  //     }
+  //   );
 
-    ReactNativeForegroundService.start({
-      id: 1244,
-      title: 'Foreground Service',
-      message: 'We are live World',
-      icon: 'ic_launcher',
-      button: true,
-      button2: true,
-      buttonText: 'Button',
-      button2Text: 'Anther Button',
-      buttonOnPress: 'cray',
-      setOnlyAlertOnce: true,
-      color: '#000000',
-      progress: {
-        max: 100,
-        curr: 50,
-      },
-    });
-  }, []);
+  //   ReactNativeForegroundService.start({
+  //     id: 1244,
+  //     title: 'Foreground Service',
+  //     message: 'We are live World',
+  //     icon: 'ic_launcher',
+  //     button: true,
+  //     button2: true,
+  //     buttonText: 'Button',
+  //     button2Text: 'Anther Button',
+  //     buttonOnPress: 'cray',
+  //     setOnlyAlertOnce: true,
+  //     color: '#000000',
+  //     progress: {
+  //       max: 100,
+  //       curr: 50,
+  //     },
+  //   });
+  // }, []);
 
   // const [isAuth, setIsAuth] = React.useState(false);
   /** currentSession - accessToken ... */
@@ -161,6 +161,7 @@ const HomeTabs = (props) => {
         }}
       />
       {/** location screen */}
+      {/**
       <Tab.Screen
         name="Location tracking"
         // lưu ý
@@ -178,7 +179,6 @@ const HomeTabs = (props) => {
           ),
         }}
       />
-      {/** test screen */}
       <Tab.Screen
         name="ChildTest"
         component={ChildTest}
@@ -192,6 +192,7 @@ const HomeTabs = (props) => {
           ),
         }}
       />
+     */}
     </Tab.Navigator>
   );
 };

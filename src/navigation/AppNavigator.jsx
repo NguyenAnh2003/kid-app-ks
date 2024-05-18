@@ -45,6 +45,8 @@ const AppNavigator = () => {
     return session;
   }, [currentUser]);
 
+  // session -> childId -> HomeTabs
+
   return (
     <Stack.Navigator>
       {session ? (
@@ -169,7 +171,7 @@ const HomeTabs = (props) => {
     // };
   }, []);
   return (
-    <Tab.Navigator
+    <Stack.Navigator
       initialRouteName="HomeTabs"
       screenOptions={{
         tabBarLabel: '',
@@ -178,7 +180,7 @@ const HomeTabs = (props) => {
       }}
     >
       {/** home screen */}
-      <Tab.Screen
+      <Stack.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{
@@ -191,66 +193,7 @@ const HomeTabs = (props) => {
           ),
         }}
       />
-      {/** account screen */}
-      <Tab.Screen
-        name="Account"
-        component={AccountScreen}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? 'account' : 'account-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
-      {/** location screen */}
-      <Tab.Screen
-        name="Location tracking"
-        // lưu ý
-        // truyền list id lấy từ database ở đây, t đang truyền 2 cái id1 và id2 đấy
-        // đoạn này bị warning, kh rõ truyền cái list id ở đây ổn không
-
-        component={() => <ListChildToTrack items={['id1', 'id2']} />}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? 'map' : 'map-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
-      {/** test screen */}
-      <Tab.Screen
-        name="ChildTest"
-        component={ChildTest}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'home' : 'home-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="TimeLimitTest"
-        component={SetOnScreenTimeLimit}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'home' : 'home-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+    </Stack.Navigator>
   );
 };
 

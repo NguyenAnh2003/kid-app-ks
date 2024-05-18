@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
-
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, processColor } from 'react-native';
 import {
     EventFrequency,
@@ -12,8 +12,6 @@ import {
     showUsageAccessSettings,
 } from '@brighthustle/react-native-usage-stats-manager';
 import moment from 'moment';
-import { COLORS } from '../colors/index';
-import { PieChart } from 'react-native-charts-wrapper';
 
 export default function Monitor() {
     // const [result, setRes ult] = React.useState<any | undefined>('test');
@@ -24,53 +22,6 @@ export default function Monitor() {
 
     const startMilliseconds = new Date(startDateString).getTime();
     const endMilliseconds = new Date(endDateString).getTime();
-
-    const [dataView, setDataView] = React.useState([]);
-    const [dataNew, setDataNew] = React.useState({
-        data: {
-            dataSets: [
-                {
-                    values: [],
-                    // label: 'Pie dataset',
-                    config: {
-                        colors: [
-                            processColor(COLORS.BUTTONCOLOR1),
-                            processColor(COLORS.ORANGE_COLOR),
-                            processColor(COLORS.GREEN_COLOR),
-                            processColor(COLORS.RED_COLOR),
-                            processColor(COLORS.TEAL_COLOR),
-                        ],
-                        valueTextSize: 20,
-                        valueTextColor: processColor('green'),
-                        sliceSpace: 2,
-                        selectionShift: 10,
-                        // xValuePosition: "OUTSIDE_SLICE",
-                        // yValuePosition: "OUTSIDE_SLICE",
-                        valueFormatter: "#'%'",
-                        valueLineColor: processColor('green'),
-                        valueLinePart1Length: 0.5,
-                    },
-                },
-            ],
-        },
-    });
-    const [dataNewPie, setDataNewPie] = React.useState({
-        legend: {
-            enabled: false,
-            // textSize: 15,
-            // form: 'CIRCLE',
-            // horizontalAlignment: 'RIGHT',
-            // verticalAlignment: 'CENTER',
-            // orientation: 'VERTICAL',
-            // wordWrapEnabled: true,
-        },
-        highlights: [{ x: 2 }],
-        description: {
-            text: '',
-            textSize: 15,
-            textColor: processColor('darkgray'),
-        },
-    });
 
     const getHours = (seconds) => {
         const hours = Math.floor(seconds / 3600);
@@ -96,92 +47,42 @@ export default function Monitor() {
     }
 
     const handleSelect = (event) => {
-     
+
         console.log(event.nativeEvent);
     };
-    React.useEffect(() => {
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        let isMounted = true;
+
         checkForPermission().then((res) => {
             console.log('permission ::', res);
             if (!res) {
                 showUsageAccessSettings('');
             }
         });
-        queryEvents(startMilliseconds, endMilliseconds).then((res) => {
-            let dataTempArr = [];
 
-            for (let i = 0; i < 3; i++) {
-                console.log('data ::', res[i]);
-                const dataTemp = {
-                    value: res[i].usageTime,
-                    label: res[i].name ? res[i].name : res[i].packageName,
-                };
-                dataTempArr.push(dataTemp);
+        queryEvents(startMilliseconds, endMilliseconds).then((res) => {
+            if (isMounted) {
+                for (let i = 0; i < 3; i++) {
+                    console.log('data ::', res[i]);
+                    const dataTemp = {
+                        value: res[i].usageTime,
+                        label: res[i].name ? res[i].name : res[i].packageName,
+                    };
+                    setData(prevData => [...prevData, dataTemp]);
+                }
             }
-            let dataTempPie = {
-                data: {
-                    dataSets: [
-                        {
-                            values: dataTempArr,
-                            config: {
-                                colors: [
-                                    processColor(COLORS.BUTTONCOLOR1),
-                                    processColor(COLORS.ORANGE_COLOR),
-                                    processColor(COLORS.GREEN_COLOR),
-                                    processColor(COLORS.RED_COLOR),
-                                    processColor(COLORS.TEAL_COLOR),
-                                ],
-                                valueTextSize: 15,
-                                valueTextColor: processColor('white'),
-                                sliceSpace: 5,
-                                selectionShift: 13,
-                                // xValuePositio: "OUTSIDE_SLICE",
-                                // yValuePosition: "OUTSIDE_SLICE",
-                                valueFormatter: "#'%'",
-                                valueLineColor: processColor('green'),
-                                valueLinePart1Length: 0.5,
-                            },
-                        },
-                    ],
-                },
-            };
-            setDataNew(dataTempPie);
-            setDataView(dataTempArr);
         });
+
+        return () => {
+            isMounted = false; // Cleanup function to mark component as unmounted
+        };
     }, []);
 
     return (
         <View>
-            <PieChart
-                style={styles.chart}
-                logEnabled={true}
-                // chartBackgroundColor={processColor('green')}
-                chartDescription={dataNewPie.description}
-                data={dataNew.data}
-                legend={dataNewPie.legend}
-                highlights={dataNewPie.highlights}
-                // extraOffsets={{ left: 10, top: 5, right: 10, bottom: 2 }}
-                // entryLabelColor={processColor('green')}
-                entryLabelFontFamily={'HelveticaNeue-Medium'}
-                drawEntryLabels={true}
-                rotationEnabled={true}
-                rotationAngle={45}
-                usePercentValues={true}
-                styledCenterText={{
-                    text: '',
-                    color: processColor('pink'),
-                    fontFamily: 'HelveticaNeue-Medium',
-                    size: 20,
-                }}
-                centerTextRadiusPercent={100}
-                holeRadius={25}
-                holeColor={processColor('#f0f0f0')}
-                transparentCircleRadius={30}
-                transparentCircleColor={processColor('#f0f0f088')}
-                maxAngle={360}
-                onSelect={handleSelect}
-                onChange={(event) => console.log(event.nativeEvent)}
-            />
-            {dataView.map((data) => {
+
+            {data.map((data) => {
                 return (
                     <View
                         style={{ alignItems: 'center', justifyContent: 'center' }}

@@ -17,7 +17,7 @@ import {
   SingleChildScreen,
 } from '../screens';
 import Monitor from '../screens/Monitor';
-import StateApp from '../screens/StateApp';import SplashScreen from '../screens/SplashScreen';
+import StateApp from '../screens/StateApp'; import SplashScreen from '../screens/SplashScreen';
 
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
@@ -57,19 +57,6 @@ const AppNavigator = () => {
         </>
       ) : (
         <>
-          <Tab.Screen
-            name="Monitor"
-            component={Monitor}
-            options={{
-              tabBarIcon: ({ color, size, focused }) => (
-                <Ionicons
-                  name={focused ? 'home' : 'home-outline'}
-                  size={24}
-                  color={'black'}
-                />
-              ),
-            }}
-          />
           <Stack.Screen
             name="SignIn"
             component={LoginScreen}

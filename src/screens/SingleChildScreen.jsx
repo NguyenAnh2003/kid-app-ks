@@ -10,7 +10,6 @@ import {
 import React, {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useState,
 } from 'react';
@@ -19,7 +18,15 @@ import { ScrollView } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
-
+import { createActivity, getAllActivities } from '../libs';
+import {
+  EventFrequency,
+  checkForPermission,
+  queryEvents,
+  queryEventsStats,
+  showUsageAccessSettings,
+} from '@brighthustle/react-native-usage-stats-manager';
+import moment from 'moment';
 const styles = StyleSheet.create({
   /** container */
   container: {
@@ -48,72 +55,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const packageList = [
-  {
-    id: '1',
-    name: 'facebook',
-    packageName: 'com.facebook.katana',
-    timeUsed: 10,
-    dateUsed: '2024-05-5',
-  },
-  {
-    id: '2',
-    name: 'facebook',
-    packageName: 'com.facebook.katana',
-    timeUsed: 1,
-    dateUsed: '2024-05-4',
-  },
-  {
-    id: '3',
-    name: 'instagram',
-    packageName: 'com.instagram.android',
-    timeUsed: 1,
-    dateUsed: '2024-05-6',
-  },
-  {
-    id: '4',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
-    timeUsed: 1,
-    dateUsed: '2024-04-22',
-  },
-  {
-    id: '5',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
-    timeUsed: 2,
-    dateUsed: '2024-04-24',
-  },
-  {
-    id: '6',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
-    timeUsed: 2,
-    dateUsed: '2024-04-26',
-  },
-  {
-    id: '7',
-    name: 'zalo',
-    packageName: 'com.zing.zalo',
-    timeUsed: 2,
-    dateUsed: '2024-04-25',
-  },
-  // {
-  //   id: '8',
-  //   name: 'zalo',
-  //   packageName: 'com.zing.zalo',
-  //   timeUsed: 2,
-  //   dateUsed: '2024-05-10',
-  // },
-  // {
-  //   id: '9',
-  //   name: 'facebook',
-  //   packageName: 'com.facebook.katana',
-  //   timeUsed: 8,
-  //   dateUsed: '2024-05-10',
-  // },
-];
-
 const numDay = 2;
 const numWeek = 1;
 
@@ -133,6 +74,71 @@ const SingleChildScreen = ({ route, navigation }) => {
   const options = ['recent', '5 days'];
 
   /** state */
+  const [packageList, setPackagelist] = useState([]);
+  const startToday = moment().startOf('day');
+
+  const startDateString = startToday.format('YYYY-MM-DD HH:mm:ss');
+  const endDateString = new Date();
+
+  const startMilliseconds = new Date(startDateString).getTime();
+  const endMilliseconds = new Date(endDateString).getTime();
+  useEffect(() => {
+    const fetchAndInsertData = async () => {
+      try {
+        // Check for permissions
+        const permission = await checkForPermission();
+        if (!permission) {
+          showUsageAccessSettings('');
+          return;
+        }
+
+        // Query events
+        const usageData = await queryEvents(startMilliseconds, endMilliseconds);
+        console.log(`Number of events fetched: ${Object.keys(usageData).length}`);
+        console.log(`Child ID: ${childId}`);
+
+        // Insert data into Supabase
+        const usageDataKeys = Object.keys(usageData);
+
+        for (let i = 0; i < usageDataKeys.length; i++) {
+          const key = usageDataKeys[i];
+          console.log(`Processing usage data at index ${i}:`, usageData[key]);
+
+          const { name, packageName, usageTime } = usageData[key];
+          const dateUsed = new Date().toISOString().split('T')[0]; // Ensure the date is in YYYY-MM-DD format
+
+          // Ensure usageTime is a valid number representing seconds
+          const validUsageTime = Number(usageTime);
+          if (isNaN(validUsageTime)) {
+            console.error('Invalid usageTime:', usageTime);
+            continue;
+          }
+          // Insert into Supabase
+          const result = await createActivity(childId, name, packageName, usageTime, dateUsed);
+          console.log('Create Activity Result:', result);
+
+          // Fetch updated data from Supabase
+          const fetchedData = await getAllActivities(childId);
+          console.log(fetchedData)
+          setPackagelist(fetchedData);
+        }
+      } catch (error) {
+        console.error('Error fetching or inserting data:', error.message);
+      }
+    };
+
+    // Fetch and insert data immediately on component mount
+    fetchAndInsertData();
+
+    // Set up interval to fetch and insert data every minute
+    const intervalId = setInterval(fetchAndInsertData, 60000);
+
+    // Cleanup function to clear interval and mark component as unmounted
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [childId]);
+
   const [activities, setActivities] = useState(packageList);
   const [refresh, setRefresh] = useState(false);
 
@@ -148,14 +154,14 @@ const SingleChildScreen = ({ route, navigation }) => {
       const today2 = new Date(today);
       today2.setDate(today.getDate() - 1 * numDay);
 
-      const todayUsage = packageList.filter((item) => {
+      const todayUsage = packageList ? packageList.filter((item) => {
         const itemDate = new Date(item.dateUsed);
         // Compare timestamps of itemDate and previousDay
         return (
           itemDate.getTime() >= today2.getTime() &&
           itemDate.getTime() < today.getTime()
         );
-      });
+      }) : [];
 
       return todayUsage;
     }
@@ -166,11 +172,11 @@ const SingleChildScreen = ({ route, navigation }) => {
       previousWeek.setDate(today.getDate() - 7 * numWeek);
 
       // Filter data for the previous day
-      const previousWeekData = packageList.filter((item) => {
+      const previousWeekData = packageList ? packageList.filter((item) => {
         const itemDate = new Date(item.dateUsed);
         // Compare timestamps of itemDate and previousWeek
         return itemDate >= previousWeek && itemDate < today;
-      });
+      }) : [];
 
       return previousWeekData;
     }
@@ -214,7 +220,7 @@ const SingleChildScreen = ({ route, navigation }) => {
     /** fetch child data by childId */
 
     /** remove data */
-    return () => {};
+    return () => { };
   }, [childId, navigation]);
 
   return (

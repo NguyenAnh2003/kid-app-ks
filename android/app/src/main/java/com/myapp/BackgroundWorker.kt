@@ -29,7 +29,7 @@ class BackgroundWorker(context: Context, workerParams: WorkerParameters) :
             showNotification("Foreground Service", "Background task is running")
         } else {
             Log.d("BackgroundWorker", "start services.")
-            applicationContext.startService(service)
+            applicationContext.startForegroundService(service)
         }
         return Result.success()
     }

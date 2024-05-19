@@ -20,10 +20,13 @@ const AppNavigator = () => {
   /** currentSession - accessToken ... */
   const currentUser = useSelector((state) => state.userReducers?.user);
   const currentChild = useSelector((state) => state.kidReducers?.kid);
+  console.log({ currentChild });
 
   const kidAppData = React.useMemo(() => {
-    const { childId, hourUsage, minuteUsage } = JSON.parse(currentChild);
-    return { childId, hourUsage, minuteUsage };
+    if (currentChild) {
+      const { childId, hourUsage, minuteUsage } = JSON.parse(currentChild);
+      return { childId, hourUsage, minuteUsage };
+    }
   }, [currentChild]);
 
   const session = React.useMemo(() => {
@@ -34,14 +37,14 @@ const AppNavigator = () => {
 
   // session -> Assign child mobile -> childId -> HomeStack
   const { childId, parentId } = {
-    childId: kidAppData.childId,
-    parentId: JSON.parse(currentUser.session).user.id, // parentId taken from session
+    childId: kidAppData ? kidAppData.childId : null,
+    parentId: session ? JSON.parse(currentUser.session).user.id : null, // parentId taken from session
   };
 
   return (
     <Stack.Navigator>
       {session ? (
-        childId ? (
+        currentChild ? (
           <>
             {/**
              *

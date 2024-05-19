@@ -32,6 +32,7 @@ export const userLogout = () => {
 
 /** assign child to device */
 export const assignData2Device = (data) => {
+  console.log({ data });
   /**
    * @param data
    * (parentId, childId, hourUsage, timeUsaege)

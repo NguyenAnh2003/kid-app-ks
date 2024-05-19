@@ -19,6 +19,12 @@ const AppNavigator = () => {
   // const [isAuth, setIsAuth] = React.useState(false);
   /** currentSession - accessToken ... */
   const currentUser = useSelector((state) => state.userReducers?.user);
+  const currentChild = useSelector((state) => state.kidReducers?.kid);
+
+  const kidAppData = React.useMemo(() => {
+    const { childId, hourUsage, minuteUsage } = JSON.parse(currentChild);
+    return { childId, hourUsage, minuteUsage };
+  }, [currentChild]);
 
   const session = React.useMemo(() => {
     if (!currentUser) return;
@@ -28,7 +34,7 @@ const AppNavigator = () => {
 
   // session -> Assign child mobile -> childId -> HomeStack
   const { childId, parentId } = {
-    childId: 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae6',
+    childId: kidAppData.childId,
     parentId: JSON.parse(currentUser.session).user.id, // parentId taken from session
   };
 
@@ -43,7 +49,7 @@ const AppNavigator = () => {
             <Stack.Screen
               name="Home"
               component={HomeStack}
-              initialParams={{ childId, parentId }}
+              initialParams={{ kidAppData, parentId }}
               options={{ headerShown: false }}
             ></Stack.Screen>
           </>
@@ -74,10 +80,12 @@ const AppNavigator = () => {
 };
 
 const HomeStack = ({ route }) => {
-  const { childId, parentId } = route.params;
+  const { kidAppData, parentId } = route.params;
+
+  const { childId, hourUsage, minuteUsage } = kidAppData;
 
   /** useBackground hook */
-  useBackgroundTask(parentId, childId);
+  useBackgroundTask(parentId, childId, hourUsage, minuteUsage);
 
   return (
     <Stack.Navigator

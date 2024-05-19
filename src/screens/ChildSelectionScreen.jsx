@@ -1,5 +1,11 @@
 /* eslint-disable prettier/prettier */
-import React, { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import {
   Button,
   NativeModules,
@@ -13,9 +19,10 @@ import {
 import globalStyle from '../styles/globalStyle';
 import ChildCard from '../components/cards/ChildCard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { getAllChildren } from '../libs';
-import { useSelector } from 'react-redux';
+import { getAllChildren, getLimitedTime } from '../libs';
+import { useDispatch, useSelector } from 'react-redux';
 import SplashScreen from './SplashScreen';
+import { assignData2Device } from '../redux/actions/actions';
 
 const styles = StyleSheet.create({
   button: {
@@ -56,6 +63,8 @@ const ChildSelectionScreen = ({ user, navigation, route }) => {
    * create child -> button to create child
    * list of child - get child -> return list of child
    */
+  const assignDispatch = useDispatch();
+
   const [state, dispatch] = useReducer(reducer, {
     children: [],
     isFetching: true,
@@ -86,11 +95,22 @@ const ChildSelectionScreen = ({ user, navigation, route }) => {
     fetchChildren().finally(() => setRefresh(false));
   }, []);
 
-  return state.isFetching ? <SplashScreen /> : (
-    <ScrollView contentContainerStyle={{ flex: 1 }}
+  const submitHandler = async (childId) => {
+    const limitedUsage = await getLimitedTime(childId);
+    if (limitedUsage) {
+      assignDispatch(assignData2Device(JSON.stringify(limitedUsage[0])));
+    }
+  };
+
+  return state.isFetching ? (
+    <SplashScreen />
+  ) : (
+    <ScrollView
+      contentContainerStyle={{ flex: 1 }}
       refreshControl={
         <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
-      }>
+      }
+    >
       <View style={[globalStyle.container, { flex: 1, paddingHorizontal: 10 }]}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View style={{ flexDirection: 'column', gap: 10, width: '100%' }}>
@@ -99,8 +119,7 @@ const ChildSelectionScreen = ({ user, navigation, route }) => {
               state.children.map((i, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => { console.log('childId', i.id); }
-                  }
+                  onPress={() => submitHandler(i.id)}
                 >
                   <ChildCard
                     key={i.id}

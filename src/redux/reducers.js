@@ -12,6 +12,7 @@ const initState = {
     session: {},
     userData: {},
   },
+  kid: {},
   loading: false,
 };
 
@@ -37,6 +38,18 @@ export const userReducers = (state = initState.user, action) => {
       return { ...state, user: { session: action.payload } };
     case appConstants.USER_LOGOUT:
       return { ...state, user: { session: null } };
+    default:
+      return state;
+  }
+};
+
+export const kidReducers = (state = initState.kid, action) => {
+  switch (action.type) {
+    case appConstants.ASSIGN_DATA2DEVICE:
+      return {
+        ...state,
+        kid: action.payload,
+      };
     default:
       return state;
   }

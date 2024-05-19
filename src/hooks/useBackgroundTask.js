@@ -6,13 +6,12 @@ import { NativeModules } from 'react-native';
 
 /** lib foreground */
 ReactNativeForegroundService.register();
-const useBackgroundTask = (parentId, childId) => {
+const useBackgroundTask = (parentId, childId, hourUsage, minuteUsage) => {
   /** power module */
   const { PowerManager } = NativeModules;
 
   /**  */
   useEffect(() => {
-    console.log({ parentId, childId });
 
     ReactNativeForegroundService.add_task(
       async () => {

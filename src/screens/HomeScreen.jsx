@@ -15,6 +15,7 @@ import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
 import packageList from '../mock/activities';
 import child from '../mock/child';
+import { getAllActivities } from '../libs';
 
 const styles = StyleSheet.create({
   /** container */
@@ -130,7 +131,14 @@ const HomeScreen = ({ navigation }) => {
     /** setup header when (childId, navigation) change */
     navigation.setOptions({
       headerTitle: () => (
-        <View style={{ flexDirection: 'row', alignContent: 'center', gap: 10, marginLeft: 15 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignContent: 'center',
+            gap: 10,
+            marginLeft: 15,
+          }}
+        >
           <Image
             source={{ uri: childImage, width: 30, height: 30 }}
             style={{ marginLeft: -20, borderRadius: 10 }}
@@ -143,6 +151,12 @@ const HomeScreen = ({ navigation }) => {
     });
 
     /** fetch child data by childId */
+    const fetchUsage = async () => {
+      const data = await getAllActivities(childId);
+      console.log('activities', data);
+    };
+
+    fetchUsage();
 
     /** remove data */
     return () => {};

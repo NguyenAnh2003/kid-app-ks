@@ -1,126 +1,304 @@
-/* eslint-disable prettier/prettier */
-import React, { useEffect, useRef, useState } from 'react';
 import {
-  Button,
-  NativeModules,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
+  Text,
+  Image,
+  StyleSheet,
+  NativeModules,
+  TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import globalStyle from '../styles/globalStyle';
-import ChildCard from '../components/cards/ChildCard';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { getAllChildren } from '../libs';
-import { useSelector } from 'react-redux';
+import { ScrollView } from 'react-native-gesture-handler';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import ActivityCard from '../components/cards/ActivityCard';
+import UsageChart from '../components/UsageChart';
+import packageList from '../mock/activities';
+import child from '../mock/child';
+import { getAllActivities } from '../libs';
 
 const styles = StyleSheet.create({
-  button: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 10,
-    backgroundColor: 'black',
+  /** container */
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#fafafa',
+    paddingHorizontal: 8,
+    paddingVertical: 15,
+  },
+  /** name */
+  textHeading: {
+    fontSize: 17,
+    color: 'black',
+  },
+  /** flexbox for name and image */
+  topBox: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    gap: 10,
+    marginBottom: 5,
+    paddingBottom: 5,
   },
-  text: {
-    color: 'white',
-  },
-  btnText: {
-    color: 'white',
+  avatarChild: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
   },
 });
 
-const childList = [
-  /** childId, childName, ChildAvatar */
-  {
-    childId: '7ce14780-1a03-438a-9596-973d81725fa7',
-    childName: 'Nguyen Anh',
-    childPNumber: '0358423237',
-    avatarUrl:
-      'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=19M80UHL7OUAX-2OV9R&_nc_ht=scontent.fdad4-1.fna&oh=00_AfD76oKUeKfB5Wu8k0a_3MdD4Sou2SzL54HRcJ17vFGTlA&oe=6624F0B8',
-    phoneType: 'Sam Sung',
-  },
-  {
-    childId: '1baf7534-f582-403f-a5ef-f09464b5733e',
-    childName: 'Bin Bin',
-    childPNumber: '0358423237',
-    avatarUrl:
-      'https://scontent.fdad4-1.fna.fbcdn.net/v/t39.30808-1/416167704_2320873964969530_3091803937576343392_n.jpg?stp=dst-jpg_s200x200&_nc_cat=107&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFXUgMaHDLADOcW1y8ihn69FjXwQ_1c8q4WNfBD_VzyrszQ0F2EhicA5IfGKJ_2MwOgAi3W8hVCLN4vAF34CrrF&_nc_ohc=c_IFlPPF8gUAX_s3ex-&_nc_ht=scontent.fdad4-1.fna&oh=00_AfCUdFhSbBJ4__9Xa99Ct5hWJz3N9JJ33g7362OFilnYDQ&oe=6602BBC1',
-    phoneType: 'Sam Sung',
-  },
-  {
-    childId: '7ce14780-1a03-438a-9596-973d81725fa0',
-    childName: 'Bin Bin',
-    childPNumber: '0358423237',
-    avatarUrl:
-      'https://scontent.fdad4-1.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeG9i1qn6l43gkgamWlIFfcBso2H55p0AlGyjYfnmnQCUWkluqxxNCGvGVG1PVYHXNR6aK5qtqLm_qilNbC_bMV0&_nc_ohc=19M80UHL7OUAX-2OV9R&_nc_ht=scontent.fdad4-1.fna&oh=00_AfD76oKUeKfB5Wu8k0a_3MdD4Sou2SzL54HRcJ17vFGTlA&oe=6624F0B8',
-    phoneType: 'Sam Sung',
-  },
-];
+const numDay = 2;
+const numWeek = 1;
 
-const HomeScreen = ({ user, navigation, route }) => {
-  /** @author @NguyenAnh2003
-   * can be seen as FamilyScreen
-   * create child -> button to create child
-   * list of child - get child -> return list of child
+const HomeScreen = ({ navigation }) => {
+  /**
+   * @param childId
+   * @param childName
+   * @param childImage (avatar)
+   * @param activities ? (com.package.name, timeUsed, date)
    */
-  const currentUserSession = useSelector((state) => state.userReducers?.user);
+  const { childId, childImage, childName, phoneType } = child;
 
-  const [data, setData] = useState();
-  useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const userId = JSON.parse(currentUserSession.session).user.id; // userId
-        const data = await getAllChildren(userId);
-        console.log('children', data);
-      };
-      /** */
-      fetchData();
-    } catch (error) {
-      console.log(error);
-    }
+  /** native module */
+  const { AppPackaging } = NativeModules;
+  /** childId -> fetchDataByChildId */
+  /** option */
+  const [option, setOption] = useState('recent');
+  const options = ['recent', '5 days'];
+
+  /** state */
+  const [activities, setActivities] = useState(packageList);
+  const [refresh, setRefresh] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefresh(true);
+    /** fetch data again */
+    setRefresh(false);
   }, []);
 
-  return (
-    <View style={[globalStyle.container, { flex: 1, paddingHorizontal: 10 }]}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={{ flexDirection: 'column', gap: 10, width: '100%' }}>
-          {/** list of child */}
-          {childList.map((i, index) => (
-            <TouchableOpacity
-              key={i.childId}
-              onPress={() =>
-                navigation.navigate('SingleChild', {
-                  childId: i.childId,
-                  childName: i.childName,
-                  childImage: i.avatarUrl,
-                  phoneType: i.phoneType,
-                })
-              }
-            >
-              <ChildCard
-                key={i.childId}
-                childName={i.childName}
-                childPhoneNumber={i.childPNumber}
-                childAvatar={i.avatarUrl}
-                phoneType={i.phoneType}
-              />
-            </TouchableOpacity>
-          ))}
-        </View>
-        {/** create child button */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('AddChild')}
+  const dataBasedonTime = useMemo(() => {
+    if (option === 'recent') {
+      const today = new Date();
+      const today2 = new Date(today);
+      today2.setDate(today.getDate() - 1 * numDay);
+
+      const todayUsage = packageList.filter((item) => {
+        const itemDate = new Date(item.dateUsed);
+        // Compare timestamps of itemDate and previousDay
+        return (
+          itemDate.getTime() >= today2.getTime() &&
+          itemDate.getTime() < today.getTime()
+        );
+      });
+
+      return todayUsage;
+    }
+    if (option === '5 days') {
+      const today = new Date();
+
+      const previousWeek = new Date(today);
+      previousWeek.setDate(today.getDate() - 7 * numWeek);
+
+      // Filter data for the previous day
+      const previousWeekData = packageList.filter((item) => {
+        const itemDate = new Date(item.dateUsed);
+        // Compare timestamps of itemDate and previousWeek
+        return itemDate >= previousWeek && itemDate < today;
+      });
+
+      return previousWeekData;
+    }
+  }, [option]);
+
+  useEffect(() => {
+    /** */
+    const fetchData = async () => {
+      const processedPackage = await AppPackaging.preprocessAppPackageInfo(
+        dataBasedonTime
+      );
+      if (processedPackage) {
+        setActivities(processedPackage);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      setActivities();
+    };
+  }, [dataBasedonTime, option]);
+
+  /** setup header when nav & childId change */
+  useEffect(() => {
+    /** setup header when (childId, navigation) change */
+    navigation.setOptions({
+      headerTitle: () => (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignContent: 'center',
+            gap: 10,
+            marginLeft: 15,
+          }}
         >
-          <AntDesign name="pluscircleo" size={30} color={'white'} />
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
+          <Image
+            source={{ uri: childImage, width: 30, height: 30 }}
+            style={{ marginLeft: -20, borderRadius: 10 }}
+          />
+          <Text style={{ color: '#333', fontSize: 15, fontWeight: '600' }}>
+            {childName}
+          </Text>
+        </View>
+      ),
+    });
+
+    /** fetch child data by childId */
+    const fetchUsage = async () => {
+      const data = await getAllActivities(childId);
+      console.log('activities', data);
+    };
+
+    fetchUsage();
+
+    /** remove data */
+    return () => {};
+  }, [childId, navigation]);
+
+  return (
+    <ScrollView
+      contentContainerStyle={{ flex: 1 }}
+      refreshControl={
+        <RefreshControl onRefresh={onRefresh} refreshing={refresh} />
+      }
+    >
+      <View
+        style={[globalStyle.container, { paddingTop: 20, paddingBottom: 0 }]}
+      >
+        {/** child info container */}
+        <View style={styles.container}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            {/** child view */}
+            <View
+              style={[
+                styles.topBox,
+                {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignContent: 'center',
+                  paddingRight: 10,
+                  borderBottomWidth: 1,
+                  borderColor: '#f2f2f2',
+                },
+              ]}
+            >
+              <View style={styles.topBox}>
+                <Image
+                  source={{ uri: childImage }}
+                  style={styles.avatarChild}
+                />
+                {/** */}
+                <View style={{ flexDirection: 'column' }}>
+                  <Text style={styles.textHeading}>{childName}</Text>
+                  <Text style={{ color: '#a5a5a5' }}>{phoneType}</Text>
+                </View>
+              </View>
+            </View>
+            {/** activities view */}
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: 10,
+              }}
+            >
+              {options.map((i, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={{ padding: 10, backgroundColor: '#000', minWidth: 80 }}
+                  onPress={() => setOption(i)}
+                >
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontSize: 15,
+                      fontWeight: 600,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {i.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text
+              style={{
+                color: 'black',
+                marginTop: 15,
+                marginLeft: 5,
+                fontSize: 20,
+                fontWeight: '700',
+              }}
+            >
+              Activities in {option.toUpperCase()}
+            </Text>
+            {/** block activities today */}
+            <View style={{ maxHeight: 200 }}>
+              {activities?.length !== 0 ? (
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                  <View
+                    style={{
+                      paddingHorizontal: 15,
+                      paddingVertical: 15,
+                      backgroundColor: '#fff',
+                      flexDirection: 'column',
+                      gap: 12,
+                    }}
+                  >
+                    {activities?.map((i, index) => (
+                      <ActivityCard
+                        key={index}
+                        packageName={i.name}
+                        packageImage={i.icon}
+                        packageTimeUsed={i.timeUsed}
+                        packageDateUsed={i.dateUsed}
+                      />
+                    ))}
+                  </View>
+                </ScrollView>
+              ) : (
+                <Text
+                  style={{
+                    color: 'red',
+                    marginTop: 95,
+                    marginLeft: 5,
+                    fontSize: 20,
+                    fontWeight: '500',
+                    textAlign: 'center',
+                  }}
+                >
+                  There is no activities in recent
+                </Text>
+              )}
+            </View>
+            {/** activities last week view */}
+            {activities?.length !== 0 ? (
+              <>
+                <Text
+                  style={{
+                    color: 'black',
+                    marginLeft: 5,
+                    fontSize: 20,
+                    fontWeight: '600',
+                  }}
+                >
+                  Usage Chart
+                </Text>
+                {activities && <UsageChart activities={activities} />}
+              </>
+            ) : (
+              <></>
+            )}
+          </ScrollView>
+        </View>
+      </View>
+    </ScrollView>
   );
 };
 

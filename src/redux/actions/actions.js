@@ -29,3 +29,15 @@ export const userLogout = () => {
     type: appConstants.USER_LOGOUT,
   };
 };
+
+/** assign child to device */
+export const assignData2Device = (data) => {
+  /**
+   * @param data
+   * (parentId, childId, hourUsage, timeUsaege)
+   */
+  return {
+    type: appConstants.ASSIGN_DATA2DEVICE,
+    payload: data,
+  };
+};

@@ -2,12 +2,16 @@ import { supabase, appTables } from './supabase';
 
 const timelimTab = supabase.from(appTables.TIME);
 
-export const getTimeLim = async (childId) => {
+export const getLimitedTime = async (childId) => {
   try {
-    const { data, status } = await timelimTab
+    const { data, status, error } = await timelimTab
       .select('*')
       .eq('childId', childId);
     if (status === 200) return data;
+    if (error) {
+      console.log({ error });
+      return;
+    }
   } catch (error) {
     console.log(error.message);
   }

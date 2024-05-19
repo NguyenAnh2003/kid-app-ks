@@ -50,7 +50,7 @@ const reducer = (state, action) => {
   }
 };
 
-const HomeScreen = ({ user, navigation, route }) => {
+const ChildSelectionScreen = ({ user, navigation, route }) => {
   /** @author @NguyenAnh2003
    * can be seen as FamilyScreen
    * create child -> button to create child
@@ -118,4 +118,4 @@ const HomeScreen = ({ user, navigation, route }) => {
   );
 };
 
-export default HomeScreen;
+export default ChildSelectionScreen;

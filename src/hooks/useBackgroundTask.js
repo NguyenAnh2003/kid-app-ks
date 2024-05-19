@@ -36,28 +36,27 @@ const useBackgroundTask = (parentId, childId, hourUsage, minuteUsage) => {
             console.log(elapsedTime);
             await AsyncStorage.setItem('elapsedTime', elapsedTime.toString());
 
-            const timeLimit =
-              parseInt(await AsyncStorage.getItem('timeLimit')) || 0;
+            const timeLimit = hourUsage * 3600 + minuteUsage * 60;
             const notificationSent = JSON.parse(
               await AsyncStorage.getItem('notificationSent')
             );
 
             // Check timeLimit and Insert Supabase
-            // if (elapsedTime >= timeLimit && timeLimit > 0 && !notificationSent) {
-            //   const parentId = '1baf7534-f582-403f-a5ef-f09464b5733e';
-            //   const childId = 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae6';
-            //   const description = 'Time limit reached';
-            //   const now = new Date();
-            //   const date = now.toLocaleString(); // Convert to local date and time string
+            if (elapsedTime >= timeLimit && timeLimit > 0 && !notificationSent) {
+              const parentId = '1baf7534-f582-403f-a5ef-f09464b5733e';
+              const childId = 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae6';
+              const description = 'Time limit reached';
+              const now = new Date();
+              const date = now.toLocaleString(); // Convert to local date and time string
 
-            //   console.log('Creating notification with:', { parentId, childId, description, date });
-            //   try {
-            //     const notificationStatus = await createNotification(parentId, childId, description, date);
-            //     await AsyncStorage.setItem('notificationSent', JSON.stringify(true));
-            //   } catch (error) {
-            //     console.error('Error in notification process:', error);
-            //   }
-            // }
+              console.log('Creating notification with:', { parentId, childId, description, date });
+              try {
+                const notificationStatus = await createNotification(parentId, childId, description, date);
+                await AsyncStorage.setItem('notificationSent', JSON.stringify(true));
+              } catch (error) {
+                console.error('Error in notification process:', error);
+              }
+            }
           }
         });
       },

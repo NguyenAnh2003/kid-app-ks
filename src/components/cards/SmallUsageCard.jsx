@@ -27,7 +27,7 @@ const SmallUsageCard = React.memo(({ color, name, timeUsed }) => {
         ></View>
         <Text style={{ color: 'black' }}>{name} </Text>
       </View>
-      <Text style={{ color: 'black' }}>{timeUsed} mins</Text>
+      <Text style={{ color: 'black' }}>{timeUsed}</Text>
     </View>
   );
 });

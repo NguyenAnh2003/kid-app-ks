@@ -53,7 +53,6 @@ const UsageChart = React.memo(({ activities }) => {
   useEffect(() => {
     const processedActivities = collapseArray(activities);
     /** set usage */
-    console.log('cac 2', processedActivities);
     setUsages(processedActivities);
     const arr = []; // define statis array
     processedActivities.forEach(({ number }) => {
@@ -104,7 +103,21 @@ const UsageChart = React.memo(({ activities }) => {
     },
     [activities]
   );
-
+  function humanReadableMillis(milliSeconds) {
+    const seconds = Math.floor(milliSeconds / 1000);
+    if (seconds < 60) {
+      return `${seconds}s`;
+    } else if (seconds < 3600) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}m ${remainingSeconds}s`;
+    } else {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const remainingSeconds = seconds % 60;
+      return `${hours}h ${minutes}m ${remainingSeconds}s`;
+    }
+  }
   return (
     <View style={styles.container}>
       <PieChart
@@ -120,7 +133,7 @@ const UsageChart = React.memo(({ activities }) => {
             key={index}
             color={i.color}
             name={i.name}
-            timeUsed={i.number}
+            timeUsed={humanReadableMillis(i.number)}
           />
         ))}
     </View>

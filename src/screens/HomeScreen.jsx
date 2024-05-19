@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 const childList = [
   /** childId, childName, ChildAvatar */
   {
-    childId: '7ce14780-1a03-438a-9596-973d81725fa7',
+    childId: 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae6',
     childName: 'Nguyen Anh',
     childPNumber: '0358423237',
     avatarUrl:
@@ -43,7 +43,7 @@ const childList = [
     phoneType: 'Sam Sung',
   },
   {
-    childId: '1baf7534-f582-403f-a5ef-f09464b5733e',
+    childId: 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae61',
     childName: 'Bin Bin',
     childPNumber: '0358423237',
     avatarUrl:
@@ -51,7 +51,7 @@ const childList = [
     phoneType: 'Sam Sung',
   },
   {
-    childId: '7ce14780-1a03-438a-9596-973d81725fa0',
+    childId: 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae62',
     childName: 'Bin Bin',
     childPNumber: '0358423237',
     avatarUrl:

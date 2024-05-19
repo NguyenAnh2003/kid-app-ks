@@ -18,7 +18,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
-import { createActivity, getAllActivities } from '../libs';
+import { createActivity, getAllActivities, updateActivity } from '../libs';
 import {
   EventFrequency,
   checkForPermission,
@@ -75,6 +75,10 @@ const SingleChildScreen = ({ route, navigation }) => {
 
   /** state */
   const [packageList, setPackagelist] = useState([]);
+  // set activities
+  const [activities, setActivities] = useState([]);
+  const [activitiesUsage, setActivitiesUsage] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const startToday = moment().startOf('day');
 
   const startDateString = startToday.format('YYYY-MM-DD HH:mm:ss');
@@ -82,6 +86,7 @@ const SingleChildScreen = ({ route, navigation }) => {
 
   const startMilliseconds = new Date(startDateString).getTime();
   const endMilliseconds = new Date(endDateString).getTime();
+
   useEffect(() => {
     const fetchAndInsertData = async () => {
       try {
@@ -91,56 +96,79 @@ const SingleChildScreen = ({ route, navigation }) => {
           showUsageAccessSettings('');
           return;
         }
-
         // Query events
         const usageData = await queryEvents(startMilliseconds, endMilliseconds);
-        console.log(`Number of events fetched: ${Object.keys(usageData).length}`);
-        console.log(`Child ID: ${childId}`);
-
         // Insert data into Supabase
         const usageDataKeys = Object.keys(usageData);
-
+        const processedUsageData = [];
         for (let i = 0; i < usageDataKeys.length; i++) {
           const key = usageDataKeys[i];
-          console.log(`Processing usage data at index ${i}:`, usageData[key]);
-
           const { name, packageName, usageTime } = usageData[key];
-          const dateUsed = new Date().toISOString().split('T')[0]; // Ensure the date is in YYYY-MM-DD format
-
-          // Ensure usageTime is a valid number representing seconds
           const validUsageTime = Number(usageTime);
-          if (isNaN(validUsageTime)) {
-            console.error('Invalid usageTime:', usageTime);
-            continue;
-          }
-          // Insert into Supabase
-          const result = await createActivity(childId, name, packageName, usageTime, dateUsed);
-          console.log('Create Activity Result:', result);
 
-          // Fetch updated data from Supabase
-          const fetchedData = await getAllActivities(childId);
-          console.log(fetchedData)
-          setPackagelist(fetchedData);
+          const dateUsed = new Date().toISOString().split('T')[0]; // Ensure the date is in YYYY-MM-DD format
+          processedUsageData.push({ name, packageName, validUsageTime, dateUsed });
         }
+        setActivitiesUsage(processedUsageData)
+
+
+        //fetch data
+        const fetchedData = await getAllActivities(childId);
+        setPackagelist(fetchedData);
       } catch (error) {
         console.error('Error fetching or inserting data:', error.message);
       }
     };
-
-    // Fetch and insert data immediately on component mount
     fetchAndInsertData();
-
-    // Set up interval to fetch and insert data every minute
-    const intervalId = setInterval(fetchAndInsertData, 60000);
-
-    // Cleanup function to clear interval and mark component as unmounted
+    const intervalId = setInterval(fetchAndInsertData, 30000);
     return () => {
       clearInterval(intervalId);
     };
   }, [childId]);
 
-  const [activities, setActivities] = useState(packageList);
-  const [refresh, setRefresh] = useState(false);
+  useEffect(() => {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const filteredData = packageList
+      .filter(item => item.dateUsed.split('T')[0] === currentDate)
+      .map(item => ({
+        id: item.id,
+        name: item.appName,
+        packageName: item.packageName,
+        timeUsed: item.timeUsed,
+        dateUsed: item.dateUsed.split('T')[0]
+      }));
+    setActivities(filteredData)
+
+  }, [packageList]);
+  useEffect(() => {
+    const insertOrUpdateActivities = async () => {
+      if (activitiesUsage.length === 0 || activities.length === 0) return;
+      console.log(activities)
+      for (let i = 0; i < activitiesUsage.length; i++) {
+        const { name, packageName, validUsageTime, dateUsed } = activitiesUsage[i];
+
+        const existingActivity = activities.find(activity =>
+          activity.name === name && activity.packageName === packageName);
+        console.log("trung nhau", existingActivity.id)
+
+        if (existingActivity) {
+          const updatedTimeUsed = existingActivity.timeUsed;
+          console.log("update")
+          await updateActivity(existingActivity.id, updatedTimeUsed);
+        } else {
+          console.log("insert")
+          await createActivity(childId, name, packageName, validUsageTime, dateUsed);
+        }
+      }
+    };
+
+    insertOrUpdateActivities();
+    const intervalId = setInterval(insertOrUpdateActivities, 30000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [activitiesUsage, packageList]);
+
 
   const onRefresh = useCallback(() => {
     setRefresh(true);

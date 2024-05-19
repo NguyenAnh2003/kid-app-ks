@@ -4,14 +4,6 @@ import { supabase } from './supabase';
 const activitiesTable = supabase.from(appTables.ACTIVITIES);
 export const createActivity = async (childId, appName, packageName, timeUsed, dateUsed) => {
   try {
-    console.log('Processing activity:', {
-      childId,
-      appName,
-      packageName,
-      timeUsed,
-      dateUsed,
-    });
-
     // Ensure timeUsed is a valid number
     const validTimeUsed = Number(timeUsed);
     if (isNaN(validTimeUsed)) {
@@ -26,51 +18,27 @@ export const createActivity = async (childId, appName, packageName, timeUsed, da
       return null;
     }
 
-    // Check if the activity already exists
-    const { data: existingData, error: selectError } = await activitiesTable
-      .select('id, timeUsed')
-      .eq('childId', childId)
-      .eq('appName', appName)
-      .single();
+    // Convert usage time (seconds) to a timestamp
 
-    if (selectError && selectError.code !== 'PGRST116') { // PGRST116 means no rows returned
-      console.error('Error fetching existing activity:', selectError.message);
+    const { data, error, status } = await activitiesTable.insert({
+      childId,
+      appName,
+      packageName,
+      timeUsed: validTimeUsed, // Converted to timestamp
+      dateUsed: validDateUsed,
+    });
+
+    if (error) {
+      console.error('Error inserting activity:', error.message);
       return null;
     }
 
-    if (existingData) {
-      // If the activity exists, update the timeUsed
-      const updatedTimeUsed = validTimeUsed;
-
-      const { data: updateData, error: updateError, status: updateStatus } = await activitiesTable
-        .update({ timeUsed: updatedTimeUsed })
-        .eq('id', existingData.id);
-
-      if (updateError) {
-        console.error('Error updating activity:', updateError.message);
-        return null;
-      }
-
-      console.log('Update successful:', updateData);
-      return updateData;
-    } else {
-      // If the activity does not exist, insert a new record
-      const { data: insertData, error: insertError, status: insertStatus } = await activitiesTable.insert({
-        childId,
-        appName,
-        packageName,
-        timeUsed: validTimeUsed,
-        dateUsed: validDateUsed,
-      });
-
-      if (insertError) {
-        console.error('Error inserting activity:', insertError.message);
-        return null;
-      }
-
-      console.log('Insert successful:', insertData);
-      return insertData;
+    if (status !== 200) {
+      console.warn('Unexpected status code:', status);
     }
+
+    console.log('Insert successful:', data);
+    return data;
   } catch (error) {
     console.error('Unexpected error:', error.message);
     return null;
@@ -90,3 +58,13 @@ export const getAllActivities = async (childId) => {
     console.log(error.message);
   }
 };
+export const updateActivity = async(id, timeUsed) => {
+  try {
+    const { data, status } = await activitiesTable.update({ timeUsed }).eq('id', id);
+    console.log("update oke")
+    return data;
+  } catch (error) {
+    console.error('Error updating activity:', error.message);
+  }
+};
+

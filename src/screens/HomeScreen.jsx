@@ -186,16 +186,6 @@ const HomeScreen = ({ navigation }) => {
                   <Text style={{ color: '#a5a5a5' }}>{phoneType}</Text>
                 </View>
               </View>
-              <MaterialCommunityIcons
-                name="account-edit-outline"
-                size={24}
-                color={'black'}
-                onPress={() =>
-                  navigation.navigate('EditChild', {
-                    childId: childId,
-                  })
-                }
-              />
             </View>
             {/** activities view */}
             <View

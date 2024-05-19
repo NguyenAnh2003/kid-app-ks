@@ -43,8 +43,6 @@ const useBackgroundTask = (parentId, childId, hourUsage, minuteUsage) => {
 
             // Check timeLimit and Insert Supabase
             if (elapsedTime >= timeLimit && timeLimit > 0 && !notificationSent) {
-              const parentId = '1baf7534-f582-403f-a5ef-f09464b5733e';
-              const childId = 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae6';
               const description = 'Time limit reached';
               const now = new Date();
               const date = now.toLocaleString(); // Convert to local date and time string

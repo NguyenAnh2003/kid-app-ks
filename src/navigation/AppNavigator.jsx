@@ -4,8 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
-import ListChildToTrack from '../screens/ListChildToTrack';
-import ChildTest from '../screens/ChildTest';
 /** import screens folder */
 import {
   AccountScreen,
@@ -20,7 +18,6 @@ import {
 } from '../screens';
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SetOnScreenTimeLimit from '../screens/SetOnScreenTimeLimit';
 import { NativeModules } from 'react-native';
 const { PowerManager } = NativeModules;
 import { createNotification } from '../libs/supabase/notfication.services';
@@ -29,10 +26,9 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 /** lib foreground */
-ReactNativeForegroundService.register();
+// ReactNativeForegroundService.register();
 
 const AppNavigator = () => {
-
   // const [isAuth, setIsAuth] = React.useState(false);
   /** currentSession - accessToken ... */
   const currentUser = useSelector((state) => state.userReducers?.user);
@@ -43,28 +39,34 @@ const AppNavigator = () => {
     return session;
   }, [currentUser]);
 
-  // session -> childId -> HomeTabs
+  // session -> Assign child mobile -> childId -> HomeTabs
+  const { childId, parentId } = {
+    childId: 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae6',
+    parentId: '1baf7534-f582-403f-a5ef-f09464b5733e',
+  };
 
   return (
     <Stack.Navigator>
       {session ? (
-        <>
-          {/**
-           * <Stack.Screen
-            name="Home"
-            component={HomeTabs}
-            options={{ headerShown: false }}
-          ></Stack.Screen>
-           */}
-          {/** selection child to assign screen */}
-          <Stack.Screen
-            name="ChildSelection"
-            component={ChildSelectionScreen}></Stack.Screen>
-          <Stack.Screen
-            name="SingleChild"
-            component={SingleChildScreen}
-          ></Stack.Screen>
-        </>
+        childId ? (
+          <>
+            {/**
+             *
+             */}
+            <Stack.Screen
+              name="Home"
+              component={HomeTabs}
+              options={{ headerShown: false }}
+            ></Stack.Screen>
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              name="ChildSelection"
+              component={ChildSelectionScreen}
+            ></Stack.Screen>
+          </>
+        )
       ) : (
         <>
           <Stack.Screen
@@ -179,15 +181,6 @@ const HomeTabs = (props) => {
       <Stack.Screen
         name="HomeScreen"
         component={HomeScreen}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'home' : 'home-outline'}
-              size={24}
-              color={'black'}
-            />
-          ),
-        }}
       />
     </Stack.Navigator>
   );

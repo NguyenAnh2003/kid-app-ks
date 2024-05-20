@@ -54,13 +54,14 @@ export const getAllActivities = async (childId) => {
       .eq('childId', childId);
 
     if (status === 200) return data;
+    else throw new Error('Failed to fetch activities');
   } catch (error) {
     console.log(error.message);
   }
 };
 export const updateActivity = async(id, timeUsed) => {
   try {
-    const { data, status } = await activitiesTable.update({ timeUsed }).eq('id', id);
+    const { data, status } = await activitiesTable.update({ timeUsed }).eq('id', id).single();
     console.log("update oke")
     return data;
   } catch (error) {

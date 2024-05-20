@@ -96,6 +96,7 @@ const SingleChildScreen = ({ route, navigation }) => {
       setActivitiesUsage(uniqueUsageData);
 
       const fetchedData = await getAllActivities(childId);
+      console.log("childId: ",childId);
       console.log("Fetched activities from DB:", fetchedData);
 
       const currentDate = new Date().toISOString().split('T')[0];
@@ -131,7 +132,9 @@ const SingleChildScreen = ({ route, navigation }) => {
       console.log("All activities processed");
 
       // Refresh activityMap after processing
+
       const updatedFetchedData = await getAllActivities(childId);
+      console.log("childId: ",childId);
       const updatedFilteredData = updatedFetchedData.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({
         id: item.id,
         name: item.appName,

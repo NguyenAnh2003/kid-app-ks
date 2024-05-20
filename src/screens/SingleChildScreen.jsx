@@ -59,128 +59,107 @@ const SingleChildScreen = ({ route, navigation }) => {
   const [activities, setActivities] = useState([]);
   const [activitiesUsage, setActivitiesUsage] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const startToday = moment().startOf('day');
 
-  const startDateString = startToday.format('YYYY-MM-DD HH:mm:ss');
-  const endDateString = new Date().toISOString();
+  const fetchData = async () => {
+    try {
+      console.log("Fetching usage data...");
+      const permission = await checkForPermission();
+      if (!permission) {
+        showUsageAccessSettings('');
+        return;
+      }
 
-  const startMilliseconds = new Date(startDateString).getTime();
-  const endMilliseconds = new Date(endDateString).getTime();
+      const startToday = moment().startOf('day');
+      const startDateString = startToday.format('YYYY-MM-DD HH:mm:ss');
+      const endDateString = new Date().toISOString();
 
-  // Fetch data and update state
-  useEffect(() => {
-    const fetchAndInsertData = async () => {
-      try {
-        const permission = await checkForPermission();
-        if (!permission) {
-          showUsageAccessSettings('');
-          return;
-        }
-        
-        const usageData = await queryEvents(startMilliseconds, endMilliseconds);
-        
-        const usageDataKeys = Object.keys(usageData);
-        const processedUsageData = [];
+      const startMilliseconds = new Date(startDateString).getTime();
+      const endMilliseconds = new Date(endDateString).getTime();
 
-        for (let i = 0; i < usageDataKeys.length; i++) {
-          const key = usageDataKeys[i];
-          const { name, packageName, usageTime } = usageData[key];
-          const validUsageTime = Number(usageTime);
-          const dateUsed = new Date().toISOString().split('T')[0];
-          processedUsageData.push({ name, packageName, validUsageTime, dateUsed });
-        }
-        setActivitiesUsage(processedUsageData);
-        
-        const fetchedData = await getAllActivities(childId);
-        setPackageList(fetchedData);
-        const currentDate = new Date().toISOString().split('T')[0];
-        const filteredData = packageList.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({
+      const usageData = await queryEvents(startMilliseconds, endMilliseconds);
+      const usageDataKeys = Object.keys(usageData);
+      const processedUsageData = [];
+
+      for (let i = 0; i < usageDataKeys.length; i++) {
+        const key = usageDataKeys[i];
+        const { name, packageName, usageTime } = usageData[key];
+        const validUsageTime = Number(usageTime);
+        const dateUsed = new Date().toISOString().split('T')[0];
+        processedUsageData.push({ name, packageName, validUsageTime, dateUsed });
+      }
+
+      const uniqueUsageData = processedUsageData.filter((value, index, self) =>
+        index === self.findIndex((t) => t.packageName === value.packageName)
+      );
+
+      console.log("Unique usage data:", uniqueUsageData);
+      setActivitiesUsage(uniqueUsageData);
+
+      const fetchedData = await getAllActivities(childId);
+      console.log("Fetched activities from DB:", fetchedData);
+
+      const currentDate = new Date().toISOString().split('T')[0];
+      const filteredData = fetchedData.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({
         id: item.id,
         name: item.appName,
         packageName: item.packageName,
         timeUsed: item.timeUsed,
         dateUsed: item.dateUsed.split('T')[0]
-    }));
-    setActivities(filteredData);
-      } catch (error) {
-        console.error('Error fetching or inserting data:', error.message);
-      }
-    };
+      }));
+      setActivities(filteredData);
 
-    fetchAndInsertData();
-    const intervalId = setInterval(fetchAndInsertData, 30000);
+      const activityMap = new Map(filteredData.map(item => [item.packageName, item]));
+
+      console.log("Activity map:", Array.from(activityMap.entries()));
+
+      const promises = uniqueUsageData.map(async (usageData) => {
+        const { name, packageName, validUsageTime, dateUsed } = usageData;
+        const existingActivity = activityMap.get(packageName);
+
+        if (existingActivity) {
+          const updatedTimeUsed = existingActivity.timeUsed;
+          await updateActivity(existingActivity.id, updatedTimeUsed);
+          console.log(`Updated ${name} with new time ${updatedTimeUsed}`);
+        } else {
+          await createActivity(childId, name, packageName, validUsageTime, dateUsed);
+          console.log(`Inserted new activity ${name}`);
+        }
+      });
+
+      await Promise.all(promises);
+
+      console.log("All activities processed");
+
+      // Refresh activityMap after processing
+      const updatedFetchedData = await getAllActivities(childId);
+      const updatedFilteredData = updatedFetchedData.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({
+        id: item.id,
+        name: item.appName,
+        packageName: item.packageName,
+        timeUsed: item.timeUsed,
+        dateUsed: item.dateUsed.split('T')[0]
+      }));
+      setActivities(updatedFilteredData);
+      console.log("Updated filtered data after processing:", updatedFilteredData);
+
+    } catch (error) {
+      console.error('Error fetching or inserting data:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    const intervalId = setInterval(fetchData, 30000);
+
     return () => {
       clearInterval(intervalId);
     };
   }, [childId]);
 
-  // Insert or update activities in the database
-  useEffect(() => {
-    const insertOrUpdateActivities = async () => {
-      try {
-        const usageData = await queryEvents(startMilliseconds, endMilliseconds);
-        
-        const usageDataKeys = Object.keys(usageData);
-        const processedUsageData = [];
-
-        for (let i = 0; i < usageDataKeys.length; i++) {
-          const key = usageDataKeys[i];
-          const { name, packageName, usageTime } = usageData[key];
-          const validUsageTime = Number(usageTime);
-          const dateUsed = new Date().toISOString().split('T')[0];
-          processedUsageData.push({ name, packageName, validUsageTime, dateUsed });
-        }
-
-        const fetchedData = await getAllActivities(childId);
-        const currentDate = new Date().toISOString().split('T')[0];
-        const activities = fetchedData.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({
-          id: item.id,
-          name: item.appName,
-          packageName: item.packageName,
-          timeUsed: item.timeUsed,
-          dateUsed: item.dateUsed.split('T')[0]
-        }));
-
-        // Prepare an array of promises for updating or creating activities
-        const promises = processedUsageData.map(async (usageData) => {
-          const { name, packageName, validUsageTime, dateUsed } = usageData;
-          const existingActivity = activities.find(activity => activity.packageName === packageName);
-          console.log("Existing activity:", existingActivity ? existingActivity.packageName : null);
-          // You can include your update and create logic here
-          // Example:
-          if (existingActivity) {
-            const updatedTimeUsed = existingActivity.timeUsed; // Adjust time calculation as needed
-            await updateActivity(existingActivity.id, updatedTimeUsed);
-          } else {
-            await createActivity(childId, name, packageName, validUsageTime, dateUsed);
-          }
-          // Return a resolved promise for each iteration
-          return Promise.resolve();
-        });
-        
-        // Wait for all promises to resolve
-        await Promise.all(promises);
-        
-        
-        console.log("All activities processed");
-      } catch (error) {
-        console.error('Error fetching or inserting data:', error.message);
-      }
-    };
-
-    insertOrUpdateActivities();
-    const intervalId = setInterval(insertOrUpdateActivities, 30000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [activitiesUsage]);
-
-
   const onRefresh = useCallback(() => {
     setRefresh(true);
-    setRefresh(false);
-  }, []);
+    fetchData().finally(() => setRefresh(false));
+  }, [childId]);
 
   const dataBasedonTime = useMemo(() => {
     if (option === 'recent') {
@@ -206,14 +185,14 @@ const SingleChildScreen = ({ route, navigation }) => {
   }, [option, packageList]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProcessedData = async () => {
       const processedPackage = await AppPackaging.preprocessAppPackageInfo(dataBasedonTime);
       if (processedPackage) {
         setActivities(processedPackage);
       }
     };
 
-    fetchData();
+    fetchProcessedData();
   }, [dataBasedonTime, option]);
 
   useEffect(() => {

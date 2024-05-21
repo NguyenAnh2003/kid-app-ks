@@ -87,7 +87,7 @@ const HomeStack = ({ route }) => {
 
   const { childId, hourUsage, minuteUsage } = kidAppData;
 
-  useMonitor(childId)
+  const { activities, activitiesUsage } = useMonitor(childId);
   /** useBackground hook */
   useBackgroundTask(parentId, childId, hourUsage, minuteUsage);
 
@@ -101,7 +101,7 @@ const HomeStack = ({ route }) => {
       }}
     >
       {/** home screen -> usage screen */}
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} initialParams={{ activities, activitiesUsage }} />
     </Stack.Navigator>
   );
 };

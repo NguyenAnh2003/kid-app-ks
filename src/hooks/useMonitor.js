@@ -78,7 +78,7 @@ const useMonitor = (childId) => {
           const existingActivity = activityMap.get(packageName);
 
           if (existingActivity) {
-            const updatedTimeUsed = existingActivity.timeUsed + validUsageTime;
+            const updatedTimeUsed = existingActivity.timeUsed;
             await updateActivity(existingActivity.id, updatedTimeUsed);
             console.log(`Updated ${name} with new time ${updatedTimeUsed}`);
           } else {

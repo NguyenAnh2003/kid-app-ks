@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
 const numDay = 2;
 const numWeek = 1;
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
   /**
    * @param childId
    * @param childName

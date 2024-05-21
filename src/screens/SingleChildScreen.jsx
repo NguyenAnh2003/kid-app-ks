@@ -21,30 +21,30 @@ import {
 } from '@brighthustle/react-native-usage-stats-manager';
 import moment from 'moment';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#fafafa',
-    paddingHorizontal: 8,
-    paddingVertical: 15,
-  },
-  textHeading: {
-    fontSize: 17,
-    color: 'black',
-  },
-  topBox: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 5,
-    paddingBottom: 5,
-  },
-  avatarChild: {
-    width: 50,
-    height: 50,
-    borderRadius: 8,
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     flexDirection: 'column',
+//     backgroundColor: '#fafafa',
+//     paddingHorizontal: 8,
+//     paddingVertical: 15,
+//   },
+//   textHeading: {
+//     fontSize: 17,
+//     color: 'black',
+//   },
+//   topBox: {
+//     flexDirection: 'row',
+//     gap: 10,
+//     marginBottom: 5,
+//     paddingBottom: 5,
+//   },
+//   avatarChild: {
+//     width: 50,
+//     height: 50,
+//     borderRadius: 8,
+//   },
+// });
 
 const numDay = 2;
 const numWeek = 1;
@@ -83,7 +83,9 @@ const SingleChildScreen = ({ route, navigation }) => {
       for (let i = 0; i < usageDataKeys.length; i++) {
         const key = usageDataKeys[i];
         const { name, packageName, usageTime } = usageData[key];
+        console.log("usageTime: ",usageTime);
         const validUsageTime = Number(usageTime);
+        console.log("validUsageTime: ",validUsageTime);
         const dateUsed = new Date().toISOString().split('T')[0];
         processedUsageData.push({ name, packageName, validUsageTime, dateUsed });
       }
@@ -96,7 +98,7 @@ const SingleChildScreen = ({ route, navigation }) => {
       setActivitiesUsage(uniqueUsageData);
 
       const fetchedData = await getAllActivities(childId);
-      console.log("childId: ",childId);
+      console.log("childId1: ",childId);
       console.log("Fetched activities from DB:", fetchedData);
 
       const currentDate = new Date().toISOString().split('T')[0];
@@ -133,17 +135,18 @@ const SingleChildScreen = ({ route, navigation }) => {
 
       // Refresh activityMap after processing
 
-      const updatedFetchedData = await getAllActivities(childId);
-      console.log("childId: ",childId);
-      const updatedFilteredData = updatedFetchedData.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({
-        id: item.id,
-        name: item.appName,
-        packageName: item.packageName,
-        timeUsed: item.timeUsed,
-        dateUsed: item.dateUsed.split('T')[0]
-      }));
-      setActivities(updatedFilteredData);
-      console.log("Updated filtered data after processing:", updatedFilteredData);
+      // const updatedFetchedData = await getAllActivities(childId);
+      // console.log("updatedFetchedData: ", updatedFetchedData);
+      // console.log("childId2: ",childId);
+      // const updatedFilteredData = updatedFetchedData.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({
+      //   id: item.id,
+      //   name: item.appName,
+      //   packageName: item.packageName,
+      //   timeUsed: item.timeUsed,
+      //   dateUsed: item.dateUsed.split('T')[0]
+      // }));
+      // setActivities(updatedFilteredData);
+      // console.log("Updated filtered data after processing:", updatedFilteredData);
 
     } catch (error) {
       console.error('Error fetching or inserting data:', error.message);
@@ -157,7 +160,7 @@ const SingleChildScreen = ({ route, navigation }) => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [childId]);
+  }, []);
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
@@ -216,139 +219,151 @@ const SingleChildScreen = ({ route, navigation }) => {
 
   return (
     <ScrollView
-      contentContainerStyle={{ flex: 1 }}
-      refreshControl={
-        <RefreshControl onRefresh={onRefresh} refreshing={refresh} />
-      }
+    contentContainerStyle={styles.scrollViewContent}
+    refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={refresh} />}
     >
-      <View
-        style={[globalStyle.container, { paddingTop: 20, paddingBottom: 0 }]}
-      >
-        <View style={styles.container}>
-          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-            <View
-              style={[
-                styles.topBox,
-                {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignContent: 'center',
-                  paddingRight: 10,
-                  borderBottomWidth: 1,
-                  borderColor: '#f2f2f2',
-                },
-              ]}
-            >
-              <View style={styles.topBox}>
-                <Image
-                  source={{ uri: childImage }}
-                  style={styles.avatarChild}
-                />
-                <View style={{ flexDirection: 'column' }}>
-                  <Text style={styles.textHeading}>{childName}</Text>
-                  <Text style={{ color: '#a5a5a5' }}>{phoneType}</Text>
-                </View>
-              </View>
-              <MaterialCommunityIcons
-                name="account-edit-outline"
-                size={24}
-                color={'black'}
-                onPress={() =>
-                  navigation.navigate('EditChild', {
-                    childId: childId,
-                  })
-                }
-              />
-            </View>
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-              {options.map((i, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={{ padding: 10, backgroundColor: '#000', minWidth: 80 }}
-                  onPress={() => setOption(i)}
-                >
-                  <Text
-                    style={{
-                      color: '#fff',
-                      fontSize: 15,
-                      fontWeight: '600',
-                      textAlign: 'center',
-                    }}
-                  >
-                    {i.toUpperCase()}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            <Text
-              style={{
-                color: 'black',
-                marginTop: 15,
-                marginLeft: 5,
-                fontSize: 20,
-                fontWeight: '700',
-              }}
-            >
-              Activities in {option.toUpperCase()}
-            </Text>
-            <View style={{ maxHeight: 200 }}>
-              {activities?.length !== 0 ? (
-                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                  <View
-                    style={{
-                      paddingHorizontal: 15,
-                      paddingVertical: 15,
-                      backgroundColor: '#fff',
-                      flexDirection: 'column',
-                      gap: 12,
-                    }}
-                  >
-                    {activities?.map((i, index) => (
-                      <ActivityCard
-                        key={index}
-                        packageName={i.name}
-                        packageImage={i.icon}
-                        packageTimeUsed={i.timeUsed}
-                        packageDateUsed={i.dateUsed}
-                      />
-                    ))}
-                  </View>
-                </ScrollView>
-              ) : (
-                <Text
-                  style={{
-                    color: 'red',
-                    marginTop: 95,
-                    marginLeft: 5,
-                    fontSize: 20,
-                    fontWeight: '500',
-                    textAlign: 'center'
-                  }}
-                >
-                  There are no activities in recent
-                </Text>
-              )}
-            </View>
-            {activities?.length !== 0 && (
-              <>
-                <Text
-                  style={{
-                    color: 'black',
-                    marginLeft: 5,
-                    fontSize: 20,
-                    fontWeight: '600',
-                  }}
-                >
-                  Usage Chart
-                </Text>
-                {activities && <UsageChart activities={activities} />}
-              </>
-            )}
-          </ScrollView>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.childInfo}>
+          <Image source={{ uri: childImage }} style={styles.avatarChild} />
+          <View>
+            <Text style={styles.textHeading}>{childName}</Text>
+            <Text style={styles.phoneType}>{phoneType}</Text>
+          </View>
         </View>
+        <MaterialCommunityIcons
+          name="account-edit-outline"
+          size={24}
+          color={'black'}
+          onPress={() => navigation.navigate('EditChild', { childId })}
+        />
       </View>
-    </ScrollView>
+
+      <View style={styles.optionsContainer}>
+        {options.map((i, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.optionButton}
+            onPress={() => setOption(i)}
+          >
+            <Text style={styles.optionButtonText}>{i.toUpperCase()}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <Text style={styles.activitiesTitle}>
+        Activities in {option.toUpperCase()}
+      </Text>
+
+      <View style={styles.activitiesContainer}>
+        {activities?.length ? (
+          <ScrollView contentContainerStyle={styles.activitiesContent}>
+            {activities.map((activity, index) => (
+              <ActivityCard
+                key={index}
+                packageName={activity.name}
+                packageImage={activity.icon}
+                packageTimeUsed={activity.timeUsed}
+                packageDateUsed={activity.dateUsed}
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <Text style={styles.noActivitiesText}>
+            There are no activities in recent
+          </Text>
+        )}
+      </View>
+
+      {activities?.length > 0 && (
+        <>
+          <Text style={styles.usageChartTitle}>Usage Chart</Text>
+          <UsageChart activities={activities} />
+        </>
+      )}
+    </View>
+  </ScrollView>
   );
 };
-
+const styles = StyleSheet.create({
+  scrollViewContent: {
+    flexGrow: 1,
+  },
+  container: {
+    ...globalStyle.container,
+    paddingTop: 20,
+    paddingBottom: 0,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingRight: 10,
+    borderBottomWidth: 1,
+    borderColor: '#f2f2f2',
+  },
+  childInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatarChild: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  textHeading: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  phoneType: {
+    color: '#a5a5a5',
+  },
+  optionsContainer: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 15,
+  },
+  optionButton: {
+    padding: 10,
+    backgroundColor: '#000',
+    minWidth: 80,
+    alignItems: 'center',
+  },
+  optionButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  activitiesTitle: {
+    color: 'black',
+    marginTop: 15,
+    marginLeft: 5,
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  activitiesContainer: {
+    maxHeight: 200,
+  },
+  activitiesContent: {
+    flexGrow: 1,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    backgroundColor: '#fff',
+    gap: 12,
+  },
+  noActivitiesText: {
+    color: 'red',
+    marginTop: 95,
+    marginLeft: 5,
+    fontSize: 20,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  usageChartTitle: {
+    color: 'black',
+    marginLeft: 5,
+    fontSize: 20,
+    fontWeight: '600',
+  },
+});
 export default SingleChildScreen;

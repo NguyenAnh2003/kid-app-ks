@@ -11,7 +11,7 @@ import {
   LoginScreen,
   RegisterScreen,
 } from '../screens';
-import { useBackgroundTask } from '../hooks';
+import { useBackgroundTask,useMonitor } from '../hooks';
 
 const Stack = createStackNavigator();
 
@@ -87,6 +87,7 @@ const HomeStack = ({ route }) => {
 
   const { childId, hourUsage, minuteUsage } = kidAppData;
 
+  const { activities, activitiesUsage } = useMonitor(childId);
   /** useBackground hook */
   useBackgroundTask(parentId, childId, hourUsage, minuteUsage);
 
@@ -100,7 +101,7 @@ const HomeStack = ({ route }) => {
       }}
     >
       {/** home screen -> usage screen */}
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} initialParams={{ activities, activitiesUsage }} />
     </Stack.Navigator>
   );
 };

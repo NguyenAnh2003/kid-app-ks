@@ -46,3 +46,12 @@ export const getAllActivities = async (childId) => {
     console.log(error.message);
   }
 };
+export const updateActivity = async(id, timeUsed) => {
+  try {
+    const { data, status } = await activitiesTable.update({ timeUsed }).eq('id', id).single();
+    console.log("update oke")
+    return data;
+  } catch (error) {
+    console.error('Error updating activity:', error.message);
+  }
+};

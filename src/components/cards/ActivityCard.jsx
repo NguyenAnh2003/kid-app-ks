@@ -26,7 +26,21 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 });
-
+function humanReadableMillis(milliSeconds) {
+  const seconds = Math.floor(milliSeconds / 1000);
+  if (seconds < 60) {
+    return `${seconds}s`;
+  } else if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}m ${remainingSeconds}s`;
+  } else {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    return `${hours}h ${minutes}m ${remainingSeconds}s`;
+  }
+}
 const ActivityCard = React.memo(
   ({ packageName, packageImage, packageTimeUsed, packageDateUsed }) => {
     /**
@@ -42,13 +56,13 @@ const ActivityCard = React.memo(
             style={styles.pImage}
             source={{ uri: `data:image/png;base64,${packageImage}`, width: 50, height: 50 }}
           />
-          <View style={{flexDirection: 'column', gap: 3}}>
+          <View style={{ flexDirection: 'column', gap: 3 }}>
             <Text style={styles.pName}>{packageName}</Text>
             <Text style={styles.dateUsedText}>{packageDateUsed}</Text>
           </View>
         </View>
         {/** time used */}
-        <Text style={styles.timeUsedText}>{packageTimeUsed} mins</Text>
+        <Text style={styles.timeUsedText}>{humanReadableMillis(packageTimeUsed)}</Text>
       </View>
     );
   }

@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
 const numDay = 2;
 const numWeek = 1;
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
   /**
    * @param childId
    * @param childName
@@ -152,8 +152,19 @@ const HomeScreen = ({ navigation }) => {
 
     /** fetch child data by childId */
     const fetchUsage = async () => {
-      const data = await getAllActivities(childId);
-      console.log('activities', data);
+      const fetchedData = await getAllActivities(childId);
+      console.log(" activities ", fetchedData);
+      const dataArray = Array.isArray(fetchedData) ? fetchedData : [fetchedData];
+      const currentDate = new Date().toISOString().split('T')[0];
+      const filteredData = dataArray.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({
+        id: item.id,
+        name: item.appName,
+        packageName: item.packageName,
+        timeUsed: item.timeUsed,
+        dateUsed: item.dateUsed.split('T')[0]
+      }));
+      setActivities(filteredData);
+      console.log('activities', filteredData);
     };
 
     fetchUsage();

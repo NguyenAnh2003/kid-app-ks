@@ -12,7 +12,7 @@ import {
   LoginScreen,
   RegisterScreen,
 } from '../screens';
-import { useBackgroundTask, useMonitor } from '../hooks';
+// import { useBackgroundTask, useMonitor } from '../hooks';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import {
   View,
@@ -93,7 +93,6 @@ const AppNavigator = () => {
 
 const HomeStack = ({ route }) => {
   const { kidAppData } = route.params;
-  console.log({ kidAppData });
   const { childId, hourUsage, minuteUsage, children } = kidAppData;
   const [region, setRegion] = React.useState({});
   const [childIdState, setChildId] = React.useState(null);
@@ -168,7 +167,7 @@ const HomeStack = ({ route }) => {
   //   }
   // }, [region])
 
-  const { activities, activitiesUsage } = useMonitor(childId);
+  // const { activities, activitiesUsage } = useMonitor(childId);
   /** useBackground hook */
   // useBackgroundTask(parentId: children.parentId, childId, hourUsage, minuteUsage);
 

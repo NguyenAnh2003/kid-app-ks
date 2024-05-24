@@ -15,6 +15,7 @@ import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
 import packageList from '../mock/activities';
 import { getAllActivities, getChildInfo } from '../libs';
+import { processAppIcon } from '../libs/utils';
 
 const styles = StyleSheet.create({
   /** container */
@@ -54,9 +55,6 @@ const HomeScreen = ({ navigation, route }) => {
    * @param childImage (avatar)
    */
   const { childId, childName, childImage, phoneType } = route.params;
-
-  /** native module */
-  const { AppPackaging } = NativeModules;
   /** childId -> fetchDataByChildId */
   /** option */
   const [option, setOption] = useState('recent');
@@ -65,11 +63,11 @@ const HomeScreen = ({ navigation, route }) => {
   /** state */
   const [activities, setActivities] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const [child, setDataa] = useState({});
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
     /** fetch data again */
+    fetchUsage();
     setRefresh(false);
   }, []);
 
@@ -109,28 +107,27 @@ const HomeScreen = ({ navigation, route }) => {
     }
   }, [option, activities]);
 
-  const getAppIcon = async (appPackage) => {
-    const result = await AppPackaging.preprocessAppPackageInfo(appPackage);
-    if (result) return result;
+  /** fetch child data by childId */
+  const fetchUsage = async () => {
+    const activities = await getAllActivities(childId);
+    if (activities) {
+      const processedActivities = activities.map((i) => {
+        const processedDateUsed = i.dateUsed.split('T')[0];
+        const processedTimeUsed = Number(i.timeUsed);
+        const id = i.id.toString();
+        return {
+          ...i,
+          id: id,
+          dateUsed: processedDateUsed,
+          timeUsed: processedTimeUsed,
+        };
+      });
+
+      const result = await processAppIcon(processedActivities);
+      console.log({ result });
+      setActivities(result);
+    }
   };
-
-  // useEffect(() => {
-  //   /** */
-  //   const fetchData = async () => {
-  //     const processedPackage = await AppPackaging.preprocessAppPackageInfo(
-  //       dataBasedonTime
-  //     );
-  //     if (processedPackage) {
-  //       setActivities(processedPackage);
-  //     }
-  //   };
-
-  //   fetchData();
-
-  //   return () => {
-  //     setActivities();
-  //   };
-  // }, [dataBasedonTime, option]);
 
   /** setup header when nav &I childId change */
   useEffect(() => {
@@ -155,37 +152,6 @@ const HomeScreen = ({ navigation, route }) => {
         </View>
       ),
     });
-
-    /** fetch child data by childId */
-    const fetchUsage = async () => {
-      const activities = await getAllActivities(childId);
-      if (activities) {
-        const processedActivities = activities.map((i) => {
-          const processedDateUsed = i.dateUsed.split('T')[0];
-          return {
-            ...i,
-            dateUsed: processedDateUsed,
-          };
-        });
-
-        const result = await getAppIcon(processedActivities);
-        console.log('ressult', result);
-        setActivities(result);
-        // const fetchedData = await getAllActivities(childId);
-        // console.log(" activities ", fetchedData);
-        // const dataArray = Array.isArray(fetchedData) ? fetchedData : [fetchedData];
-        // const currentDate = new Date().toISOString().split('T')[0];
-        // const filteredData = dataArray.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({
-        //   id: item.id,
-        //   name: item.appName,
-        //   packageName: item.packageName,
-        //   timeUsed: item.timeUsed,
-        //   dateUsed: item.dateUsed.split('T')[0]
-        // }));
-        // setActivities(filteredData);
-        // console.log('activities', filteredData);
-      }
-    };
 
     fetchUsage();
 

@@ -52,9 +52,8 @@ const HomeScreen = ({ navigation, route }) => {
    * @param childId
    * @param childName
    * @param childImage (avatar)
-   * @param activities ? (com.package.name, timeUsed, date)
    */
-  const { childId } = route.params;
+  const { childId, childName, childImage, phoneType } = route.params;
 
   /** native module */
   const { AppPackaging } = NativeModules;
@@ -65,20 +64,8 @@ const HomeScreen = ({ navigation, route }) => {
 
   /** state */
   const [activities, setActivities] = useState([]);
-  const [refresh, setRefresh] = useState(false)
-  const [child, setDataa] = useState({})
-
-  useEffect(() => {
-    const fetchChild = async () => {
-      const res = await getChildInfo(childId)
-      if(res) {
-        console.log({'child': res});
-        setDataa(res[0])
-      }
-    }
-
-    fetchChild()
-  }, [])
+  const [refresh, setRefresh] = useState(false);
+  const [child, setDataa] = useState({});
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
@@ -87,12 +74,12 @@ const HomeScreen = ({ navigation, route }) => {
   }, []);
 
   const dataBasedonTime = useMemo(() => {
-    if(activities) {
+    if (activities) {
       if (option === 'recent') {
         const today = new Date();
         const today2 = new Date(today);
         today2.setDate(today.getDate() - 1 * numDay);
-  
+
         const todayUsage = activities.filter((item) => {
           const itemDate = new Date(item.dateUsed);
           // Compare timestamps of itemDate and previousDay
@@ -101,31 +88,31 @@ const HomeScreen = ({ navigation, route }) => {
             itemDate.getTime() < today.getTime()
           );
         });
-  
+
         return todayUsage;
       }
       if (option === '5 days') {
         const today = new Date();
-  
+
         const previousWeek = new Date(today);
         previousWeek.setDate(today.getDate() - 7 * numWeek);
-  
+
         // Filter data for the previous day
         const previousWeekData = activities.filter((item) => {
           const itemDate = new Date(item.dateUsed);
           // Compare timestamps of itemDate and previousWeek
           return itemDate >= previousWeek && itemDate < today;
         });
-  
+
         return previousWeekData;
       }
     }
   }, [option, activities]);
 
   const getAppIcon = async (appPackage) => {
-    const result = await AppPackaging.preprocessAppPackageInfo(appPackage)
-    if(result) return result
-  }
+    const result = await AppPackaging.preprocessAppPackageInfo(appPackage);
+    if (result) return result;
+  };
 
   // useEffect(() => {
   //   /** */
@@ -159,11 +146,11 @@ const HomeScreen = ({ navigation, route }) => {
           }}
         >
           <Image
-            source={{ uri: child.avatarUrl, width: 30, height: 30 }}
+            source={{ uri: childImage, width: 30, height: 30 }}
             style={{ marginLeft: -20, borderRadius: 10 }}
           />
           <Text style={{ color: '#333', fontSize: 15, fontWeight: '600' }}>
-            {child.kidName}
+            {childName}
           </Text>
         </View>
       ),
@@ -172,26 +159,39 @@ const HomeScreen = ({ navigation, route }) => {
     /** fetch child data by childId */
     const fetchUsage = async () => {
       const activities = await getAllActivities(childId);
-      if(activities) {
+      if (activities) {
         const processedActivities = activities.map((i) => {
           const processedDateUsed = i.dateUsed.split('T')[0];
           return {
             ...i,
-            dateUsed: processedDateUsed
-          } 
-        })
+            dateUsed: processedDateUsed,
+          };
+        });
 
-        const result = await getAppIcon(processedActivities)
-        console.log(result ? 'ccc' : 'nope');
+        const result = await getAppIcon(processedActivities);
+        console.log('ressult', result);
         setActivities(result);
-      }      
+        // const fetchedData = await getAllActivities(childId);
+        // console.log(" activities ", fetchedData);
+        // const dataArray = Array.isArray(fetchedData) ? fetchedData : [fetchedData];
+        // const currentDate = new Date().toISOString().split('T')[0];
+        // const filteredData = dataArray.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({
+        //   id: item.id,
+        //   name: item.appName,
+        //   packageName: item.packageName,
+        //   timeUsed: item.timeUsed,
+        //   dateUsed: item.dateUsed.split('T')[0]
+        // }));
+        // setActivities(filteredData);
+        // console.log('activities', filteredData);
+      }
     };
 
     fetchUsage();
 
     /** remove data */
     return () => {};
-  }, [navigation, child]);
+  }, [navigation]);
 
   return (
     <ScrollView
@@ -222,13 +222,13 @@ const HomeScreen = ({ navigation, route }) => {
             >
               <View style={styles.topBox}>
                 <Image
-                  source={{ uri: child.avatarUrl }}
+                  source={{ uri: childImage }}
                   style={styles.avatarChild}
                 />
                 {/** */}
                 <View style={{ flexDirection: 'column' }}>
-                  <Text style={styles.textHeading}>{child.kidName}</Text>
-                  <Text style={{ color: '#a5a5a5' }}>{child.phoneType}</Text>
+                  <Text style={styles.textHeading}>{childName}</Text>
+                  <Text style={{ color: '#a5a5a5' }}>{phoneType}</Text>
                 </View>
               </View>
             </View>

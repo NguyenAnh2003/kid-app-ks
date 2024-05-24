@@ -96,9 +96,9 @@ const ChildSelectionScreen = ({ user, navigation, route }) => {
   }, []);
 
   const submitHandler = async (childId) => {
-    const limitedUsage = await getLimitedTime(childId);
-    if (limitedUsage) {
-      assignDispatch(assignData2Device(JSON.stringify(limitedUsage[0])));
+    const kidData = await getLimitedTime(childId);
+    if (kidData) {
+      assignDispatch(assignData2Device(JSON.stringify(kidData[0])));
     }
   };
 

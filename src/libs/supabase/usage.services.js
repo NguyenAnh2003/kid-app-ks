@@ -6,7 +6,7 @@ export const getLimitedTime = async (childId) => {
   console.log({ childId });
   try {
     const { data, status, error } = await timelimTab
-      .select('*')
+      .select(`*, children:childId (*)`)
       .eq('childId', childId);
     console.log({ status });
     if (status === 200) return data;

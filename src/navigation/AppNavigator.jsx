@@ -86,7 +86,7 @@ const HomeTabs = (props) => {
       }}
     >
       {/** home screen */}
-      {/* <Tab.Screen
+      <Tab.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{
@@ -98,9 +98,9 @@ const HomeTabs = (props) => {
             />
           ),
         }}
-      /> */}
+      />
       {/** notification screen */}
-      {/* <Tab.Screen
+      <Tab.Screen
         name="Notification"
         component={NotificationScreen}
         options={{
@@ -112,9 +112,9 @@ const HomeTabs = (props) => {
             />
           ),
         }}
-      /> */}
+      />
       {/** account screen */}
-      {/* <Tab.Screen
+      <Tab.Screen
         name="Account"
         component={AccountScreen}
         options={{
@@ -125,8 +125,8 @@ const HomeTabs = (props) => {
               color={'black'}
             />
           ),
-        }} */}
-      {/* /> */}
+        }}
+       />
       <Tab.Screen
         name="Child"
         component={ChildTest}

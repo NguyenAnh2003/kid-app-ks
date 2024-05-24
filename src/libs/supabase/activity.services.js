@@ -38,7 +38,7 @@ export const getAllActivities = async (childId) => {
    */
   try {
     const { data, status } = await activitiesTable
-      .select(`*, children:childId (*)`)
+      .select("*")
       .eq('childId', childId);
 
     if (status === 200) return data;

@@ -14,8 +14,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
 import packageList from '../mock/activities';
-import child from '../mock/child';
-import { getAllActivities } from '../libs';
+import { getAllActivities, getChildInfo } from '../libs';
 
 const styles = StyleSheet.create({
   /** container */
@@ -55,7 +54,7 @@ const HomeScreen = ({ navigation, route }) => {
    * @param childImage (avatar)
    * @param activities ? (com.package.name, timeUsed, date)
    */
-  const { childId, childImage, childName, phoneType } = child;
+  const { childId } = route.params;
 
   /** native module */
   const { AppPackaging } = NativeModules;
@@ -65,8 +64,21 @@ const HomeScreen = ({ navigation, route }) => {
   const options = ['recent', '5 days'];
 
   /** state */
-  const [activities, setActivities] = useState(packageList);
-  const [refresh, setRefresh] = useState(false);
+  const [activities, setActivities] = useState([]);
+  const [refresh, setRefresh] = useState(false)
+  const [child, setDataa] = useState({})
+
+  useEffect(() => {
+    const fetchChild = async () => {
+      const res = await getChildInfo(childId)
+      if(res) {
+        console.log({'child': res});
+        setDataa(res[0])
+      }
+    }
+
+    fetchChild()
+  }, [])
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
@@ -75,58 +87,65 @@ const HomeScreen = ({ navigation, route }) => {
   }, []);
 
   const dataBasedonTime = useMemo(() => {
-    if (option === 'recent') {
-      const today = new Date();
-      const today2 = new Date(today);
-      today2.setDate(today.getDate() - 1 * numDay);
-
-      const todayUsage = packageList.filter((item) => {
-        const itemDate = new Date(item.dateUsed);
-        // Compare timestamps of itemDate and previousDay
-        return (
-          itemDate.getTime() >= today2.getTime() &&
-          itemDate.getTime() < today.getTime()
-        );
-      });
-
-      return todayUsage;
-    }
-    if (option === '5 days') {
-      const today = new Date();
-
-      const previousWeek = new Date(today);
-      previousWeek.setDate(today.getDate() - 7 * numWeek);
-
-      // Filter data for the previous day
-      const previousWeekData = packageList.filter((item) => {
-        const itemDate = new Date(item.dateUsed);
-        // Compare timestamps of itemDate and previousWeek
-        return itemDate >= previousWeek && itemDate < today;
-      });
-
-      return previousWeekData;
-    }
-  }, [option]);
-
-  useEffect(() => {
-    /** */
-    const fetchData = async () => {
-      const processedPackage = await AppPackaging.preprocessAppPackageInfo(
-        dataBasedonTime
-      );
-      if (processedPackage) {
-        setActivities(processedPackage);
+    if(activities) {
+      if (option === 'recent') {
+        const today = new Date();
+        const today2 = new Date(today);
+        today2.setDate(today.getDate() - 1 * numDay);
+  
+        const todayUsage = activities.filter((item) => {
+          const itemDate = new Date(item.dateUsed);
+          // Compare timestamps of itemDate and previousDay
+          return (
+            itemDate.getTime() >= today2.getTime() &&
+            itemDate.getTime() < today.getTime()
+          );
+        });
+  
+        return todayUsage;
       }
-    };
+      if (option === '5 days') {
+        const today = new Date();
+  
+        const previousWeek = new Date(today);
+        previousWeek.setDate(today.getDate() - 7 * numWeek);
+  
+        // Filter data for the previous day
+        const previousWeekData = activities.filter((item) => {
+          const itemDate = new Date(item.dateUsed);
+          // Compare timestamps of itemDate and previousWeek
+          return itemDate >= previousWeek && itemDate < today;
+        });
+  
+        return previousWeekData;
+      }
+    }
+  }, [option, activities]);
 
-    fetchData();
+  const getAppIcon = async (appPackage) => {
+    const result = await AppPackaging.preprocessAppPackageInfo(appPackage)
+    if(result) return result
+  }
 
-    return () => {
-      setActivities();
-    };
-  }, [dataBasedonTime, option]);
+  // useEffect(() => {
+  //   /** */
+  //   const fetchData = async () => {
+  //     const processedPackage = await AppPackaging.preprocessAppPackageInfo(
+  //       dataBasedonTime
+  //     );
+  //     if (processedPackage) {
+  //       setActivities(processedPackage);
+  //     }
+  //   };
 
-  /** setup header when nav & childId change */
+  //   fetchData();
+
+  //   return () => {
+  //     setActivities();
+  //   };
+  // }, [dataBasedonTime, option]);
+
+  /** setup header when nav &I childId change */
   useEffect(() => {
     /** setup header when (childId, navigation) change */
     navigation.setOptions({
@@ -140,11 +159,11 @@ const HomeScreen = ({ navigation, route }) => {
           }}
         >
           <Image
-            source={{ uri: childImage, width: 30, height: 30 }}
+            source={{ uri: child.avatarUrl, width: 30, height: 30 }}
             style={{ marginLeft: -20, borderRadius: 10 }}
           />
           <Text style={{ color: '#333', fontSize: 15, fontWeight: '600' }}>
-            {childName}
+            {child.kidName}
           </Text>
         </View>
       ),
@@ -152,26 +171,27 @@ const HomeScreen = ({ navigation, route }) => {
 
     /** fetch child data by childId */
     const fetchUsage = async () => {
-      const fetchedData = await getAllActivities(childId);
-      // console.log(" activities ", fetchedData);
-      const dataArray = Array.isArray(fetchedData) ? fetchedData : [fetchedData];
-      const currentDate = new Date().toISOString().split('T')[0];
-      const filteredData = dataArray.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({
-        id: item.id,
-        name: item.appName,
-        packageName: item.packageName,
-        timeUsed: item.timeUsed,
-        dateUsed: item.dateUsed.split('T')[0]
-      }));
-      setActivities(filteredData);
-      console.log('activities', filteredData);
+      const activities = await getAllActivities(childId);
+      if(activities) {
+        const processedActivities = activities.map((i) => {
+          const processedDateUsed = i.dateUsed.split('T')[0];
+          return {
+            ...i,
+            dateUsed: processedDateUsed
+          } 
+        })
+
+        const result = await getAppIcon(processedActivities)
+        console.log(result ? 'ccc' : 'nope');
+        setActivities(result);
+      }      
     };
 
     fetchUsage();
 
     /** remove data */
     return () => {};
-  }, [childId, navigation]);
+  }, [navigation, child]);
 
   return (
     <ScrollView
@@ -202,13 +222,13 @@ const HomeScreen = ({ navigation, route }) => {
             >
               <View style={styles.topBox}>
                 <Image
-                  source={{ uri: childImage }}
+                  source={{ uri: child.avatarUrl }}
                   style={styles.avatarChild}
                 />
                 {/** */}
                 <View style={{ flexDirection: 'column' }}>
-                  <Text style={styles.textHeading}>{childName}</Text>
-                  <Text style={{ color: '#a5a5a5' }}>{phoneType}</Text>
+                  <Text style={styles.textHeading}>{child.kidName}</Text>
+                  <Text style={{ color: '#a5a5a5' }}>{child.phoneType}</Text>
                 </View>
               </View>
             </View>
@@ -251,7 +271,7 @@ const HomeScreen = ({ navigation, route }) => {
             </Text>
             {/** block activities today */}
             <View style={{ maxHeight: 200 }}>
-              {activities?.length !== 0 ? (
+              {dataBasedonTime?.length !== 0 ? (
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                   <View
                     style={{
@@ -289,7 +309,7 @@ const HomeScreen = ({ navigation, route }) => {
               )}
             </View>
             {/** activities last week view */}
-            {activities?.length !== 0 ? (
+            {dataBasedonTime?.length !== 0 ? (
               <>
                 <Text
                   style={{
@@ -301,7 +321,7 @@ const HomeScreen = ({ navigation, route }) => {
                 >
                   Usage Chart
                 </Text>
-                {activities && <UsageChart activities={activities} />}
+                {dataBasedonTime && <UsageChart activities={dataBasedonTime} />}
               </>
             ) : (
               <></>

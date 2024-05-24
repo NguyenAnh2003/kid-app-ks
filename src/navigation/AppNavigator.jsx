@@ -17,6 +17,7 @@ import {
   RegisterScreen,
   SingleChildScreen,
 } from '../screens';
+import ChildTest from '../screens/ChildTest';
 const Tab = createBottomTabNavigator(); // tab bar
 const Stack = createStackNavigator(); // stack navigator
 
@@ -85,7 +86,7 @@ const HomeTabs = (props) => {
       }}
     >
       {/** home screen */}
-      <Tab.Screen
+      {/* <Tab.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{
@@ -97,9 +98,9 @@ const HomeTabs = (props) => {
             />
           ),
         }}
-      />
+      /> */}
       {/** notification screen */}
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Notification"
         component={NotificationScreen}
         options={{
@@ -111,11 +112,24 @@ const HomeTabs = (props) => {
             />
           ),
         }}
-      />
+      /> */}
       {/** account screen */}
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Account"
         component={AccountScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialCommunityIcons
+              name={focused ? 'account' : 'account-outline'}
+              size={24}
+              color={'black'}
+            />
+          ),
+        }} */}
+      {/* /> */}
+      <Tab.Screen
+        name="Child"
+        component={ChildTest}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons

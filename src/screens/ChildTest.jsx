@@ -5,7 +5,7 @@ import { View, StyleSheet, Text, PermissionsAndroid, Alert } from 'react-native'
 import Geolocation from '@react-native-community/geolocation';
 import { check, request } from 'react-native-permissions';
 import io from 'socket.io-client';
-const socket = io.connect('http://192.168.1.13:3001/');
+const socket = io.connect('http://172.20.10.4:3001/');
 
 
 // đây là file giả làm app thằng kid t bỏ đây tạm
@@ -13,7 +13,7 @@ const socket = io.connect('http://192.168.1.13:3001/');
 // hiện tại mới chỉ foreground, để cho file này chạy background t bị lỗi mãi k làm đc
 
 function getChildIdFromDtb(){
-  return "7ce14780-1a03-438a-9596-973d81725fa7";
+  return "b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae6";
 }
 
 const ChildTest = () => {
@@ -110,7 +110,7 @@ const ChildTest = () => {
     }, [region])
   return (
     <View style={globalStyle.container}>
-      <Text style={globalStyle.h1}>Đọc được dòng ni thì máy thằng kid bật r đó, qua mà check location</Text>
+      {/* <Text style={globalStyle.h1}>Đọc được dòng ni thì máy thằng kid bật r đó, qua mà check location</Text> */}
     </View>
   );
 };

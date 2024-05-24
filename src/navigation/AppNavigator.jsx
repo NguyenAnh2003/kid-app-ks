@@ -12,6 +12,12 @@ import {
   RegisterScreen,
 } from '../screens';
 import { useBackgroundTask,useMonitor } from '../hooks';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import { View, StyleSheet, Text, PermissionsAndroid, Alert } from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
+import { check, request } from 'react-native-permissions';
+import io from 'socket.io-client';
+const socket = io.connect('http://192.168.2.101:3001/');
 
 const Stack = createStackNavigator();
 
@@ -40,6 +46,8 @@ const AppNavigator = () => {
     childId: kidAppData ? kidAppData.childId : null,
     parentId: session ? JSON.parse(currentUser.session).user.id : null, // parentId taken from session
   };
+
+  React.useEffect(() => {console.log({childId});}, [])
 
   return (
     <Stack.Navigator>
@@ -84,8 +92,82 @@ const AppNavigator = () => {
 
 const HomeStack = ({ route }) => {
   const { kidAppData, parentId } = route.params;
-
   const { childId, hourUsage, minuteUsage } = kidAppData;
+  const [region, setRegion] = React.useState({});
+  const [childIdState, setChildId] = React.useState(null);
+  const [checkUpdate, setCheckUpdate] = React.useState(null);
+
+  React.useEffect(() => {
+    const requestLocationPermission = async () => {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Location Permission',
+              message: 'This app needs access to your location.',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          // If permission granted, get current location
+          Geolocation.watchPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              // console.log(position.coords);
+              console.log({latitude, 
+                longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,});
+              
+              setRegion({
+                latitude, 
+                longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              });
+              setCheckUpdate(false)
+            },
+            (error) => console.error(error),
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+          );
+        } else {
+          Alert.alert("Location permission denied","Kiểm tra trong cài đặt")
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    };
+
+    requestLocationPermission();
+
+    // cleanup function
+    return () => {
+      // clear watch position if any
+      Geolocation.clearWatch();
+    };
+  }, []);
+
+
+
+    React.useEffect(()=>{
+      if(checkUpdate==true){
+        socket.emit('locationChild', (region, childId))
+      }
+      else{
+        console.log("childtest trong hook:" , region);
+        socket.on('requestLocationToSpecificDevice', (childId) => {
+          console.log(childId+" may child");
+
+          if(childId){
+            socket.emit('locationChild',region, childId)
+          }
+          setCheckUpdate(true)
+        });
+      }
+    }, [region])
+
 
   const { activities, activitiesUsage } = useMonitor(childId);
   /** useBackground hook */

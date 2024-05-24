@@ -153,7 +153,7 @@ const HomeScreen = ({ navigation, route }) => {
     /** fetch child data by childId */
     const fetchUsage = async () => {
       const fetchedData = await getAllActivities(childId);
-      console.log(" activities ", fetchedData);
+      // console.log(" activities ", fetchedData);
       const dataArray = Array.isArray(fetchedData) ? fetchedData : [fetchedData];
       const currentDate = new Date().toISOString().split('T')[0];
       const filteredData = dataArray.filter(item => item.dateUsed.split('T')[0] === currentDate).map(item => ({

@@ -7,7 +7,13 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from 'react-native';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react';
 import globalStyle from '../styles/globalStyle';
 import { ScrollView } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,6 +22,7 @@ import UsageChart from '../components/UsageChart';
 import packageList from '../mock/activities';
 import { getAllActivities, getChildInfo } from '../libs';
 import { processAppIcon } from '../libs/utils';
+import SplashScreen from './SplashScreen';
 
 const styles = StyleSheet.create({
   /** container */
@@ -48,6 +55,15 @@ const styles = StyleSheet.create({
 const numDay = 2;
 const numWeek = 1;
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'FETCH_ACTIVITIES':
+      return { activities: action.payload, isFetching: false };
+    default:
+      return { ...state };
+  }
+};
+
 const HomeScreen = ({ navigation, route }) => {
   /**
    * @param childId
@@ -55,14 +71,14 @@ const HomeScreen = ({ navigation, route }) => {
    * @param childImage (avatar)
    */
   const { childId, childName, childImage, phoneType } = route.params;
-  /** childId -> fetchDataByChildId */
-  /** option */
   const [option, setOption] = useState('recent');
   const options = ['recent', '5 days'];
-
-  /** state */
   const [activities, setActivities] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const [state, dispatch] = useReducer(reducer, {
+    activities: [],
+    isFetching: true,
+  });
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
@@ -72,13 +88,13 @@ const HomeScreen = ({ navigation, route }) => {
   }, []);
 
   const dataBasedonTime = useMemo(() => {
-    if (activities) {
+    if (state.activities) {
       if (option === 'recent') {
         const today = new Date();
         const today2 = new Date(today);
         today2.setDate(today.getDate() - 1 * numDay);
 
-        const todayUsage = activities.filter((item) => {
+        const todayUsage = state.activities.filter((item) => {
           const itemDate = new Date(item.dateUsed);
           // Compare timestamps of itemDate and previousDay
           return (
@@ -96,7 +112,7 @@ const HomeScreen = ({ navigation, route }) => {
         previousWeek.setDate(today.getDate() - 7 * numWeek);
 
         // Filter data for the previous day
-        const previousWeekData = activities.filter((item) => {
+        const previousWeekData = state.activities.filter((item) => {
           const itemDate = new Date(item.dateUsed);
           // Compare timestamps of itemDate and previousWeek
           return itemDate >= previousWeek && itemDate < today;
@@ -105,7 +121,7 @@ const HomeScreen = ({ navigation, route }) => {
         return previousWeekData;
       }
     }
-  }, [option, activities]);
+  }, [option, state.activities]);
 
   /** fetch child data by childId */
   const fetchUsage = async () => {
@@ -124,8 +140,7 @@ const HomeScreen = ({ navigation, route }) => {
       });
 
       const result = await processAppIcon(processedActivities);
-      console.log({ result });
-      setActivities(result);
+      dispatch({ type: 'FETCH_ACTIVITIES', payload: result });
     }
   };
 
@@ -159,7 +174,9 @@ const HomeScreen = ({ navigation, route }) => {
     return () => {};
   }, [navigation]);
 
-  return (
+  return state.isFetching ? (
+    <SplashScreen />
+  ) : (
     <ScrollView
       contentContainerStyle={{ flex: 1 }}
       refreshControl={
@@ -248,7 +265,7 @@ const HomeScreen = ({ navigation, route }) => {
                       gap: 12,
                     }}
                   >
-                    {activities?.map((i, index) => (
+                    {dataBasedonTime?.map((i, index) => (
                       <ActivityCard
                         key={index}
                         packageName={i.name}

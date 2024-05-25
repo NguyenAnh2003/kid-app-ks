@@ -111,7 +111,6 @@ const useMonitor = (childId) => {
     };
   }, [childId]);
 
-  return { activities, activitiesUsage };
 };
 
 export default useMonitor;

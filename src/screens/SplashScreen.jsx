@@ -13,7 +13,6 @@ const SplashScreen = () => {
       }}
     >
       <ActivityIndicator size={'large'} color={'#000'} />
-      <Text>SplashScreen</Text>
     </View>
   );
 };

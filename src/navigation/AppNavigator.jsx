@@ -26,7 +26,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { check, request } from 'react-native-permissions';
 import io from 'socket.io-client';
 import { useAppState, useBackgroundTask, useMonitor } from '../hooks';
-import { userLogout } from '../redux/actions/actions';
+import { userLogout } from '../redux';
 const socket = io.connect('http://192.168.2.101:3001/');
 
 const Stack = createStackNavigator();
